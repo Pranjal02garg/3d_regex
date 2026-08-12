@@ -31,7 +31,7 @@ export default function JournalPage() {
       {/* ── Article List ──────────────────────────────────────────────────── */}
       <section className="shell py-12 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
-          {journalArticles.map((article, index) => (
+          {journalArticles.map((article) => (
             <Reveal key={article.slug} className="flex flex-col h-full group">
               <Link href={`/journal/${article.slug}`} className="flex flex-col flex-1">
                 <div className="border border-gray-200 rounded-2xl p-6 md:p-8 flex-1 flex flex-col justify-between transition-all duration-300 group-hover:border-[var(--ochre)] group-hover:shadow-md bg-white">

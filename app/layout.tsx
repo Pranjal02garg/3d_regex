@@ -8,6 +8,8 @@ import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import { CartProvider } from "@/lib/cart";
 import { ToastProvider } from "@/components/ui/Toast";
 import { SITE } from "@/content/site";
+import MetaPixel from "@/components/MetaPixel";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -120,6 +122,9 @@ export default function RootLayout({
             <SearchOverlay />
             <WhatsAppButton />
           </CartProvider>
+          <Suspense fallback={null}>
+            <MetaPixel />
+          </Suspense>
         </ToastProvider>
       </body>
     </html>
