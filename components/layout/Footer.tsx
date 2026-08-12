@@ -1,134 +1,75 @@
 import Link from "next/link";
 import Image from "next/image";
-import { FOOTER_NAV, LEGAL_NAV, MEDICAL_DISCLAIMER, REGISTRATIONS, SITE } from "@/content/site";
+import { SITE } from "@/content/site";
 
 export default function Footer() {
   return (
-    <footer className="grain mt-32 bg-vetiver-deep text-paper">
-      <div className="shell py-16 md:py-20">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-4">
-            <div className="flex items-center gap-3">
-              <Image
-                src="/brand/emblem-paper.png"
-                alt=""
-                width={40}
-                height={40}
-                className="h-10 w-10 object-contain"
-              />
-              <span className="display text-[1.25rem] text-paper">Regex Remedies</span>
+    <footer className="mt-10 sm:mt-14 bg-[#111315] text-white border-t border-gray-800 py-8 sm:py-10">
+      <div className="shell space-y-6 text-left">
+        {/* Top Compact Brand & Nav Bar */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-800 pb-6">
+          <div className="flex items-center gap-3">
+            <Image
+              src="/brand/emblem-paper.png"
+              alt="Regex Remedies Emblem"
+              width={36}
+              height={36}
+              className="h-8 w-8 sm:h-9 sm:w-9 object-contain"
+            />
+            <div>
+              <span className="display text-lg font-bold text-white block leading-none">
+                Regex Remedies
+              </span>
+              <span className="font-mono text-[10px] text-[var(--ochre)] font-bold">
+                Natural Ayurvedic Remedies
+              </span>
             </div>
-            <p className="mt-5 max-w-xs text-[0.9375rem] leading-relaxed text-paper/65">
-              {SITE.promise} Classical formulations, published in full — every herb, every part
-              used, every batch record.
-            </p>
-
-            <dl className="mt-8 flex flex-col gap-2.5">
-              {REGISTRATIONS.map((r) => (
-                <div key={r.label} className="flex flex-col">
-                  <dt className="font-mono text-[0.625rem] uppercase tracking-[0.18em] text-paper/40">
-                    {r.label}
-                  </dt>
-                  <dd className="tabular text-[0.8125rem] text-paper/75">{r.value}</dd>
-                </div>
-              ))}
-            </dl>
           </div>
 
-          <nav className="grid grid-cols-2 gap-10 sm:grid-cols-4 lg:col-span-8" aria-label="Footer">
-            {FOOTER_NAV.map((group) => (
-              <div key={group.title}>
-                <h2 className="font-mono text-[0.625rem] uppercase tracking-[0.18em] text-paper/40">
-                  {group.title}
-                </h2>
-                <ul className="mt-4 flex flex-col gap-2.5">
-                  {group.links.map((l) => (
-                    <li key={l.href + l.label}>
-                      <Link
-                        href={l.href}
-                        className="text-[0.875rem] text-paper/70 transition-colors hover:text-paper"
-                      >
-                        {l.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          <nav className="flex flex-wrap items-center gap-4 text-xs font-mono font-bold text-gray-300">
+            <Link href="/shop" className="hover:text-[var(--ochre)] transition-colors">
+              SHOP ALL
+            </Link>
+            <span>•</span>
+            <Link href="/about" className="hover:text-[var(--ochre)] transition-colors">
+              OUR STORY
+            </Link>
+            <span>•</span>
+            <Link href="/quality" className="hover:text-[var(--ochre)] transition-colors">
+              QUALITY
+            </Link>
+            <span>•</span>
+            <a
+              href="https://wa.me/918360053594"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-[#25D366] transition-colors"
+            >
+              WHATSAPP SUPPORT
+            </a>
           </nav>
         </div>
 
-        <div className="mt-14 grid gap-8 border-t border-paper/15 pt-10 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <h2 className="font-mono text-[0.625rem] uppercase tracking-[0.18em] text-paper/40">
-              Manufactured at
-            </h2>
-            <address className="mt-3 text-[0.875rem] not-italic leading-relaxed text-paper/70">
-              {SITE.address.line1}
-              <br />
-              {SITE.address.line2}
-              <br />
-              {SITE.address.country}
-            </address>
+        {/* Middle Statutory License Strip */}
+        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-gray-400">
+          <div>
+            <span>AYUSH LICENCE: <strong className="text-[var(--ochre)]">PB/AY/000000</strong></span>
+            <span className="mx-2">•</span>
+            <span>SCHEDULE T <strong className="text-[#25D366]">GMP CERTIFIED</strong></span>
           </div>
-
-          <div className="lg:col-span-3">
-            <h2 className="font-mono text-[0.625rem] uppercase tracking-[0.18em] text-paper/40">
-              Talk to us
-            </h2>
-            <ul className="mt-3 flex flex-col gap-1.5 text-[0.875rem] text-paper/70">
-              <li>
-                <a href={`tel:${SITE.phoneHref}`} className="transition-colors hover:text-paper">
-                  {SITE.phone}
-                </a>
-              </li>
-              <li>
-                <a href={`mailto:${SITE.email}`} className="transition-colors hover:text-paper">
-                  {SITE.email}
-                </a>
-              </li>
-              <li className="text-paper/50">{SITE.hours}</li>
-            </ul>
-          </div>
-
-          <div className="lg:col-span-5">
-            <h2 className="font-mono text-[0.625rem] uppercase tracking-[0.18em] text-paper/40">
-              Grievance officer
-            </h2>
-            <p className="mt-3 text-[0.875rem] leading-relaxed text-paper/70">
-              {SITE.grievanceOfficer.name} ·{" "}
-              <a
-                href={`mailto:${SITE.grievanceOfficer.email}`}
-                className="transition-colors hover:text-paper"
-              >
-                {SITE.grievanceOfficer.email}
-              </a>
-              <span className="mt-1 block text-paper/45">
-                Named under the Consumer Protection (E-Commerce) Rules, 2020.
-              </span>
-            </p>
+          <div>
+            <span>Customer Support: <strong className="text-white">+91 83600 53594</strong></span>
           </div>
         </div>
 
-        {/* The disclaimer sits in the footer at readable size rather than in
-            six-point grey. If it is worth saying it is worth reading. */}
-        <p className="mt-12 max-w-4xl border-t border-paper/15 pt-8 text-[0.8125rem] leading-relaxed text-paper/55">
-          {MEDICAL_DISCLAIMER}
-        </p>
-
-        <div className="mt-10 flex flex-col gap-4 text-[0.8125rem] text-paper/45 sm:flex-row sm:items-center sm:justify-between">
+        {/* Bottom Disclaimer & Copyright */}
+        <div className="pt-4 border-t border-gray-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[10px] font-mono text-gray-400">
           <p>
-            © {new Date().getFullYear()} {SITE.legalName}. All rights reserved.
+            © {new Date().getFullYear()} {SITE.legalName}. All rights reserved. Manufactured in Punjab, India.
           </p>
-          <ul className="flex flex-wrap gap-x-6 gap-y-2">
-            {LEGAL_NAV.map((l) => (
-              <li key={l.href}>
-                <Link href={l.href} className="transition-colors hover:text-paper/80">
-                  {l.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <p className="max-w-md text-gray-400">
+            Ayurvedic proprietary remedies. Read label dosage instructions prior to use.
+          </p>
         </div>
       </div>
     </footer>

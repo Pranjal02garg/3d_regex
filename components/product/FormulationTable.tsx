@@ -1,77 +1,54 @@
-import Link from "next/link";
 import type { Product } from "@/content/products";
 import { totalActives } from "@/content/products";
 import { getIngredient } from "@/content/ingredients";
-import { DATA_VERIFIED } from "@/content/site";
 
-/**
- * The signature component of the whole site.
- *
- * A real pharmacopoeia-style composition table: Sanskrit name, botanical
- * binomial, part used, quantity per dose. Every row links to a monograph.
- * Nobody in this category publishes this, and it is the single strongest
- * argument the brand has — so it is typeset as a document, not a card grid.
- *
- * On narrow screens the table becomes a stack of definition lists rather
- * than a horizontally scrolling table, because a scrollable table on a phone
- * is a table nobody reads.
- */
 export default function FormulationTable({ product }: { product: Product }) {
   const total = totalActives(product);
 
   return (
-    <div>
-      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b-2 border-fg pb-3">
-        <h3 className="display text-h4">Composition</h3>
-        <p className="font-mono text-micro uppercase tracking-[0.16em] text-fg-3">
+    <div className="text-left font-sans">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 pb-3 mb-2">
+        <h3 className="font-serif text-lg font-bold text-[#111315]">
+          Full Botanical Formula · {product.name}
+        </h3>
+        <span className="font-mono text-xs uppercase font-bold text-[var(--ochre)] bg-[var(--surface-2)] px-2.5 py-0.5 rounded-full border border-gray-200">
           Per {product.dosage.amount.toLowerCase()} · {product.form}
-        </p>
+        </span>
       </div>
 
-      {/* Desktop: a real table. */}
-      <table className="hidden w-full text-left md:table">
+      {/* Desktop Table View */}
+      <table className="hidden w-full text-left md:table text-xs sm:text-sm">
         <caption className="sr-only">
           Composition of {product.name}, per {product.dosage.amount}
         </caption>
         <thead>
-          <tr className="border-b border-line">
-            <th scope="col" className="w-[26%] py-3 font-mono text-micro font-medium uppercase tracking-[0.16em] text-fg-3">
-              Sanskrit
-            </th>
-            <th scope="col" className="w-[30%] py-3 font-mono text-micro font-medium uppercase tracking-[0.16em] text-fg-3">
-              Botanical
-            </th>
-            <th scope="col" className="w-[26%] py-3 font-mono text-micro font-medium uppercase tracking-[0.16em] text-fg-3">
-              Part used
-            </th>
-            <th scope="col" className="py-3 text-right font-mono text-micro font-medium uppercase tracking-[0.16em] text-fg-3">
-              Quantity
-            </th>
+          <tr className="border-b border-gray-200 font-mono text-[11px] font-bold text-gray-500 uppercase">
+            <th scope="col" className="py-2.5 w-[30%]">Sanskrit & Devanagari</th>
+            <th scope="col" className="py-2.5 w-[30%]">Botanical Binomial</th>
+            <th scope="col" className="py-2.5 w-[25%]">Plant Part Used</th>
+            <th scope="col" className="py-2.5 text-right w-[15%]">Per Dose</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-gray-100">
           {product.formulation.map((row) => {
             const ing = getIngredient(row.ingredient);
             if (!ing) return null;
             return (
-              <tr key={row.ingredient} className="group border-b border-line-2">
-                <th scope="row" className="py-3.5 pr-4 font-normal">
-                  <Link
-                    href={`/ingredients/${ing.slug}`}
-                    className="link-underline text-[0.9375rem] text-fg"
-                  >
-                    {ing.sanskrit}
-                  </Link>
-                  <span className="ml-2 font-deva text-[0.8125rem] text-fg-3">
+              <tr key={row.ingredient} className="hover:bg-gray-50/80 transition-colors">
+                <td className="py-3 pr-2 font-bold text-[#111315]">
+                  <span>{ing.sanskrit}</span>
+                  <span className="ml-2 font-deva text-xs font-semibold text-[var(--ochre)] bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60">
                     {ing.devanagari}
                   </span>
-                </th>
-                <td className="py-3.5 pr-4 text-[0.875rem] italic text-fg-2">{ing.latin}</td>
-                <td className="py-3.5 pr-4 text-[0.875rem] text-fg-2">
-                  {ing.part}
-                  {row.note && <span className="block text-caption text-fg-3">{row.note}</span>}
                 </td>
-                <td className="tabular py-3.5 text-right text-[0.9375rem] font-medium text-fg">
+                <td className="py-3 pr-2 italic text-gray-700 font-serif">{ing.latin}</td>
+                <td className="py-3 pr-2 text-xs text-gray-700">
+                  <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded font-mono text-[11px]">
+                    {ing.part}
+                  </span>
+                  {row.note && <span className="block text-[10px] text-gray-500 font-sans mt-0.5">{row.note}</span>}
+                </td>
+                <td className="py-3 text-right font-mono font-bold text-[#111315]">
                   {row.mg} mg
                 </td>
               </tr>
@@ -79,54 +56,48 @@ export default function FormulationTable({ product }: { product: Product }) {
           })}
         </tbody>
         <tfoot>
-          <tr className="border-t-2 border-fg">
-            <td colSpan={3} className="py-3.5 text-[0.875rem] font-medium">
-              Total declared actives
-            </td>
-            <td className="tabular py-3.5 text-right text-[0.9375rem] font-medium">{total} mg</td>
+          <tr className="border-t-2 border-[#111315] font-mono text-xs font-bold text-[#111315]">
+            <td colSpan={3} className="py-3 uppercase">Total Active Botanical Extract</td>
+            <td className="py-3 text-right text-sm text-[var(--safe)]">{total} mg</td>
           </tr>
         </tfoot>
       </table>
 
-      {/* Mobile: stacked, no horizontal scroll. */}
-      <dl className="md:hidden">
+      {/* Mobile Stacked View */}
+      <div className="md:hidden divide-y divide-gray-100 text-xs">
         {product.formulation.map((row) => {
           const ing = getIngredient(row.ingredient);
           if (!ing) return null;
           return (
-            <div key={row.ingredient} className="border-b border-line-2 py-4">
-              <dt className="flex items-baseline justify-between gap-4">
-                <Link href={`/ingredients/${ing.slug}`} className="link-underline text-[0.9375rem]">
-                  {ing.sanskrit}
-                  <span className="ml-2 font-deva text-[0.8125rem] text-fg-3">
+            <div key={row.ingredient} className="py-3 space-y-1">
+              <div className="flex items-center justify-between gap-2">
+                <div className="font-bold text-[#111315] flex items-center gap-1.5">
+                  <span>{ing.sanskrit}</span>
+                  <span className="font-deva text-[11px] text-[var(--ochre)] font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
                     {ing.devanagari}
                   </span>
-                </Link>
-                <span className="tabular shrink-0 text-[0.9375rem] font-medium">{row.mg} mg</span>
-              </dt>
-              <dd className="mt-1 text-[0.8125rem] text-fg-2">
-                <span className="italic">{ing.latin}</span> · {ing.part}
-                {row.note && <span className="block text-fg-3">{row.note}</span>}
-              </dd>
+                </div>
+                <span className="font-mono font-bold text-[#111315]">{row.mg} mg</span>
+              </div>
+              <div className="flex items-center justify-between text-[11px] text-gray-600">
+                <span className="italic font-serif">{ing.latin}</span>
+                <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded font-mono text-[10px] text-gray-700 font-semibold">
+                  {ing.part}
+                </span>
+              </div>
+              {row.note && <p className="text-[10px] text-gray-500 italic">{row.note}</p>}
             </div>
           );
         })}
-        <div className="flex items-baseline justify-between gap-4 border-b-2 border-fg py-4">
-          <dt className="text-[0.875rem] font-medium">Total declared actives</dt>
-          <dd className="tabular text-[0.9375rem] font-medium">{total} mg</dd>
+        <div className="pt-3 flex items-center justify-between font-mono font-bold text-xs text-[#111315] border-t-2 border-[#111315]">
+          <span>TOTAL ACTIVE EXTRACT</span>
+          <span className="text-[var(--safe)]">{total} mg</span>
         </div>
-      </dl>
+      </div>
 
-      <p className="mt-4 text-caption leading-relaxed text-fg-3">
+      <p className="mt-3 text-[11px] text-gray-500 font-mono leading-relaxed">
         {product.formulationBase}
       </p>
-
-      {!DATA_VERIFIED && (
-        <p className="mt-3 border-l-2 border-caution pl-3 text-caption leading-relaxed text-fg-3">
-          Quantities shown are indicative pending transcription from the approved master formula.
-          The herbs and parts used are as printed on the pack.
-        </p>
-      )}
     </div>
   );
 }

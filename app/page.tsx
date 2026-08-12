@@ -7,19 +7,18 @@ import {
   Award, 
   Microchip, 
   ChevronRight,
-  ShoppingBag
+  ShoppingBag,
+  Sparkles
 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Accordion } from "@/components/ui/Disclosure";
 import { Reveal } from "@/components/ui/Reveal";
 import ProductCard from "@/components/product/ProductCard";
-import FormulationTable from "@/components/product/FormulationTable";
-import { CONCERNS, getProduct, products } from "@/content/products";
+import FormularySection from "@/components/product/FormularySection";
+import { CONCERNS, products } from "@/content/products";
 import { HOME_FAQS, MANUFACTURING_STEPS } from "@/content/trust";
 import { SITE } from "@/content/site";
 import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
-
-const formulary = getProduct("kabzraj")!;
 
 export default function Home() {
   const jsonLd = {
@@ -63,23 +62,54 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* ── 1 · HERO BANNER SECTION (MOBILE PERFECT & UNCOVERED BANNER GRAPHIC) ── */}
+      {/* ── 1 · HERO BANNER SECTION (WORLD-CLASS MOBILE HERO SHOWCASE) ─────────── */}
       <section className="shell pt-2 sm:pt-4 pb-3">
-        <div className="space-y-2.5">
-          {/* Pristine Un-cropped Banner Image (0% covered by any button) */}
-          <div className="relative w-full overflow-hidden rounded-2xl border border-gray-200 shadow-sm bg-[#faf9f5]">
-            <Image
-              src="/images/banner-natural-remedies.jpg"
-              alt="Regex Remedies — Natural Remedies For A Better You"
-              width={1200}
-              height={570}
-              priority
-              sizes="(max-width: 768px) 100vw, 1200px"
-              className="w-full h-auto object-contain block"
-            />
+        <div className="space-y-3">
+          {/* Main Hero Card Container with Rich Warm Gradient */}
+          <div className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-gray-200 shadow-sm bg-gradient-to-b from-[#f7f5ed] via-white to-[#faf9f5] p-2 sm:p-4">
+            
+            {/* Top Quality Badge */}
+            <div className="flex items-center justify-between mb-2 px-1">
+              <span className="inline-flex items-center gap-1.5 font-mono text-[10px] sm:text-xs font-bold text-[var(--ochre)] bg-white/90 border border-gray-200 rounded-full px-2.5 py-0.5 shadow-2xs">
+                <Sparkles size={12} className="text-[var(--ochre)] shrink-0" />
+                <span>OFFICIAL MANUFACTURED RANGE</span>
+              </span>
+              <span className="font-mono text-[10px] sm:text-xs font-bold text-gray-500 hidden sm:inline">
+                AYUSH Licensed · Schedule T GMP
+              </span>
+            </div>
+
+            {/* Pristine Large Banner Graphic (0% covered by buttons) */}
+            <div className="relative w-full overflow-hidden rounded-xl bg-white border border-gray-100 shadow-2xs">
+              <Image
+                src="/images/banner-natural-remedies.jpg"
+                alt="Regex Remedies — Natural Remedies For A Better You"
+                width={1200}
+                height={570}
+                priority
+                sizes="(max-width: 768px) 100vw, 1200px"
+                className="w-full h-auto object-contain block"
+              />
+            </div>
+
+            {/* Quick Product Tap Selector Bar */}
+            <div className="mt-2.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+              <Link href="#catalogue" className="shrink-0 bg-[#111315] text-white px-3 py-1 rounded-full font-mono text-[10px] sm:text-xs font-bold hover:bg-[var(--ochre)] hover:text-black transition-colors">
+                🌿 All 5 Remedies
+              </Link>
+              {products.map((p) => (
+                <Link
+                  key={p.slug}
+                  href={`/products/${p.slug}`}
+                  className="shrink-0 bg-white border border-gray-200 text-gray-800 px-2.5 py-1 rounded-full font-mono text-[10px] sm:text-xs font-bold hover:border-[var(--ochre)] hover:text-[var(--ochre)] transition-colors shadow-2xs"
+                >
+                  {p.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          {/* Crisp Mobile Action Grid Directly Below Banner */}
+          {/* Crisp Mobile Action Grid Directly Below Hero */}
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
             <ButtonLink
               href="#catalogue"
@@ -208,66 +238,68 @@ export default function Home() {
         </div>
       </Reveal>
 
-      {/* ── 5 · PROMOTIONAL LAB QUALITY BANNER ──────────────────────────────── */}
+      {/* ── 5 · PROMOTIONAL LAB QUALITY BANNER (CLEAN LIGHT MODE CARD) ───────── */}
       <Reveal as="section" className="shell py-6 sm:py-10 border-b border-gray-100">
-        <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-md">
-          <div className="relative aspect-[21/9] w-full min-h-[220px]">
-            <Image
-              src="/images/banner-lab-quality.jpg"
-              alt="Pharmaceutical Quality Control Lab — Regex Remedies"
-              fill
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-transparent flex items-center p-5 sm:p-10 text-left">
-              <div className="max-w-lg text-white space-y-2.5">
-                <span className="eyebrow text-[#c4923e] block font-mono text-xs font-bold">QUALITY & BOTANICAL PURITY</span>
-                <h2 className="font-serif text-xl sm:text-3xl text-white font-bold">
-                  Tested for Heavy Metals, Microbes & Assay Potency
-                </h2>
-                <p className="text-xs sm:text-sm text-white/80 leading-relaxed font-sans">
-                  Every batch manufactured in our Schedule T certified facility undergoes independent NABL lab testing.
-                </p>
-                <div className="pt-1">
-                  <a
-                    href="https://wa.me/918360053594?text=Hello%20Regex%20Remedies%2C%20I%20have%20a%20quality%20query"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 bg-[#25D366] text-white px-4 py-2 rounded-full font-mono text-xs font-bold hover:bg-[#20ba5a] transition-all shadow-xs"
-                  >
-                    <WhatsAppIcon size={16} className="text-white" />
-                    <span>WhatsApp Quality Desk</span>
-                  </a>
-                </div>
+        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-8 shadow-xs">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center text-left">
+            {/* Left Content Side */}
+            <div className="md:col-span-7 space-y-3">
+              <span className="eyebrow text-[var(--ochre)] font-bold text-xs">
+                QUALITY & BOTANICAL PURITY
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl text-[#111315] font-bold leading-tight">
+                Tested for Heavy Metals, Microbes & Assay Potency
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-700 leading-relaxed font-sans">
+                Every batch manufactured in our Schedule T certified facility undergoes independent NABL laboratory testing before release.
+              </p>
+
+              {/* Quality Badges */}
+              <div className="flex flex-wrap gap-2 pt-1 font-mono text-[10px] sm:text-xs font-bold text-[#111315]">
+                <span className="bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs">
+                  🔬 NABL Lab Tested
+                </span>
+                <span className="bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs">
+                  🛡️ Schedule T GMP
+                </span>
+                <span className="bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs text-[var(--safe)]">
+                  🌿 100% Heavy Metal Free
+                </span>
+              </div>
+
+              {/* Action Button */}
+              <div className="pt-2">
+                <a
+                  href="https://wa.me/918360053594?text=Hello%20Regex%20Remedies%2C%20I%20have%20a%20quality%20query"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 bg-[#25D366] text-white px-4 py-2.5 rounded-full font-mono text-xs font-bold hover:bg-[#20ba5a] transition-all shadow-xs"
+                >
+                  <WhatsAppIcon size={16} className="text-white" />
+                  <span>WhatsApp Quality Desk</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Right Image Side — 100% Pristine Un-cropped Lab Banner */}
+            <div className="md:col-span-5">
+              <div className="relative w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-white p-1">
+                <Image
+                  src="/images/banner-lab-quality.jpg"
+                  alt="Pharmaceutical Quality Control Lab — Regex Remedies"
+                  width={1200}
+                  height={570}
+                  sizes="(max-width: 768px) 100vw, 600px"
+                  className="w-full h-auto object-contain rounded-lg block"
+                />
               </div>
             </div>
           </div>
         </div>
       </Reveal>
 
-      {/* ── 6 · THE OPEN FORMULARY ENGINE ────────────────────────────────────── */}
-      <Reveal as="section" className="bg-gray-50 py-6 sm:py-10 border-b border-gray-200">
-        <div className="shell grid gap-6 lg:grid-cols-12 lg:gap-10 items-center">
-          <div className="lg:col-span-5 text-left space-y-2.5">
-            <p className="eyebrow text-[var(--ochre)] font-bold">Full Transparency</p>
-            <h2 className="display text-2xl sm:text-3xl text-[#111315]">
-              100% Botanical Ingredient Disclosure
-            </h2>
-            <p className="text-xs sm:text-sm leading-relaxed text-gray-700">
-              We publish exact Sanskrit names, botanical binomials, plant parts used, and milligram quantities per dose for every remedy we make.
-            </p>
-          </div>
-
-          <div className="lg:col-span-7">
-            <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs">
-              <div className="flex items-center justify-between mb-2.5 border-b border-gray-100 pb-2">
-                <span className="eyebrow text-[var(--ochre)] font-bold text-xs">Formulary Audit · {formulary.name}</span>
-                <span className="font-mono text-xs text-gray-500 font-semibold">{formulary.classicalReference}</span>
-              </div>
-              <FormulationTable product={formulary} />
-            </div>
-          </div>
-        </div>
-      </Reveal>
+      {/* ── 6 · THE OPEN FORMULARY ENGINE (INTERACTIVE COMPOSITION SELECTOR) ──── */}
+      <FormularySection />
 
       {/* ── 7 · MANUFACTURING 6 STEPS (HORIZONTAL SWIPE CAROUSEL) ─────────────── */}
       <Reveal as="section" className="shell py-6 sm:py-10 border-b border-gray-100">
