@@ -9,7 +9,7 @@ export const SITE = {
   legalName: "Regex Remedies",
   positioning: "Natural Ayurvedic Remedies For A Better You",
   promise: "Natural Ingredients · Safe & Effective · Made With Care",
-  url: "https://regex-remedies.vercel.app",
+  url: "https://regexremedies.vercel.app",
   description:
     "Official Regex Remedies Store — Buy authentic Ayurvedic remedies online. Livgex for liver health, Kabzraj for constipation relief, Gas-O-Gex for digestion, Pilegex for anorectal comfort, and Lucogex for women's wellness. 100% natural, GMP certified, NABL lab tested.",
   founded: 2019,
