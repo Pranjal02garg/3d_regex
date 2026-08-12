@@ -78,6 +78,20 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
+import { Inter, Playfair_Display } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-playfair",
+});
+
 const THEME_SCRIPT = `(function(){try{document.documentElement.classList.remove("dark")}catch(e){}})();`;
 
 export default function RootLayout({
@@ -88,7 +102,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
-      <body>
+      <body className={`${inter.variable} ${playfair.variable} font-sans`}>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-brand focus:px-4 focus:py-2.5 focus:text-sm focus:font-medium focus:text-brand-fg"

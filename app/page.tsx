@@ -6,9 +6,7 @@ import {
   FileText, 
   Award, 
   Microchip, 
-  ChevronRight,
-  ShoppingBag,
-  Sparkles
+  ChevronRight
 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Accordion } from "@/components/ui/Disclosure";
@@ -62,74 +60,59 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* ── 1 · HERO BANNER SECTION (WORLD-CLASS MOBILE HERO SHOWCASE) ─────────── */}
-      <section className="shell pt-2 sm:pt-4 pb-3">
-        <div className="space-y-3">
-          {/* Main Hero Card Container with Rich Warm Gradient */}
-          <div className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-gray-200 shadow-sm bg-gradient-to-b from-[#f7f5ed] via-white to-[#faf9f5] p-2 sm:p-4">
-            
-            {/* Top Quality Badge */}
-            <div className="flex items-center justify-between mb-2 px-1">
-              <span className="inline-flex items-center gap-1.5 font-mono text-[10px] sm:text-xs font-bold text-[var(--ochre)] bg-white/90 border border-gray-200 rounded-full px-2.5 py-0.5 shadow-2xs">
-                <Sparkles size={12} className="text-[var(--ochre)] shrink-0" />
-                <span>OFFICIAL MANUFACTURED RANGE</span>
+      {/* ── 1 · HERO BANNER SECTION (ELEGANT & EDITORIAL) ─────────── */}
+      <section className="bg-[#faf9f5] border-b border-gray-200">
+        <div className="shell flex flex-col-reverse lg:flex-row items-center justify-between gap-10 py-12 lg:py-20">
+          
+          {/* Text Content */}
+          <div className="w-full lg:w-5/12 space-y-6 text-center lg:text-left">
+            <Reveal className="space-y-4">
+              <span className="font-mono text-xs sm:text-sm font-bold tracking-[0.2em] text-[var(--ochre)] uppercase">
+                The Science of Ayurveda
               </span>
-              <span className="font-mono text-[10px] sm:text-xs font-bold text-gray-500 hidden sm:inline">
-                AYUSH Licensed · Schedule T GMP
-              </span>
-            </div>
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.1] text-[#111315]">
+                Natural Remedies for a Better You
+              </h1>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
+                Classical, lab-tested botanical formulations manufactured in our Schedule T GMP certified facility. 100% transparent ingredients, zero heavy metals.
+              </p>
+            </Reveal>
 
-            {/* Pristine Large Banner Graphic (0% covered by buttons) */}
-            <div className="relative w-full overflow-hidden rounded-xl bg-white border border-gray-100 shadow-2xs">
+            <Reveal className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 justify-center lg:justify-start pt-2 delay-100">
+              <ButtonLink
+                href="#catalogue"
+                size="lg"
+                className="w-full sm:w-auto rounded-none bg-[#111315] text-white hover:bg-[var(--ochre)] hover:text-white px-8 py-3.5 font-sans font-medium tracking-wide text-sm transition-colors border border-transparent"
+              >
+                Explore Formulations
+              </ButtonLink>
+              <a
+                href="https://wa.me/918360053594"
+                target="_blank"
+                rel="noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#111315] hover:text-[var(--ochre)] hover:border-[var(--ochre)] bg-transparent border border-[#111315] px-8 py-3.5 font-sans font-medium text-sm transition-colors"
+              >
+                <WhatsAppIcon size={16} className="text-current" />
+                <span>Consult Our Experts</span>
+              </a>
+            </Reveal>
+          </div>
+
+          {/* Hero Image */}
+          <Reveal className="w-full lg:w-7/12 delay-200">
+            <div className="relative w-full rounded-sm overflow-hidden shadow-sm bg-white p-1 border border-gray-100">
               <Image
                 src="/images/banner-natural-remedies.jpg"
                 alt="Regex Remedies — Natural Remedies For A Better You"
                 width={1200}
                 height={570}
                 priority
-                sizes="(max-width: 768px) 100vw, 1200px"
+                sizes="(max-width: 1024px) 100vw, 60vw"
                 className="w-full h-auto object-contain block"
               />
             </div>
+          </Reveal>
 
-            {/* Quick Product Tap Selector Bar */}
-            <div className="mt-2.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
-              <Link href="#catalogue" className="shrink-0 bg-[#111315] text-white px-3 py-1 rounded-full font-mono text-[10px] sm:text-xs font-bold hover:bg-[var(--ochre)] hover:text-black transition-colors">
-                🌿 All 5 Remedies
-              </Link>
-              {products.map((p) => (
-                <Link
-                  key={p.slug}
-                  href={`/products/${p.slug}`}
-                  className="shrink-0 bg-white border border-gray-200 text-gray-800 px-2.5 py-1 rounded-full font-mono text-[10px] sm:text-xs font-bold hover:border-[var(--ochre)] hover:text-[var(--ochre)] transition-colors shadow-2xs"
-                >
-                  {p.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Crisp Mobile Action Grid Directly Below Hero */}
-          <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <ButtonLink
-              href="#catalogue"
-              size="sm"
-              className="w-full justify-center rounded-xl bg-[#111315] text-white hover:bg-[var(--ochre)] hover:text-black font-bold text-xs sm:text-sm py-2.5 sm:py-3 shadow-xs border border-transparent"
-            >
-              <ShoppingBag size={15} className="mr-1.5 shrink-0" />
-              <span>Explore 5 Remedies</span>
-            </ButtonLink>
-
-            <a
-              href="https://wa.me/918360053594?text=Hello%20Regex%20Remedies"
-              target="_blank"
-              rel="noreferrer"
-              className="w-full inline-flex items-center justify-center gap-1.5 bg-[#25D366] text-white py-2.5 sm:py-3 px-3 rounded-xl font-mono text-xs font-bold hover:bg-[#20ba5a] transition-all shadow-xs border border-transparent"
-            >
-              <WhatsAppIcon size={18} className="text-white shrink-0" />
-              <span>WhatsApp Support</span>
-            </a>
-          </div>
         </div>
       </section>
 

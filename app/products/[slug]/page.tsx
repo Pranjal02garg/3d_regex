@@ -8,6 +8,7 @@ import FormulationTable from "@/components/product/FormulationTable";
 import ProductCard from "@/components/product/ProductCard";
 import { Accordion } from "@/components/ui/Disclosure";
 import { Badge, Callout, Rating, DataRow } from "@/components/ui/Primitives";
+import { Reveal } from "@/components/ui/Reveal";
 import { CARE_LEVELS, getProduct, products } from "@/content/products";
 import { reviewsFor } from "@/content/reviews";
 import { MEDICAL_DISCLAIMER, SITE } from "@/content/site";
@@ -108,54 +109,51 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </ol>
         </nav>
 
-        {/* ── Buy Block (Mobile First & Compact) ─────────────────────────── */}
-        <div className="grid gap-6 sm:gap-10 lg:grid-cols-12 items-start">
-          <div className="lg:col-span-6 w-full">
+        {/* ── Buy Block (Premium Editorial Layout) ─────────────────────────── */}
+        <div className="grid gap-10 lg:gap-16 lg:grid-cols-12 items-start">
+          <Reveal className="lg:col-span-6 w-full">
             <Gallery product={product} />
-          </div>
+          </Reveal>
 
-          <div className="lg:col-span-6 space-y-4">
+          <Reveal className="lg:col-span-6 space-y-6 lg:pt-4 delay-100">
             <div>
-              <div className="flex items-center justify-between gap-2 mb-2">
+              <div className="flex items-center justify-between gap-2 mb-4">
                 <Link
                   href={`/shop/${product.concernSlug}`}
-                  className="eyebrow text-xs text-[var(--ochre)] font-bold hover:underline"
+                  className="font-mono text-xs text-[var(--ochre)] font-bold uppercase tracking-widest hover:underline"
                 >
-                  {product.concern.toUpperCase()}
+                  {product.concern}
                 </Link>
-                <span className="font-deva text-base font-bold text-[var(--ochre)] px-3 py-0.5 rounded-full bg-[var(--surface-2)] border border-gray-200">
+                <span className="font-deva text-base font-bold text-[var(--ochre)] px-3 py-0.5 rounded-full border border-gray-200">
                   {product.devanagari}
                 </span>
               </div>
 
-              <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#111315]">{product.name}</h1>
-              <p className="text-sm sm:text-base text-gray-700 font-medium mt-1">{product.tagline}</p>
+              <h1 className="font-serif text-4xl sm:text-5xl font-bold text-[#111315] leading-[1.1]">{product.name}</h1>
+              <p className="text-base sm:text-lg text-gray-600 font-sans mt-3">{product.tagline}</p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 border-y border-gray-100 py-3">
+            <div className="flex flex-wrap items-center gap-3 border-y border-gray-100 py-4">
               <Link href="#reviews" className="hover:opacity-80">
                 <Rating value={product.rating} count={product.reviewCount} />
               </Link>
               <span className="text-gray-300">•</span>
               <Badge tone={care.tone}>{care.label}</Badge>
               <span className="text-gray-300">•</span>
-              <span className="text-xs font-mono font-bold text-gray-600">≈ {days} Days Pack</span>
+              <span className="text-xs font-mono font-bold text-gray-600 uppercase">≈ {days} Days Pack</span>
             </div>
 
             {/* Price Box */}
-            <div className="bg-[var(--surface-2)] p-4 rounded-xl border border-gray-200">
-              <div className="flex items-baseline gap-3">
-                <span className="font-mono text-2xl font-bold text-[#111315]">{formatINR(product.price)}</span>
+            <div className="pt-2">
+              <div className="flex items-baseline gap-4 mb-2">
+                <span className="font-sans text-3xl font-medium text-[#111315]">{formatINR(product.price)}</span>
                 {product.mrp > product.price && (
-                  <span className="font-mono text-sm text-gray-400 line-through">
+                  <span className="font-sans text-lg text-gray-400 line-through">
                     {formatINR(product.mrp)}
                   </span>
                 )}
-                <span className="text-xs font-bold text-[var(--safe)] bg-white px-2 py-0.5 rounded border border-gray-200">
-                  SAVE {Math.round(((product.mrp - product.price) / product.mrp) * 100)}%
-                </span>
               </div>
-              <p className="text-xs font-mono text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 font-sans mb-6">
                 Pack of {product.unitsPerPack} {product.form === "tablet" ? "tablets" : "capsules"} · Inclusive of all taxes
               </p>
 
@@ -165,17 +163,17 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </div>
 
             {/* Trust Badges */}
-            <div className="space-y-2 text-xs font-mono text-gray-700 pt-1">
-              <p className="flex items-center gap-2 font-semibold">
-                <Truck size={16} className="text-[var(--ochre)]" />
+            <div className="space-y-3 text-xs font-mono text-gray-500 pt-6 border-t border-gray-100">
+              <p className="flex items-center gap-2">
+                <Truck size={16} className="text-[#111315]" />
                 <span>Dispatched within 24 hours. Express Delivery 2-4 Days.</span>
               </p>
-              <p className="flex items-center gap-2 font-semibold text-[var(--safe)]">
-                <CheckCircle2 size={16} />
+              <p className="flex items-center gap-2">
+                <CheckCircle2 size={16} className="text-[#111315]" />
                 <span>AYUSH Licensed & Schedule T Certified Manufacturing</span>
               </p>
             </div>
-          </div>
+          </Reveal>
         </div>
       </div>
 

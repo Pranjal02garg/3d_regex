@@ -68,10 +68,11 @@
   --color-ink: #111315;
   --color-paper: #ffffff;
 
-  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-playfair), ui-serif, Georgia, serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
-  --font-deva: var(--font-plex-deva), var(--font-plex-sans), sans-serif;
+  --font-deva: var(--font-plex-deva), var(--font-inter), sans-serif;
 
   /* BOLD READABLE FONT SCALE */
   --text-micro: 0.8125rem;
@@ -204,6 +205,25 @@
   .animate-shake {
     animation: shake-badge 2.4s ease-in-out infinite;
   }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
 
   .no-scrollbar::-webkit-scrollbar {
     display: none;
