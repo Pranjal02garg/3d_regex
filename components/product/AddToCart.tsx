@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/Toast";
 import type { Product } from "@/content/products";
 import { SUBSCRIBE_DISCOUNT } from "@/content/site";
 import { cn, formatINR, packDuration } from "@/lib/utils";
+import { trackEvent } from "@/lib/pixel";
 
 export default function AddToCart({ product }: { product: Product }) {
   const cart = useCart();
@@ -24,6 +25,16 @@ export default function AddToCart({ product }: { product: Product }) {
   function add() {
     cart.add(product.slug, qty, subscribe);
     setAdded(true);
+    
+    trackEvent("AddToCart", {
+      content_name: product.name,
+      content_ids: [product.slug],
+      content_type: 'product',
+      value: subscribe ? subPrice * qty : product.price * qty,
+      currency: 'INR',
+      quantity: qty
+    });
+
     toast({ message: `${product.name} added to cart`, action: { label: "View cart", href: "/cart" } });
     setTimeout(() => {
       setAdded(false);

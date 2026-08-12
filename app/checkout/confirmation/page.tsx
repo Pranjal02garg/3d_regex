@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { SITE } from "@/content/site";
+import { PixelEventTracker } from "@/lib/pixel";
 
 export const metadata: Metadata = {
   title: "Order confirmed",
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
 
 export default function ConfirmationPage() {
   return (
-    <div className="shell pt-16 md:pt-24">
+    <>
+      <PixelEventTracker eventName="Purchase" data={{ currency: 'INR' }} />
+      <div className="shell pt-16 md:pt-24">
       <div className="mx-auto max-w-2xl">
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-safe text-white">
           <Check size={22} strokeWidth={2} aria-hidden="true" />
@@ -60,5 +63,6 @@ export default function ConfirmationPage() {
         </p>
       </div>
     </div>
+    </>
   );
 }

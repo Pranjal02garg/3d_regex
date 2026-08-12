@@ -13,6 +13,7 @@ import { CARE_LEVELS, getProduct, products } from "@/content/products";
 import { reviewsFor } from "@/content/reviews";
 import { MEDICAL_DISCLAIMER, SITE } from "@/content/site";
 import { formatINR, packDuration } from "@/lib/utils";
+import { PixelEventTracker } from "@/lib/pixel";
 
 export function generateStaticParams() {
   return products.map((p) => ({ slug: p.slug }));
@@ -85,6 +86,16 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <PixelEventTracker 
+        eventName="ViewContent" 
+        data={{
+          content_name: product.name,
+          content_ids: [product.slug],
+          content_type: 'product',
+          value: product.price,
+          currency: 'INR'
+        }} 
       />
 
       <div className="shell pt-4 sm:pt-6 text-left">

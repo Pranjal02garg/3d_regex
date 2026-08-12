@@ -7,6 +7,7 @@ import { Button, ButtonLink } from "@/components/ui/Button";
 import { QuantityStepper } from "@/components/ui/Field";
 import { ShieldCheck, Truck } from "lucide-react";
 import { useCart } from "@/lib/cart";
+import { trackEvent } from "@/lib/pixel";
 import { getProduct } from "@/content/products";
 import { FREE_SHIPPING_OVER, SUBSCRIBE_DISCOUNT } from "@/content/site";
 import { formatINR, packDuration } from "@/lib/utils";
@@ -167,7 +168,19 @@ export default function CartDrawer() {
             <span className="text-sm font-bold text-[#111315] uppercase tracking-wide">Total</span>
             <span className="tabular font-serif text-2xl font-bold text-[#111315]">{formatINR(cart.total)}</span>
           </div>
-          <ButtonLink href="/checkout" full onClick={cart.closeCart}>
+          <ButtonLink 
+            href="/checkout" 
+            full 
+            onClick={() => {
+              trackEvent("InitiateCheckout", {
+                content_ids: cart.lines.map(l => l.slug),
+                num_items: cart.count,
+                value: cart.total,
+                currency: 'INR'
+              });
+              cart.closeCart();
+            }}
+          >
             Checkout
           </ButtonLink>
           <Button variant="quiet" full size="sm" className="mt-1" onClick={cart.closeCart}>
