@@ -128,16 +128,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 3 · OUR 5 MANUFACTURED REMEDIES (CATALOGUE UP FRONT) ─────────────── */}
-      <Reveal as="section" id="catalogue" className="shell py-8 sm:py-12 border-b border-gray-100">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 text-left gap-2">
+      {/* ── 3 · OUR 5 MANUFACTURED REMEDIES (HORIZONTAL SWIPE CAROUSEL) ────────── */}
+      <Reveal as="section" id="catalogue" className="shell py-6 sm:py-10 border-b border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 text-left gap-2">
           <div>
             <span className="eyebrow text-[var(--ochre)] font-bold text-xs">THE RANGE</span>
             <h2 className="font-serif text-2xl sm:text-3xl text-[#111315] font-bold mt-0.5">
               Our 5 Classical Formulations
             </h2>
-            <p className="text-xs sm:text-sm text-gray-600 mt-1">
-              Manufactured with 100% full ingredient disclosure and certified quality standards.
+            <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
+              Swipe horizontally to view all 5 remedies ← →
             </p>
           </div>
           <ButtonLink href="/shop" variant="secondary" size="sm" className="rounded-full font-bold text-xs self-start sm:self-auto">
@@ -146,33 +146,39 @@ export default function Home() {
           </ButtonLink>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 text-left">
+        {/* Horizontal Touch Carousel */}
+        <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-3 text-left -mx-5 px-5 sm:mx-0 sm:px-0">
           {products.map((p, i) => (
-            <ProductCard key={p.slug} product={p} priority={i < 3} />
+            <div key={p.slug} className="w-[280px] sm:w-[320px] shrink-0 snap-start">
+              <ProductCard product={p} priority={i < 3} />
+            </div>
           ))}
         </div>
       </Reveal>
 
-      {/* ── 4 · SHOP BY HEALTH CONCERN ──────────────────────────────────────── */}
-      <Reveal as="section" className="shell py-8 sm:py-12 border-b border-gray-100">
-        <div className="text-left mb-6 max-w-xl">
-          <span className="eyebrow text-[var(--ochre)] font-bold text-xs">TARGETED CARE</span>
-          <h2 className="font-serif text-2xl sm:text-3xl text-[#111315] font-bold mt-0.5">
-            What health concern are you dealing with?
-          </h2>
-          <p className="text-xs sm:text-sm text-gray-600 mt-1">
-            Four core health concerns. Select below to find your specific formulation.
-          </p>
+      {/* ── 4 · SHOP BY HEALTH CONCERN (HORIZONTAL SWIPE CAROUSEL) ─────────────── */}
+      <Reveal as="section" className="shell py-6 sm:py-10 border-b border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 text-left gap-2">
+          <div>
+            <span className="eyebrow text-[var(--ochre)] font-bold text-xs">TARGETED CARE</span>
+            <h2 className="font-serif text-2xl sm:text-3xl text-[#111315] font-bold mt-0.5">
+              What health concern are you dealing with?
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
+              Swipe horizontally to explore health concerns ← →
+            </p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-left">
+        {/* Horizontal Touch Carousel */}
+        <div className="flex gap-3.5 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-3 text-left -mx-5 px-5 sm:mx-0 sm:px-0">
           {CONCERNS.map((c) => {
             const items = products.filter((p) => p.concernSlug === c.slug);
             return (
               <Link
                 key={c.slug}
                 href={`/shop/${c.slug}`}
-                className="group bg-white border border-gray-200 hover:border-[var(--ochre)] rounded-xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md transition-all"
+                className="w-[260px] sm:w-[280px] shrink-0 snap-start group bg-white border border-gray-200 hover:border-[var(--ochre)] rounded-xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md transition-all"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
@@ -203,7 +209,7 @@ export default function Home() {
       </Reveal>
 
       {/* ── 5 · PROMOTIONAL LAB QUALITY BANNER ──────────────────────────────── */}
-      <Reveal as="section" className="shell py-8 sm:py-12 border-b border-gray-100">
+      <Reveal as="section" className="shell py-6 sm:py-10 border-b border-gray-100">
         <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-md">
           <div className="relative aspect-[21/9] w-full min-h-[220px]">
             <Image
@@ -239,7 +245,7 @@ export default function Home() {
       </Reveal>
 
       {/* ── 6 · THE OPEN FORMULARY ENGINE ────────────────────────────────────── */}
-      <Reveal as="section" className="bg-gray-50 py-8 sm:py-12 border-b border-gray-200">
+      <Reveal as="section" className="bg-gray-50 py-6 sm:py-10 border-b border-gray-200">
         <div className="shell grid gap-6 lg:grid-cols-12 lg:gap-10 items-center">
           <div className="lg:col-span-5 text-left space-y-2.5">
             <p className="eyebrow text-[var(--ochre)] font-bold">Full Transparency</p>
@@ -263,18 +269,22 @@ export default function Home() {
         </div>
       </Reveal>
 
-      {/* ── 7 · MANUFACTURING 6 STEPS ───────────────────────────────────────── */}
-      <Reveal as="section" className="shell py-8 sm:py-12 border-b border-gray-100">
-        <div className="text-left max-w-xl mb-5">
+      {/* ── 7 · MANUFACTURING 6 STEPS (HORIZONTAL SWIPE CAROUSEL) ─────────────── */}
+      <Reveal as="section" className="shell py-6 sm:py-10 border-b border-gray-100">
+        <div className="text-left max-w-xl mb-4">
           <p className="eyebrow text-[var(--ochre)] font-bold">Manufacturing Standard</p>
           <h2 className="display text-2xl sm:text-3xl text-[#111315] mt-0.5">
             Six steps from field to finished formulation.
           </h2>
+          <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
+            Swipe horizontally to view manufacturing process ← →
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 text-left">
+        {/* Horizontal Touch Carousel */}
+        <div className="flex gap-3.5 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-3 text-left -mx-5 px-5 sm:mx-0 sm:px-0">
           {MANUFACTURING_STEPS.map((s) => (
-            <div key={s.n} className="bg-white border border-gray-200 p-4 rounded-xl shadow-xs">
+            <div key={s.n} className="w-[260px] sm:w-[280px] shrink-0 snap-start bg-white border border-gray-200 p-4 rounded-xl shadow-xs">
               <span className="font-mono text-xs font-bold text-[var(--ochre)]">{s.n}</span>
               <h3 className="font-serif text-base font-bold text-[#111315] mt-0.5 mb-1">{s.title}</h3>
               <p className="text-xs text-gray-600 leading-relaxed font-sans">{s.body}</p>
@@ -284,7 +294,7 @@ export default function Home() {
       </Reveal>
 
       {/* ── 8 · FAQS (ACCORDION) ────────────────────────────────────────────── */}
-      <Reveal as="section" className="shell py-8 sm:py-12">
+      <Reveal as="section" className="shell py-6 sm:py-10">
         <div className="max-w-3xl mx-auto text-left">
           <p className="eyebrow text-[var(--ochre)] mb-1 font-bold text-center">Frequently Asked Questions</p>
           <h2 className="display text-2xl sm:text-3xl text-[#111315] mb-6 text-center">Clear answers about our remedies.</h2>

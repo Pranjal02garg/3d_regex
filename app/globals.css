@@ -204,4 +204,12 @@
   .animate-shake {
     animation: shake-badge 2.4s ease-in-out infinite;
   }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
