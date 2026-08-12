@@ -6,7 +6,8 @@ import {
   FileText, 
   Award, 
   Microchip, 
-  ChevronRight
+  ChevronRight,
+  Star
 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Accordion } from "@/components/ui/Disclosure";
@@ -16,6 +17,7 @@ import FormularySection from "@/components/product/FormularySection";
 import { CONCERNS, products } from "@/content/products";
 import { HOME_FAQS, MANUFACTURING_STEPS } from "@/content/trust";
 import { SITE } from "@/content/site";
+import { reviews } from "@/content/reviews";
 import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
 
 export default function Home() {
@@ -308,7 +310,50 @@ export default function Home() {
         </div>
       </Reveal>
 
-      {/* ── 8 · FAQS (ACCORDION) ────────────────────────────────────────────── */}
+      {/* ── 8 · VERIFIED REVIEWS (WALL OF LOVE) ──────────────────────────────── */}
+      <Reveal as="section" className="shell py-8 sm:py-12 bg-[#faf7f1]/50 border-t border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 text-left gap-2">
+          <div>
+            <span className="eyebrow text-[var(--ochre)] font-bold text-xs">WALL OF LOVE</span>
+            <h2 className="font-serif text-2xl sm:text-3xl text-[#111315] font-bold mt-0.5">
+              Don&apos;t just take our word for it.
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
+              Swipe to read verified customer experiences ← →
+            </p>
+          </div>
+        </div>
+
+        {/* Horizontal Touch Carousel */}
+        <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 text-left -mx-5 px-5 sm:mx-0 sm:px-0">
+          {reviews.filter((r) => r.rating >= 4).map((r) => (
+            <div key={r.id} className="w-[300px] sm:w-[340px] shrink-0 snap-start bg-white border border-gray-200 p-5 rounded-2xl shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-1 mb-3 text-[var(--ochre)]">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} size={14} fill={i < r.rating ? "currentColor" : "none"} className={i < r.rating ? "" : "text-gray-300"} />
+                  ))}
+                </div>
+                {r.title && <h3 className="font-serif font-bold text-[#111315] mb-2">{r.title}</h3>}
+                <p className="text-sm text-gray-600 italic mb-4 leading-relaxed line-clamp-4">&quot;{r.body}&quot;</p>
+              </div>
+              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold text-[#111315]">{r.name}</span>
+                  <span className="text-xs text-gray-500">{r.city}</span>
+                </div>
+                {r.verified && (
+                  <span className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-[var(--safe)] bg-[var(--safe)]/10 px-2 py-1 rounded-full">
+                    <ShieldCheck size={12} /> Verified
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Reveal>
+
+      {/* ── 9 · FAQS (ACCORDION) ────────────────────────────────────────────── */}
       <Reveal as="section" className="shell py-6 sm:py-10">
         <div className="max-w-3xl mx-auto text-left">
           <p className="eyebrow text-[var(--ochre)] mb-1 font-bold text-center">Frequently Asked Questions</p>

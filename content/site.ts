@@ -64,7 +64,8 @@ export const SUBSCRIBE_DISCOUNT = 0.15;
 export const NAV_PRIMARY = [
   { label: "Shop", href: "/shop", mega: true },
   { label: "Our Story", href: "/about" },
-  { label: "Quality", href: "/quality" },
+  { label: "The Journal", href: "/journal" },
+  { label: "Quality & Testing", href: "/quality" },
   { label: "Contact", href: "https://wa.me/918360053594" },
 ] as const;
 

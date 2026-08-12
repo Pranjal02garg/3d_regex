@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Drawer } from "@/components/ui/Disclosure";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { QuantityStepper } from "@/components/ui/Field";
+import { ShieldCheck, Truck } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { getProduct } from "@/content/products";
 import { FREE_SHIPPING_OVER, SUBSCRIBE_DISCOUNT } from "@/content/site";
@@ -82,7 +83,7 @@ export default function CartDrawer() {
                         <Link
                           href={`/products/${p.slug}`}
                           onClick={cart.closeCart}
-                          className="block truncate text-[0.9375rem] text-fg"
+                          className="block truncate font-serif text-lg font-bold text-[#111315] hover:text-[var(--ochre)] transition-colors"
                         >
                           {p.name}
                         </Link>
@@ -157,10 +158,14 @@ export default function CartDrawer() {
       )}
 
       {cart.lines.length > 0 && (
-        <div className="border-t border-line px-5 py-4">
+        <div className="border-t border-gray-200 px-5 py-4 bg-[#faf7f1]/50">
+          <div className="mb-4 flex items-center justify-center gap-4 text-[10px] uppercase font-bold text-gray-500 tracking-wider">
+             <span className="flex items-center gap-1 text-[var(--safe)]"><ShieldCheck size={14}/> Secure</span>
+             <span className="flex items-center gap-1"><Truck size={14}/> Dispatched 24h</span>
+          </div>
           <div className="mb-3 flex items-baseline justify-between">
-            <span className="text-[0.9375rem] font-medium">Total</span>
-            <span className="tabular text-[1.125rem] font-medium">{formatINR(cart.total)}</span>
+            <span className="text-sm font-bold text-[#111315] uppercase tracking-wide">Total</span>
+            <span className="tabular font-serif text-2xl font-bold text-[#111315]">{formatINR(cart.total)}</span>
           </div>
           <ButtonLink href="/checkout" full onClick={cart.closeCart}>
             Checkout
