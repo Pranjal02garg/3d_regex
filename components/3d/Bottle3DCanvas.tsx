@@ -12,49 +12,6 @@ interface Bottle3DProps {
   onUserInteract?: () => void;
 }
 
-// LOAD AND STITCH THE 4-VIEW REFERENCE LABELS (FRONT, LEFT, BACK, RIGHT) INTO A 2048x1024 360° TEXTURE
-function createStitched4ViewTexture(onTextureReady: (tex: THREE.CanvasTexture) => void): THREE.CanvasTexture {
-  const canvas = document.createElement("canvas");
-  canvas.width = 2048;
-  canvas.height = 1024;
-  const ctx = canvas.getContext("2d");
-
-  const canvasTexture = new THREE.CanvasTexture(canvas);
-  canvasTexture.colorSpace = THREE.SRGBColorSpace;
-
-  if (!ctx) return canvasTexture;
-
-  // Background white & yellow fill default
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, 2048, 550);
-  ctx.fillStyle = "#F4D800";
-  ctx.fillRect(0, 550, 2048, 474);
-
-  const sources = [
-    { src: "/textures/label_front.png", x: 0 },
-    { src: "/textures/label_left.png", x: 512 },
-    { src: "/textures/label_back.png", x: 1024 },
-    { src: "/textures/label_right.png", x: 1536 },
-  ];
-
-  let loadedCount = 0;
-  sources.forEach((item) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      ctx.drawImage(img, item.x, 0, 512, 1024);
-      loadedCount++;
-      canvasTexture.needsUpdate = true;
-      if (loadedCount === sources.length) {
-        onTextureReady(canvasTexture);
-      }
-    };
-    img.src = item.src;
-  });
-
-  return canvasTexture;
-}
-
 // CAP TOP EMBOSSED REGEX LOGO CANVAS
 function createCapTopCanvas(): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
@@ -136,7 +93,7 @@ export default function Bottle3DCanvas({
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
     scene.add(ambientLight);
 
-    // Primary Overhead Large Soft Key Light (Softbox Overhead)
+    // Primary Overhead Large Soft Key Light
     const keyLight = new THREE.DirectionalLight(0xfffdfa, 0.0);
     keyLight.position.set(0.8, 4.2, 2.2);
     keyLight.castShadow = true;
@@ -144,12 +101,12 @@ export default function Bottle3DCanvas({
     keyLight.shadow.mapSize.height = 1024;
     scene.add(keyLight);
 
-    // Subtle Rim Light for Back Edge Separation
+    // Subtle Rim Light
     const rimLight = new THREE.DirectionalLight(0xfff5eb, 0.35);
     rimLight.position.set(-3.2, 2.5, -2.5);
     scene.add(rimLight);
 
-    // Soft Front Fill Light for Label Clarity
+    // Soft Front Fill Light
     const fillLight = new THREE.DirectionalLight(0xffffff, 0.22);
     fillLight.position.set(-1.5, 0.5, 3.8);
     scene.add(fillLight);
@@ -159,30 +116,9 @@ export default function Bottle3DCanvas({
     bounceLight.position.set(0, -4, 2);
     scene.add(bounceLight);
 
-    // 3. High-Precision Bottle Group
-    const bottleGroup = new THREE.Group();
-
-    // High-Precision Lathed Profile (Base -> Cylindrical Body -> Shoulder Curve -> Neck -> Ring)
-    const profilePoints: THREE.Vector2[] = [
-      new THREE.Vector2(0.0, -0.92),
-      new THREE.Vector2(0.68, -0.92), // Curved base bevel start
-      new THREE.Vector2(0.78, -0.82), // Base curve transition
-      new THREE.Vector2(0.78, 0.52),  // Top of main body
-      new THREE.Vector2(0.76, 0.66),  // Shoulder curve stage 1
-      new THREE.Vector2(0.68, 0.80),  // Shoulder curve stage 2
-      new THREE.Vector2(0.56, 0.92),  // Shoulder to neck transition
-      new THREE.Vector2(0.52, 0.96),  // Neck base
-      new THREE.Vector2(0.56, 1.02),  // Security collar ring
-      new THREE.Vector2(0.52, 1.08),  // Neck top under cap
-      new THREE.Vector2(0.0, 1.08),   // Top inner seal
-    ];
-
-    const bodyGeometry = new THREE.LatheGeometry(profilePoints, 64);
-    bodyGeometry.computeVertexNormals();
-
-    // Deep Glossy Jet Black Plastic Material
-    const bodyMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x08090c,
+    // 3. Deep Glossy Jet Black Plastic Material Definition
+    const glossyBlackPlasticMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x08090c, // Pure Glossy Jet Black Plastic
       roughness: 0.28,
       metalness: 0.0,
       clearcoat: 0.65,
@@ -190,58 +126,72 @@ export default function Bottle3DCanvas({
       reflectivity: 0.75,
     });
 
-    const bottleBody = new THREE.Mesh(bodyGeometry, bodyMaterial);
-    bottleBody.castShadow = true;
-    bottleBody.receiveShadow = true;
-    bottleGroup.add(bottleBody);
-
-    // Full 360° Stitched 4-View Label Geometry (label_front, label_left, label_back, label_right)
-    const labelGeometry = new THREE.CylinderGeometry(0.785, 0.785, 1.34, 64, 1, true, 0, Math.PI * 2);
+    // 4. Load Official 360° Reference Label Atlas (`label_atlas.png`)
+    const textureLoader = new THREE.TextureLoader();
+    const labelAtlasTexture = textureLoader.load(
+      "/textures/label_atlas.png",
+      (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.needsUpdate = true;
+        setLoading(false);
+      },
+      undefined,
+      () => setLoading(false)
+    );
 
     const labelMaterial = new THREE.MeshStandardMaterial({
+      map: labelAtlasTexture,
       transparent: true,
       roughness: 0.25,
       metalness: 0.0,
     });
 
-    // Create & Stitch the 4-View PNG Textures
-    const stitchedTexture = createStitched4ViewTexture((tex) => {
-      labelMaterial.map = tex;
-      labelMaterial.needsUpdate = true;
-      setLoading(false);
-    });
-    labelMaterial.map = stitchedTexture;
+    // 5. Bottle Group & Model Importer
+    const bottleGroup = new THREE.Group();
 
+    // High-Precision Lathed Profile Fallback Geometry
+    const profilePoints: THREE.Vector2[] = [
+      new THREE.Vector2(0.0, -0.92),
+      new THREE.Vector2(0.68, -0.92),
+      new THREE.Vector2(0.78, -0.82),
+      new THREE.Vector2(0.78, 0.52),
+      new THREE.Vector2(0.76, 0.66),
+      new THREE.Vector2(0.68, 0.80),
+      new THREE.Vector2(0.56, 0.92),
+      new THREE.Vector2(0.52, 0.96),
+      new THREE.Vector2(0.56, 1.02),
+      new THREE.Vector2(0.52, 1.08),
+      new THREE.Vector2(0.0, 1.08),
+    ];
+
+    const bodyGeometry = new THREE.LatheGeometry(profilePoints, 64);
+    bodyGeometry.computeVertexNormals();
+    const bottleBody = new THREE.Mesh(bodyGeometry, glossyBlackPlasticMaterial);
+    bottleBody.castShadow = true;
+    bottleBody.receiveShadow = true;
+    bottleGroup.add(bottleBody);
+
+    // Label Cylinder Wrap
+    const labelGeometry = new THREE.CylinderGeometry(0.785, 0.785, 1.34, 64, 1, true, 0, Math.PI * 2);
     const labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
-    labelMesh.position.y = -0.15; // Centered over main cylindrical body
+    labelMesh.position.y = -0.15;
     bottleGroup.add(labelMesh);
 
-    // Ribbed Safety Cap Group (Reconstructed per Physical Spec)
+    // Ribbed Safety Cap Group
     const capGroup = new THREE.Group();
     const capGeometry = new THREE.CylinderGeometry(0.55, 0.56, 0.40, 64);
-    const capMaterial = new THREE.MeshStandardMaterial({
-      color: 0x121418,
-      roughness: 0.30,
-      metalness: 0.0,
-    });
+    const capMaterial = new THREE.MeshStandardMaterial({ color: 0x121418, roughness: 0.30, metalness: 0.0 });
     const capMesh = new THREE.Mesh(capGeometry, capMaterial);
     capMesh.castShadow = true;
     capGroup.add(capMesh);
 
-    // Cap Top Embossed Logo Mesh
     const capTopGeo = new THREE.CircleGeometry(0.54, 64);
-    const capTopTexture = createCapTopCanvas();
-    const capTopMat = new THREE.MeshStandardMaterial({
-      map: capTopTexture,
-      roughness: 0.35,
-      metalness: 0.0,
-    });
+    const capTopMat = new THREE.MeshStandardMaterial({ map: createCapTopCanvas(), roughness: 0.35, metalness: 0.0 });
     const capTopMesh = new THREE.Mesh(capTopGeo, capTopMat);
     capTopMesh.rotation.x = -Math.PI / 2;
     capTopMesh.position.y = 0.201;
     capGroup.add(capTopMesh);
 
-    // 32 Vertical Molded Plastic Cap Ridges
     const ridgeGeo = new THREE.BoxGeometry(0.018, 0.38, 0.025);
     const ridgeMat = new THREE.MeshStandardMaterial({ color: 0x181b22, roughness: 0.32 });
     for (let i = 0; i < 32; i++) {
@@ -251,18 +201,17 @@ export default function Bottle3DCanvas({
       ridge.rotation.y = -angle;
       capGroup.add(ridge);
     }
-
     capGroup.position.y = 1.28;
     bottleGroup.add(capGroup);
 
-    // Attempt to load GLB model /models/kabzraj.glb with Auto-Bounding Box Scale Normalization
+    // Load User's Exact GLB Model (`/models/base.glb`) with Material Overrides & Auto-Scale
     const gltfLoader = new GLTFLoader();
     gltfLoader.load(
-      "/models/kabzraj.glb",
+      "/models/base.glb",
       (gltf) => {
         const model = gltf.scene;
 
-        // Auto-Scale Model to fill stage at target height 2.6 units
+        // Auto-scale GLB model to target height 2.6 units
         const box = new THREE.Box3().setFromObject(model);
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
@@ -275,23 +224,38 @@ export default function Bottle3DCanvas({
         model.position.y = -center.y * autoScale;
         model.position.z = -center.z * autoScale;
 
+        let foundLabelMesh = false;
+
         model.traverse((child) => {
           if ((child as THREE.Mesh).isMesh) {
             const mesh = child as THREE.Mesh;
             mesh.castShadow = true;
             mesh.receiveShadow = true;
 
-            // Apply stitched texture if material is label
-            if (mesh.name.toLowerCase().includes("label") || mesh.name.toLowerCase().includes("material")) {
-              if (mesh.material) {
-                (mesh.material as THREE.MeshStandardMaterial).map = stitchedTexture;
-                (mesh.material as THREE.MeshStandardMaterial).needsUpdate = true;
-              }
+            const meshName = mesh.name.toLowerCase();
+
+            // If mesh is the label, apply user's official label_atlas.png texture!
+            if (meshName.includes("label") || meshName.includes("decal") || meshName.includes("sticker")) {
+              mesh.material = labelMaterial;
+              foundLabelMesh = true;
+            } else {
+              // Override untextured grey CAD material with glossy jet black plastic material!
+              mesh.material = glossyBlackPlasticMaterial;
             }
           }
         });
 
-        // Swap out fallback procedural bottle for auto-scaled GLB model
+        // If GLB did not contain a distinct label mesh, attach wrapped label cylinder to GLB body
+        if (!foundLabelMesh) {
+          const glbLabelMesh = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.785 * autoScale * 0.15, 0.785 * autoScale * 0.15, 1.34 * autoScale * 0.15, 64, 1, true),
+            labelMaterial
+          );
+          glbLabelMesh.position.y = -0.15;
+          model.add(glbLabelMesh);
+        }
+
+        // Replace fallback procedural mesh with styled base GLB model
         bottleGroup.clear();
         bottleGroup.add(model);
         setLoading(false);
@@ -300,7 +264,7 @@ export default function Bottle3DCanvas({
       (err) => console.log("Using High-Precision Profile Fallback Mesh:", err)
     );
 
-    // Soft Contact Ground Drop Shadow
+    // Ground Drop Shadow
     const shadowGeo = new THREE.PlaneGeometry(2.6, 2.6);
     const shadowMat = new THREE.MeshBasicMaterial({
       color: 0x111315,
@@ -330,7 +294,7 @@ export default function Bottle3DCanvas({
       }
     };
 
-    // 4. Touch & Drag Controls
+    // Touch & Drag Controls
     const onMouseDown = (e: MouseEvent) => {
       isDraggingRef.current = true;
       notifyInteraction();
@@ -416,7 +380,7 @@ export default function Bottle3DCanvas({
     domElement.addEventListener("touchend", onTouchEnd);
     domElement.addEventListener("wheel", onWheel, { passive: false });
 
-    // 5. Animation Timeline Loop (Key Light smooth fade-in 0 -> 1.6)
+    // Render Animation Loop
     let animationFrameId: number;
     const clock = new THREE.Clock();
 
@@ -424,19 +388,16 @@ export default function Bottle3DCanvas({
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Smooth Overhead Soft Key Light Fade-In
       if (keyLight.intensity < 1.6) {
         keyLight.intensity += (1.6 - keyLight.intensity) * 0.05;
       }
 
-      // Entrance Scale & Settle
       currentScaleRef.current += (targetScaleRef.current - currentScaleRef.current) * 0.08;
       bottleGroup.scale.setScalar(currentScaleRef.current);
 
       const targetYPos = -0.1 + (prefersReducedMotion ? 0 : Math.sin(elapsedTime * 1.4) * 0.04);
       bottleGroup.position.y += (targetYPos - bottleGroup.position.y) * 0.08;
 
-      // Reveal Spin Target (0° -> 140°)
       if (!revealCompleted && !isDraggingRef.current) {
         revealProgress += 0.003;
         targetRotationRef.current.y = THREE.MathUtils.lerp(0, revealTargetY, Math.min(1, revealProgress));
@@ -445,11 +406,9 @@ export default function Bottle3DCanvas({
         }
       }
 
-      // Damped Rotation Mechanics (Light STAYS FIXED in world space as bottle turns!)
       bottleGroup.rotation.y += (targetRotationRef.current.y - bottleGroup.rotation.y) * 0.10;
       bottleGroup.rotation.x += (targetRotationRef.current.x - bottleGroup.rotation.x) * 0.10;
 
-      // Friction Inertia Decay
       if (!isDraggingRef.current) {
         targetRotationRef.current.y += velocityRef.current.y;
         velocityRef.current.y *= 0.94;
