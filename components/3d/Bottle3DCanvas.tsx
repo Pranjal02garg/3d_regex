@@ -30,7 +30,7 @@ function createCapTopCanvas(capBgColor = "#121418"): THREE.CanvasTexture {
     ctx.arc(256, 256, 220, 0, Math.PI * 2);
     ctx.stroke();
 
-    ctx.globalAlpha = 0.8;
+    ctx.globalAlpha = 0.85;
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 44px sans-serif";
     ctx.textAlign = "center";
@@ -91,29 +91,25 @@ export default function Bottle3DCanvas({
 
     container.appendChild(renderer.domElement);
 
-    // 2. PHOTOREALISTIC STUDIO LIGHTING SETUP (Fixed in World Space)
+    // 2. PHOTOREALISTIC STUDIO LIGHTING SETUP
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
     scene.add(ambientLight);
 
-    // Primary Overhead Large Soft Key Light
-    const keyLight = new THREE.DirectionalLight(0xfffdfa, 0.0);
+    const keyLight = new THREE.DirectionalLight(0xfffdfa, 1.6);
     keyLight.position.set(0.8, 4.2, 2.2);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
     keyLight.shadow.mapSize.height = 1024;
     scene.add(keyLight);
 
-    // Subtle Rim Light
     const rimLight = new THREE.DirectionalLight(0xfff5eb, 0.35);
     rimLight.position.set(-3.2, 2.5, -2.5);
     scene.add(rimLight);
 
-    // Soft Front Fill Light
     const fillLight = new THREE.DirectionalLight(0xffffff, 0.22);
     fillLight.position.set(-1.5, 0.5, 3.8);
     scene.add(fillLight);
 
-    // Ground Bounce Light
     const bounceLight = new THREE.DirectionalLight(0xf4efe6, 0.2);
     bounceLight.position.set(0, -4, 2);
     scene.add(bounceLight);
@@ -209,7 +205,6 @@ export default function Bottle3DCanvas({
     bottleBody.receiveShadow = true;
     bottleGroup.add(bottleBody);
 
-    // Label Cylinder Wrap
     const labelGeometry = new THREE.CylinderGeometry(0.785, 0.785, 1.34, 64, 1, true, 0, Math.PI * 2);
     const labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
     labelMesh.position.y = -0.15;
@@ -241,14 +236,13 @@ export default function Bottle3DCanvas({
     capGroup.position.y = 1.28;
     bottleGroup.add(capGroup);
 
-    // Load User's Reference GLB Model (`/models/base.glb`) & Wrap Official 360° Reference Label (`labelTexturePath`)
+    // Load User's Reference GLB Model (`/models/base.glb`) & Wrap Official Label
     const gltfLoader = new GLTFLoader();
     gltfLoader.load(
       "/models/base.glb",
       (gltf) => {
         const model = gltf.scene;
 
-        // Auto-scale GLB model to target height 2.6 units
         const box = new THREE.Box3().setFromObject(model);
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
@@ -261,7 +255,6 @@ export default function Bottle3DCanvas({
         model.position.y = -center.y * autoScale;
         model.position.z = -center.z * autoScale;
 
-        // Override untextured grey CAD material with product body material!
         model.traverse((child) => {
           if ((child as THREE.Mesh).isMesh) {
             const mesh = child as THREE.Mesh;
@@ -271,7 +264,6 @@ export default function Bottle3DCanvas({
           }
         });
 
-        // Precision-fit 360° Label Cylinder conforming to GLB model outer body
         const unscaledRadius = (size.x / 2.0) * 1.01;
         const unscaledLabelHeight = size.y * 0.52;
         const glbLabelMesh = new THREE.Mesh(
@@ -281,7 +273,6 @@ export default function Bottle3DCanvas({
         glbLabelMesh.position.y = center.y - size.y * 0.08;
         model.add(glbLabelMesh);
 
-        // Replace fallback procedural mesh with styled base GLB model
         bottleGroup.clear();
         bottleGroup.add(model);
         setLoading(false);
@@ -309,10 +300,6 @@ export default function Bottle3DCanvas({
     bottleGroup.position.y = -0.35;
     bottleGroup.scale.set(0.96, 0.96, 0.96);
 
-    let revealCompleted = prefersReducedMotion;
-    const revealTargetY = prefersReducedMotion ? 0 : Math.PI * 0.78;
-    let revealProgress = 0;
-
     const notifyInteraction = () => {
       if (!userInteractedRef.current) {
         userInteractedRef.current = true;
@@ -334,7 +321,7 @@ export default function Bottle3DCanvas({
 
       targetRotationRef.current.y += deltaX * 0.008;
       targetRotationRef.current.x += deltaY * 0.005;
-      targetRotationRef.current.x = Math.max(-0.4, Math.min(0.4, targetRotationRef.current.x));
+      targetRotationRef.current.x = Math.max(-0.35, Math.min(0.35, targetRotationRef.current.x));
 
       velocityRef.current = { x: deltaY * 0.002, y: deltaX * 0.004 };
       previousTouchRef.current = { x: e.clientX, y: e.clientY };
@@ -365,17 +352,10 @@ export default function Bottle3DCanvas({
         velocityRef.current.y = deltaX * 0.005;
 
         targetRotationRef.current.x += deltaY * 0.004;
-        targetRotationRef.current.x = Math.max(-0.4, Math.min(0.4, targetRotationRef.current.x));
+        targetRotationRef.current.x = Math.max(-0.35, Math.min(0.35, targetRotationRef.current.x));
 
         previousTouchRef.current.x = e.touches[0].clientX;
         previousTouchRef.current.y = e.touches[0].clientY;
-      } else if (e.touches.length === 2 && previousTouchRef.current.dist) {
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const newDist = Math.hypot(dx, dy);
-        const factor = previousTouchRef.current.dist / newDist;
-        camera.position.z = Math.max(initialCamZ * 0.85, Math.min(initialCamZ * 1.35, camera.position.z * factor));
-        previousTouchRef.current.dist = newDist;
       }
     };
 
@@ -389,11 +369,15 @@ export default function Bottle3DCanvas({
       camera.position.z = Math.max(initialCamZ * 0.85, Math.min(initialCamZ * 1.35, camera.position.z + e.deltaY * 0.0025));
     };
 
+    // Scroll Handler: Smoothly return bottle pitch (X) to 0 upright angle on scroll!
     const handleScroll = () => {
       if (prefersReducedMotion) return;
       const scrollY = window.scrollY;
       const scrollProgress = Math.min(1.0, scrollY / 600);
       targetScaleRef.current = 1.0 + scrollProgress * 0.08;
+
+      // Reset pitch to upright level position on scroll
+      targetRotationRef.current.x *= 0.85;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
 
@@ -406,7 +390,7 @@ export default function Bottle3DCanvas({
     domElement.addEventListener("touchend", onTouchEnd);
     domElement.addEventListener("wheel", onWheel, { passive: false });
 
-    // Render Animation Loop
+    // Render Loop: CONTINUOUS SMOOTH AUTO-ROTATION + SPRING DAMPING
     let animationFrameId: number;
     const clock = new THREE.Clock();
 
@@ -414,31 +398,24 @@ export default function Bottle3DCanvas({
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      if (keyLight.intensity < 1.6) {
-        keyLight.intensity += (1.6 - keyLight.intensity) * 0.05;
-      }
-
+      // Scale lerp
       currentScaleRef.current += (targetScaleRef.current - currentScaleRef.current) * 0.08;
       bottleGroup.scale.setScalar(currentScaleRef.current);
 
+      // Floating Y motion
       const targetYPos = -0.1 + (prefersReducedMotion ? 0 : Math.sin(elapsedTime * 1.4) * 0.04);
       bottleGroup.position.y += (targetYPos - bottleGroup.position.y) * 0.08;
 
-      if (!revealCompleted && !isDraggingRef.current) {
-        revealProgress += 0.003;
-        targetRotationRef.current.y = THREE.MathUtils.lerp(0, revealTargetY, Math.min(1, revealProgress));
-        if (revealProgress >= 1) {
-          revealCompleted = true;
-        }
+      // CONTINUOUS IDLE AUTO-ROTATION: Keep model continuously rotating smoothly at all times!
+      if (!isDraggingRef.current) {
+        targetRotationRef.current.y += 0.005;
+        // Smoothly return pitch X angle back to 0 level position
+        targetRotationRef.current.x += (0 - targetRotationRef.current.x) * 0.08;
       }
 
+      // Rotation Damping Lerp
       bottleGroup.rotation.y += (targetRotationRef.current.y - bottleGroup.rotation.y) * 0.10;
       bottleGroup.rotation.x += (targetRotationRef.current.x - bottleGroup.rotation.x) * 0.10;
-
-      if (!isDraggingRef.current) {
-        targetRotationRef.current.y += velocityRef.current.y;
-        velocityRef.current.y *= 0.94;
-      }
 
       renderer.render(scene, camera);
     };
@@ -481,7 +458,7 @@ export default function Bottle3DCanvas({
           if (onBottleClick) onBottleClick();
         }}
         className="w-full h-full min-h-[320px] sm:min-h-[420px] cursor-grab active:cursor-grabbing touch-pan-y"
-        title={`3D Interactive ${productName} Bottle — Drag to rotate, Pinch to zoom`}
+        title={`3D Interactive ${productName} Bottle — Continuous rotation, Drag to turn`}
       />
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

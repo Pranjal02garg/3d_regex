@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import dynamic from "next/dynamic";
 import {
   ShieldCheck,
@@ -114,17 +113,16 @@ export default function Home() {
               <button
                 key={leftProduct.slug}
                 onClick={() => handleProductSelect(leftIdx)}
-                className="group relative flex-col items-center justify-end hidden sm:flex opacity-40 hover:opacity-100 transition-all duration-500 scale-85 hover:scale-95 cursor-pointer animate-float-1"
+                className="group relative flex-col items-center justify-end hidden sm:flex opacity-60 hover:opacity-100 transition-all duration-500 scale-85 hover:scale-95 cursor-pointer w-[120px] lg:w-[150px] h-[220px]"
                 aria-label={`View ${leftProduct.name}`}
               >
-                <Image
-                  src={`/products/${leftProduct.slug}.png`}
-                  alt={leftProduct.name}
-                  width={240}
-                  height={320}
-                  className="w-[110px] lg:w-[140px] h-auto object-contain mix-blend-multiply drop-shadow-md transition-all"
-                />
-                <span className="font-mono text-[9px] uppercase tracking-widest text-gray-500 font-bold mt-2 bg-white/90 border border-gray-200 px-2 py-0.5 rounded-md shadow-xs">
+                <div className="w-full h-full pointer-events-none">
+                  <Bottle3DCanvas
+                    productSlug={leftProduct.slug}
+                    productName={leftProduct.name}
+                  />
+                </div>
+                <span className="font-mono text-[9px] uppercase tracking-widest text-fg-3 font-bold mt-1 bg-surface/90 border border-line px-2 py-0.5 rounded-md shadow-xs">
                   0{leftIdx + 1} · {leftProduct.name}
                 </span>
               </button>
@@ -140,10 +138,10 @@ export default function Home() {
                 />
 
                 {/* Sanskrit Devanagari Floating Pill */}
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 font-mono text-xs uppercase tracking-widest text-[#c44900] font-bold whitespace-nowrap bg-white border border-gray-200/90 px-4 py-1.5 rounded-full shadow-xl flex items-center gap-2 pointer-events-none">
-                  <span className="font-deva text-sm font-bold text-[#c44900]">{activeProduct.devanagari}</span>
-                  <span className="text-gray-300">•</span>
-                  <span className="text-[#111315]">{activeProduct.name}</span>
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 font-mono text-xs uppercase tracking-widest text-accent font-bold whitespace-nowrap bg-surface border border-line px-4 py-1.5 rounded-full shadow-xl flex items-center gap-2 pointer-events-none">
+                  <span className="font-deva text-sm font-bold text-accent">{activeProduct.devanagari}</span>
+                  <span className="text-line">•</span>
+                  <span className="text-fg">{activeProduct.name}</span>
                 </div>
               </div>
 
@@ -151,17 +149,16 @@ export default function Home() {
               <button
                 key={rightProduct.slug}
                 onClick={() => handleProductSelect(rightIdx)}
-                className="group relative flex-col items-center justify-end hidden sm:flex opacity-40 hover:opacity-100 transition-all duration-500 scale-85 hover:scale-95 cursor-pointer animate-float-2"
+                className="group relative flex-col items-center justify-end hidden sm:flex opacity-60 hover:opacity-100 transition-all duration-500 scale-85 hover:scale-95 cursor-pointer w-[120px] lg:w-[150px] h-[220px]"
                 aria-label={`View ${rightProduct.name}`}
               >
-                <Image
-                  src={`/products/${rightProduct.slug}.png`}
-                  alt={rightProduct.name}
-                  width={240}
-                  height={320}
-                  className="w-[110px] lg:w-[140px] h-auto object-contain mix-blend-multiply drop-shadow-md transition-all"
-                />
-                <span className="font-mono text-[9px] uppercase tracking-widest text-gray-500 font-bold mt-2 bg-white/90 border border-gray-200 px-2 py-0.5 rounded-md shadow-xs">
+                <div className="w-full h-full pointer-events-none">
+                  <Bottle3DCanvas
+                    productSlug={rightProduct.slug}
+                    productName={rightProduct.name}
+                  />
+                </div>
+                <span className="font-mono text-[9px] uppercase tracking-widest text-fg-3 font-bold mt-1 bg-surface/90 border border-line px-2 py-0.5 rounded-md shadow-xs">
                   0{rightIdx + 1} · {rightProduct.name}
                 </span>
               </button>
@@ -401,8 +398,8 @@ export default function Home() {
             </button>
 
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-20 h-20 bg-[#faf7f1] rounded-xl p-2 flex items-center justify-center shrink-0 border border-gray-200">
-                <Image src={`/products/${activeModalProduct.slug}.png`} alt={activeModalProduct.name} width={100} height={100} className="object-contain max-h-full" />
+              <div className="w-24 h-24 bg-gradient-to-b from-surface-2 to-surface-3 rounded-xl p-1 flex items-center justify-center shrink-0 border border-line overflow-hidden">
+                <Bottle3DCanvas productSlug={activeModalProduct.slug} productName={activeModalProduct.name} className="h-full w-full" />
               </div>
               <div>
                 <span className="font-deva text-xs font-bold text-[#c44900]">{activeModalProduct.devanagari}</span>

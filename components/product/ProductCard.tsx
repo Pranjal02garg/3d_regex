@@ -1,16 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import dynamic from "next/dynamic";
 import type { Product } from "@/content/products";
 import { getIngredient } from "@/content/ingredients";
 import { Rating } from "@/components/ui/Primitives";
 import { formatINR, packDuration } from "@/lib/utils";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
+const Bottle3DCanvas = dynamic(() => import("@/components/3d/Bottle3DCanvas"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center">
+      <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+    </div>
+  ),
+});
+
 export default function ProductCard({
   product,
-  priority,
 }: {
   product: Product;
   priority?: boolean;
@@ -32,24 +40,20 @@ export default function ProductCard({
           </span>
         </div>
 
-        {/* Product on its own lit ground, a shade above the card so the bottle
-            has something to sit against rather than floating on the page. */}
-        <div className="card-media relative mb-4 flex aspect-[4/3] min-h-[200px] w-full items-center justify-center overflow-hidden rounded-lg border border-line bg-surface-3 p-3 sm:min-h-[220px]">
+        {/* 3D WebGL Bottle Canvas Stage — 100% Interactive 3D Model */}
+        <div className="card-media relative mb-4 flex aspect-[4/3] min-h-[220px] w-full items-center justify-center overflow-hidden rounded-lg border border-line bg-gradient-to-b from-surface-2 to-surface-3 p-1 sm:min-h-[240px]">
           <div
             aria-hidden="true"
             className="stage-floor absolute inset-x-6 bottom-3 h-10 rounded-[50%]"
           />
-          <Image
-            src={`/products/cutout/${product.slug}.png`}
-            alt={`${product.name} — ${product.tagline}`}
-            width={600}
-            height={600}
-            priority={priority}
-            sizes="(max-width: 640px) 95vw, (max-width: 1024px) 45vw, 360px"
-            className="relative h-auto max-h-full w-auto max-w-full object-contain drop-shadow-[0_14px_24px_rgba(0,0,0,0.55)]"
+          
+          <Bottle3DCanvas
+            productSlug={product.slug}
+            productName={product.name}
+            className="h-full w-full"
           />
 
-          <span className="absolute inset-x-2 bottom-2 flex items-center justify-center gap-1 rounded-md border border-line bg-surface/85 px-2 py-1 font-mono text-[10px] font-bold text-safe backdrop-blur-md">
+          <span className="absolute inset-x-2 bottom-2 z-10 flex items-center justify-center gap-1 rounded-md border border-line bg-surface/85 px-2 py-1 font-mono text-[10px] font-bold text-safe backdrop-blur-md">
             <CheckCircle2 size={12} />
             <span>AYUSH SCHEDULE T CERTIFIED</span>
           </span>
