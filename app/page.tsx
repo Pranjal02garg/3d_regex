@@ -63,8 +63,11 @@ export default function Home() {
       <section
         className="relative min-h-[92vh] flex flex-col justify-between overflow-hidden border-b border-gray-200/80 bg-[radial-gradient(ellipse_at_top,#ffffff,#faf8f3)] pt-16 pb-6 px-4 sm:px-8 select-none"
       >
-        {/* Ambient Radial Golden Sun Aura */}
-        <div aria-hidden="true" className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[480px] bg-[#c44900]/08 blur-[160px] pointer-events-none animate-glow-pulse" />
+        {/* Visible Studio Spotlight Background Glow Source */}
+        <div
+          aria-hidden="true"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] sm:w-[750px] h-[550px] sm:h-[750px] rounded-full bg-[radial-gradient(circle_at_center,#ffffff_0%,#f5e9d9_35%,rgba(196,73,0,0.12)_60%,transparent_75%)] pointer-events-none z-0 blur-xl opacity-90"
+        />
 
         {/* Top Kicker Bar */}
         <div className="flex items-center justify-between z-10 font-mono text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest pt-2 max-w-6xl mx-auto w-full">
