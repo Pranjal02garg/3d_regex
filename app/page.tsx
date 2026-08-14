@@ -12,9 +12,13 @@ import {
   ChevronLeft,
   ChevronRight,
   Beaker,
-  Star
+  Star,
+  Award,
+  Microchip,
+  FileText
 } from "lucide-react";
 import { Accordion } from "@/components/ui/Disclosure";
+import { Reveal } from "@/components/ui/Reveal";
 import ProductCard from "@/components/product/ProductCard";
 import FormularySection from "@/components/product/FormularySection";
 import { CONCERNS, products, type Product } from "@/content/products";
@@ -71,7 +75,7 @@ export default function Home() {
             BOTANICAL REMEDIES
           </h1>
 
-          {/* 3D WEBGR BOTTLE STAGE CONTAINER */}
+          {/* 3D WEBGL BOTTLE STAGE CONTAINER */}
           <div className="relative -mt-6 sm:-mt-14 z-10 flex flex-col items-center justify-center w-full">
             
             {/* Prev / Next Navigation Controls */}
@@ -209,11 +213,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 2 · LUXURY TRUST STRIP ────────────────────────────────────────── */}
-      <section className="py-4 bg-[#f4efe6] border-b border-gray-200/80 font-mono text-xs text-gray-700">
+      {/* ── 2 · LUXURY TRUST STRIP (SMOOTH REVEAL) ────────────────────────── */}
+      <Reveal as="section" className="py-4 bg-[#f4efe6] border-b border-gray-200/80 font-mono text-xs text-gray-700">
         <div className="shell grid grid-cols-2 md:flex items-center justify-around gap-4 font-bold text-center md:text-left">
           <div className="flex items-center justify-center md:justify-start gap-1.5">
-            <ShieldCheck size={14} className="text-[#c44900]" />
+            <Award size={14} className="text-[#c44900]" />
             <span>AYUSH LICENCE: <strong className="text-[#c44900]">PB/AY/000000</strong></span>
           </div>
           <span className="hidden md:inline text-gray-300">•</span>
@@ -223,14 +227,19 @@ export default function Home() {
           </div>
           <span className="hidden md:inline text-gray-300">•</span>
           <div className="flex items-center justify-center md:justify-start gap-1.5">
-            <Beaker size={14} className="text-[#1e4d6b]" />
+            <Microchip size={14} className="text-[#1e4d6b]" />
             <span>100% <strong className="text-[#1e4d6b]">BOTANICAL DISCLOSURE</strong></span>
           </div>
+          <span className="hidden md:inline text-gray-300">•</span>
+          <div className="flex items-center justify-center md:justify-start gap-1.5">
+            <FileText size={14} className="text-[#c44900]" />
+            <span>NABL <strong className="text-[#111315]">LAB TESTED BATCHES</strong></span>
+          </div>
         </div>
-      </section>
+      </Reveal>
 
-      {/* ── 3 · THE FORMULARY CATALOGUE (STAGE 02) ─────────────────────────── */}
-      <section id="catalogue" className="shell py-12 lg:py-16 border-b border-gray-200/70">
+      {/* ── 3 · THE FORMULARY CATALOGUE (STAGE 02 — SMOOTH REVEAL) ─────────── */}
+      <Reveal id="catalogue" as="section" className="shell py-12 lg:py-16 border-b border-gray-200/70">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 text-left gap-2">
           <div>
             <span className="font-mono text-xs font-bold tracking-widest text-[#c44900] uppercase">
@@ -253,10 +262,10 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </section>
+      </Reveal>
 
-      {/* ── 4 · TARGETED CLINICAL CARE (STAGE 03) ─────────────────────────── */}
-      <section className="shell py-12 lg:py-16 border-b border-gray-200/70">
+      {/* ── 4 · TARGETED CLINICAL CARE (STAGE 03 — SMOOTH REVEAL) ─────────── */}
+      <Reveal as="section" className="shell py-12 lg:py-16 border-b border-gray-200/70">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 text-left gap-2">
           <div>
             <span className="font-mono text-xs font-bold tracking-widest text-[#c44900] uppercase">
@@ -303,13 +312,15 @@ export default function Home() {
             );
           })}
         </div>
-      </section>
+      </Reveal>
 
-      {/* ── 5 · FORMULARY ENGINE ──────────────────────────────────────────── */}
-      <FormularySection />
+      {/* ── 5 · FORMULARY ENGINE (SMOOTH REVEAL) ──────────────────────────── */}
+      <Reveal as="section">
+        <FormularySection />
+      </Reveal>
 
-      {/* ── 6 · VERIFIED CLINICAL REVIEWS (STAGE 05) ──────────────────────── */}
-      <section className="shell py-12 lg:py-16 border-b border-gray-200/70 bg-[#f4efe6]/50">
+      {/* ── 6 · VERIFIED CLINICAL REVIEWS (STAGE 05 — SMOOTH REVEAL) ──────── */}
+      <Reveal as="section" className="shell py-12 lg:py-16 border-b border-gray-200/70 bg-[#f4efe6]/50">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 text-left gap-2">
           <div>
             <span className="font-mono text-xs font-bold tracking-widest text-[#c44900] uppercase">
@@ -350,10 +361,10 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </section>
+      </Reveal>
 
-      {/* ── 7 · FAQS (STAGE 06) ───────────────────────────────────────────── */}
-      <section className="shell py-12 lg:py-16">
+      {/* ── 7 · FAQS (STAGE 06 — SMOOTH REVEAL) ───────────────────────────── */}
+      <Reveal as="section" className="shell py-12 lg:py-16">
         <div className="max-w-3xl mx-auto text-left">
           <span className="block text-center font-mono text-xs font-bold tracking-widest text-[#c44900] uppercase mb-1">
             06 · FREQUENTLY ASKED QUESTIONS
@@ -363,7 +374,7 @@ export default function Home() {
           </h2>
           <Accordion items={[...HOME_FAQS]} />
         </div>
-      </section>
+      </Reveal>
 
       {/* Interactive Detail Modal for Selected Bottle */}
       {activeModalProduct && (
