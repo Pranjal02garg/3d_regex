@@ -70,7 +70,7 @@ export default function Home() {
           
           {/* Text Content */}
           <div className="w-full lg:w-5/12 space-y-6 text-center lg:text-left">
-            <Reveal className="space-y-4">
+            <Reveal className="space-y-4 reveal--fast">
               <span className="font-mono text-xs sm:text-sm font-bold tracking-[0.2em] text-[var(--ochre)] uppercase">
                 The Science of Ayurveda
               </span>
@@ -82,7 +82,7 @@ export default function Home() {
               </p>
             </Reveal>
 
-            <Reveal className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 justify-center lg:justify-start pt-2 delay-100">
+            <Reveal className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 justify-center lg:justify-start pt-2 delay-100 reveal--fast">
               <ButtonLink
                 href="#catalogue"
                 size="lg"
@@ -103,7 +103,7 @@ export default function Home() {
           </div>
 
           {/* Hero Image */}
-          <Reveal className="w-full lg:w-7/12 delay-200">
+          <Reveal className="w-full lg:w-7/12 delay-200 reveal--fast">
             <div className="relative w-full rounded-sm overflow-hidden shadow-sm bg-white p-1 border border-gray-100">
               <Image
                 src="/images/banner-natural-remedies.jpg"
@@ -146,7 +146,7 @@ export default function Home() {
       </section>
 
       {/* ── 3 · OUR 5 MANUFACTURED REMEDIES (HORIZONTAL SWIPE CAROUSEL) ────────── */}
-      <Reveal as="section" id="catalogue" className="shell py-6 sm:py-12 border-b border-gray-100">
+      <Reveal as="section" id="catalogue" className="shell py-6 sm:py-12 border-b border-gray-100 reveal--fast">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 text-left gap-2">
           <div>
             <span className="eyebrow text-[var(--ochre)] font-bold text-xs">THE RANGE</span>

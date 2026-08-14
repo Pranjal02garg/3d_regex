@@ -226,6 +226,17 @@
     transform: none;
   }
 
+  /* Fast reveal for above-fold content (hero, first section) */
+  .reveal--fast {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 250ms var(--ease-out), transform 250ms var(--ease-out);
+  }
+  .reveal--fast[data-shown="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
   @keyframes marquee-continuous {
     0% { transform: translateX(0%); }
     100% { transform: translateX(-50%); }
