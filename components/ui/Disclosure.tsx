@@ -55,10 +55,12 @@ export function Accordion({
               id={panelId}
               role="region"
               aria-labelledby={btnId}
-              hidden={!isOpen}
-              className="pb-6 pr-10"
+              className={cn(
+                "overflow-hidden transition-all duration-[250ms] [transition-timing-function:var(--ease-out)]",
+                isOpen ? "max-h-96 opacity-100 visible" : "max-h-0 opacity-0 invisible",
+              )}
             >
-              <div className="measure text-[0.9375rem] leading-relaxed text-fg-2">{item.a}</div>
+              <div className="pb-6 pr-10 measure text-[0.9375rem] leading-relaxed text-fg-2">{item.a}</div>
             </div>
           </div>
         );
