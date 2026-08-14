@@ -13,7 +13,7 @@ export default function FormularySection() {
       <div className="shell grid gap-6 lg:grid-cols-12 lg:gap-10 items-start">
         <div className="lg:col-span-5 text-left space-y-3">
           <span className="eyebrow text-[var(--ochre)] font-bold text-xs">FULL TRANSPARENCY</span>
-          <h2 className="display text-2xl sm:text-3xl text-[#111315] font-bold">
+          <h2 className="font-serif h3 text-[#111315] font-bold">
             100% Botanical Ingredient Disclosure
           </h2>
           <p className="text-xs sm:text-sm leading-relaxed text-gray-700 font-sans">

@@ -66,13 +66,13 @@ export default function Home() {
 
       {/* ── 1 · HERO BANNER SECTION (ELEGANT & EDITORIAL) ─────────── */}
       <section className="bg-[#faf9f5] border-b border-gray-200">
-        <div className="shell flex flex-col-reverse lg:flex-row items-center justify-between gap-10 py-12 lg:py-20">
+        <div className="shell flex flex-col-reverse lg:flex-row items-center justify-between gap-10 lg:gap-14 py-12 lg:py-20">
           
           {/* Text Content.
               Load-in is pure CSS (.rise-in + --rise-step), not the scroll-driven
               Reveal: the hero is always above the fold, so an observer adds
               nothing, and per-child steps give the cascade a group fade can't. */}
-          <div className="w-full lg:w-5/12 space-y-6 text-center lg:text-left">
+          <div className="w-full lg:w-1/2 space-y-6 text-center lg:text-left">
             <div className="space-y-4">
               <span
                 className="rise-in block font-mono text-xs sm:text-sm font-bold tracking-[0.2em] text-[var(--ochre)] uppercase"
@@ -101,7 +101,7 @@ export default function Home() {
               <ButtonLink
                 href="#catalogue"
                 size="lg"
-                className="press w-full sm:w-auto rounded-none bg-[#111315] text-white hover:bg-[var(--ochre)] hover:text-white px-8 py-3.5 font-sans font-medium tracking-wide text-sm transition-colors border border-transparent"
+                className="press w-full sm:w-auto whitespace-nowrap rounded-none bg-[#111315] text-white hover:bg-[var(--ochre)] hover:text-white px-7 py-3.5 font-sans font-medium tracking-wide text-sm transition-colors border border-transparent"
               >
                 Explore Formulations
               </ButtonLink>
@@ -109,7 +109,7 @@ export default function Home() {
                 href="https://wa.me/918360053594"
                 target="_blank"
                 rel="noreferrer"
-                className="press w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#111315] hover:text-[var(--ochre)] hover:border-[var(--ochre)] bg-transparent border border-[#111315] px-8 py-3.5 font-sans font-medium text-sm transition-colors"
+                className="press w-full sm:w-auto whitespace-nowrap inline-flex items-center justify-center gap-2 text-[#111315] hover:text-[var(--ochre)] hover:border-[var(--ochre)] bg-transparent border border-[#111315] px-7 py-3.5 font-sans font-medium text-sm transition-colors"
               >
                 <WhatsAppIcon size={16} className="text-current" />
                 <span>Consult Our Experts</span>
@@ -117,19 +117,68 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Hero Image — step 0: on mobile the column reverses, so this sits at
-              the very top and should not be the last thing to arrive. */}
-          <div className="rise-in w-full lg:w-7/12" style={{ "--rise-step": 0 } as React.CSSProperties}>
-            <div className="relative w-full rounded-sm overflow-hidden shadow-sm bg-white p-1 border border-gray-100">
-              <Image
-                src="/images/banner-natural-remedies.jpg"
-                alt="Regex Remedies — Natural Remedies For A Better You"
-                width={1200}
-                height={570}
-                priority
-                sizes="(max-width: 1024px) 100vw, 60vw"
-                className="w-full h-auto object-contain block"
+          {/* Hero lineup — step 0: on mobile the column reverses, so this sits at
+              the very top and should not be the last thing to arrive.
+
+              This replaces a composite banner that had the headline burnt into
+              the artwork, so the same six words appeared twice in one viewport,
+              once as the h1 and once as pixels. The range shot also carried
+              descriptors that contradict the catalogue. Composing the real pack
+              renders keeps the h1 the only headline on the page and keeps every
+              claim in selectable text. */}
+          <div className="rise-in w-full lg:w-1/2" style={{ "--rise-step": 0 } as React.CSSProperties}>
+            {/* Paints the paper colour directly behind the lineup. mix-blend-mode
+                resolves against the nearest stacking context, and .rise-in makes
+                one (it animates both transform and opacity), so the blend cannot
+                reach the section background on its own. Matching the ground here
+                makes the result identical and independent of ancestors. */}
+            <div className="relative bg-[#faf9f5]">
+              <div className="flex items-end justify-center gap-1.5 sm:gap-3">
+                {products.map((p, i) => {
+                  const centre = (products.length - 1) / 2;
+                  const lift = (1 - Math.abs(i - centre) / centre) * 14;
+                  return (
+                    /* The lift is margin, not translateY, on purpose: a transform
+                       creates a stacking context, which isolates the child's
+                       mix-blend-mode so it blends against this wrapper instead of
+                       the section ground — and the white boxes come back. The row
+                       is items-end, so bottom margin raises it identically. */
+                    <div
+                      key={p.slug}
+                      className="relative flex-1"
+                      style={{ marginBottom: `${lift}px`, maxWidth: "20%" }}
+                    >
+                      <Image
+                        src={`/products/${p.slug}.png`}
+                        alt={`${p.name} — ${p.tagline}`}
+                        width={600}
+                        height={700}
+                        priority={i < 3}
+                        sizes="(max-width: 1024px) 19vw, 10vw"
+                        /* The pack renders are opaque white JPEGs-as-PNGs (alpha
+                           255 throughout), so on the warm paper ground they read
+                           as five white rectangles. multiply drops pure white to
+                           nothing and leaves the bottle intact; the ~2% darkening
+                           against #faf9f5 is not perceptible. drop-shadow is
+                           deliberately absent — with no alpha it would shadow the
+                           bounding box rather than the bottle. */
+                        className="w-full h-auto object-contain mix-blend-multiply"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Ground plane. A soft ellipse reads as a surface the range is
+                  standing on, which stops the bottles floating on the paper. */}
+              <div
+                aria-hidden="true"
+                className="mx-auto mt-3 h-5 w-[86%] rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(17,19,21,0.16),transparent_70%)]"
               />
+
+              <p className="mt-4 text-center font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--fg-3)]">
+                The complete range · Five classical formulations
+              </p>
             </div>
           </div>
 
@@ -318,11 +367,56 @@ export default function Home() {
       {/* ── 6 · THE OPEN FORMULARY ENGINE (INTERACTIVE COMPOSITION SELECTOR) ──── */}
       <FormularySection />
 
+      {/* ── 6b · ON THE PACK (LABEL PHOTOGRAPHY) ──────────────────────────────
+          The formulary table above is a claim about disclosure. This is the
+          evidence for it: the actual printed pack, so a buyer can check that
+          what the site publishes is what the label says. Photography only —
+          every therapeutic claim stays in the product's own copy, and none of
+          it is restated here as site voice. */}
+      <Reveal as="section" className="shell py-6 sm:py-12 border-b border-gray-100">
+        <div className="text-left max-w-2xl mb-5">
+          <span className="eyebrow text-[var(--ochre)] font-bold text-xs">THE PHYSICAL PACK</span>
+          <h2 className="font-serif h3 text-[#111315] font-bold mt-0.5">
+            What the label actually says.
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-600 mt-1 leading-relaxed">
+            Every carton carries the Sanskrit and Devanagari name, the batch
+            details and the AYUSH licence number. Compare it against the
+            composition published above — they are the same document.
+          </p>
+        </div>
+
+        <div className="flex gap-3.5 overflow-x-auto no-scrollbar rail-mask snap-x snap-mandatory pb-3 -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
+          {products.map((p) => (
+            <figure
+              key={p.slug}
+              className="card-press w-[240px] sm:w-[300px] shrink-0 snap-start overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs"
+            >
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-50">
+                <Image
+                  src={`/labels/${p.slug}-label.jpg`}
+                  alt={`Printed label detail for ${p.name}`}
+                  fill
+                  sizes="(max-width: 640px) 240px, 300px"
+                  className="object-cover"
+                />
+              </div>
+              <figcaption className="flex items-center justify-between gap-2 px-3 py-2.5 border-t border-gray-100">
+                <span className="font-serif text-sm font-bold text-[#111315]">{p.name}</span>
+                <span className="font-deva text-[13px] font-bold text-[var(--ochre)]">
+                  {p.devanagari}
+                </span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </Reveal>
+
       {/* ── 7 · MANUFACTURING 6 STEPS (HORIZONTAL SWIPE CAROUSEL) ─────────────── */}
       <Reveal as="section" className="shell py-6 sm:py-12 border-b border-gray-100">
         <div className="text-left max-w-xl mb-4">
           <p className="eyebrow text-[var(--ochre)] font-bold">Manufacturing Standard</p>
-          <h2 className="display h3 text-[#111315] mt-0.5">
+          <h2 className="font-serif h3 text-[#111315] font-bold mt-0.5">
             Six steps from field to finished formulation.
           </h2>
           <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
@@ -389,7 +483,7 @@ export default function Home() {
       <Reveal as="section" className="shell py-6 sm:py-12">
         <div className="max-w-3xl mx-auto text-left">
           <p className="eyebrow text-[var(--ochre)] mb-1 font-bold text-center">Frequently Asked Questions</p>
-          <h2 className="display h3 text-[#111315] mb-6 text-center">Clear answers about our remedies.</h2>
+          <h2 className="font-serif h3 text-[#111315] font-bold mb-6 text-center">Clear answers about our remedies.</h2>
           <Accordion items={[...HOME_FAQS]} />
         </div>
       </Reveal>
