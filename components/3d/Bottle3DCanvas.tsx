@@ -144,6 +144,7 @@ export default function Bottle3DCanvas({
       transparent: true,
       roughness: 0.25,
       metalness: 0.0,
+      side: THREE.DoubleSide,
     });
 
     // 5. Bottle Group & Model Importer
@@ -204,7 +205,7 @@ export default function Bottle3DCanvas({
     capGroup.position.y = 1.28;
     bottleGroup.add(capGroup);
 
-    // Load User's Exact GLB Model (`/models/base.glb`) with Material Overrides & Auto-Scale
+    // Load User's Reference GLB Model (`/models/base.glb`) & Wrap Official 360° Reference Label (`label_atlas.png`)
     const gltfLoader = new GLTFLoader();
     gltfLoader.load(
       "/models/base.glb",
@@ -224,36 +225,25 @@ export default function Bottle3DCanvas({
         model.position.y = -center.y * autoScale;
         model.position.z = -center.z * autoScale;
 
-        let foundLabelMesh = false;
-
+        // Override untextured grey CAD material with glossy jet black plastic material!
         model.traverse((child) => {
           if ((child as THREE.Mesh).isMesh) {
             const mesh = child as THREE.Mesh;
             mesh.castShadow = true;
             mesh.receiveShadow = true;
-
-            const meshName = mesh.name.toLowerCase();
-
-            // If mesh is the label, apply user's official label_atlas.png texture!
-            if (meshName.includes("label") || meshName.includes("decal") || meshName.includes("sticker")) {
-              mesh.material = labelMaterial;
-              foundLabelMesh = true;
-            } else {
-              // Override untextured grey CAD material with glossy jet black plastic material!
-              mesh.material = glossyBlackPlasticMaterial;
-            }
+            mesh.material = glossyBlackPlasticMaterial;
           }
         });
 
-        // If GLB did not contain a distinct label mesh, attach wrapped label cylinder to GLB body
-        if (!foundLabelMesh) {
-          const glbLabelMesh = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.785 * autoScale * 0.15, 0.785 * autoScale * 0.15, 1.34 * autoScale * 0.15, 64, 1, true),
-            labelMaterial
-          );
-          glbLabelMesh.position.y = -0.15;
-          model.add(glbLabelMesh);
-        }
+        // Precision-fit 360° Label Cylinder conforming to GLB model outer body
+        const unscaledRadius = (size.x / 2.0) * 1.01;
+        const unscaledLabelHeight = size.y * 0.52;
+        const glbLabelMesh = new THREE.Mesh(
+          new THREE.CylinderGeometry(unscaledRadius, unscaledRadius, unscaledLabelHeight, 64, 1, true, 0, Math.PI * 2),
+          labelMaterial
+        );
+        glbLabelMesh.position.y = center.y - size.y * 0.08;
+        model.add(glbLabelMesh);
 
         // Replace fallback procedural mesh with styled base GLB model
         bottleGroup.clear();
