@@ -126,7 +126,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: Readonly<React.ReactNode> }>) {
   return (
-    <html lang="en-IN" className="dark" style={{ colorScheme: "dark" }} suppressHydrationWarning>
+    <html lang="en-IN" className="light" style={{ colorScheme: "light" }} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <script dangerouslySetInnerHTML={{ __html: MOTION_READY_SCRIPT }} />

@@ -11,7 +11,6 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
-  Beaker,
   Star,
   Award,
   Microchip,
@@ -37,8 +36,10 @@ const Bottle3DCanvas = dynamic(() => import("@/components/3d/Bottle3DCanvas"), {
 });
 
 export default function Home() {
-  const [activeIdx, setActiveIdx] = useState(0);
+  const [activeIdx, setActiveIdx] = useState(1); // Default to 02 Kabzraj as per specification
   const [activeModalProduct, setActiveModalProduct] = useState<Product | null>(null);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [isSwitching, setIsSwitching] = useState(false);
 
   const activeProduct = products[activeIdx];
   const leftIdx = (activeIdx - 1 + products.length) % products.length;
@@ -46,28 +47,36 @@ export default function Home() {
   const rightIdx = (activeIdx + 1) % products.length;
   const rightProduct = products[rightIdx];
 
+  const handleProductSelect = (index: number) => {
+    if (index === activeIdx) return;
+    setIsSwitching(true);
+    setTimeout(() => {
+      setActiveIdx(index);
+      setIsSwitching(false);
+    }, 300);
+  };
+
   return (
     <div className="min-h-screen bg-[#faf8f3] text-[#111315] font-sans antialiased selection:bg-[#c44900] selection:text-white">
       
       {/* ── 1 · SANTIONI 3D INTERACTIVE HERO STAGE ───────────────────────────── */}
       <section
-        className="relative min-h-[94vh] flex flex-col justify-between overflow-hidden border-b border-gray-200/80 bg-[radial-gradient(ellipse_at_top,#ffffff,#faf8f3)] pt-16 pb-6 px-4 sm:px-8 select-none"
+        className="relative min-h-[92vh] flex flex-col justify-between overflow-hidden border-b border-gray-200/80 bg-[radial-gradient(ellipse_at_top,#ffffff,#faf8f3)] pt-16 pb-6 px-4 sm:px-8 select-none"
       >
-        
         {/* Ambient Radial Golden Sun Aura */}
-        <div aria-hidden="true" className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[480px] bg-[#c44900]/12 blur-[150px] pointer-events-none animate-glow-pulse" />
+        <div aria-hidden="true" className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[480px] bg-[#c44900]/10 blur-[160px] pointer-events-none animate-glow-pulse" />
 
         {/* Top Kicker Bar */}
-        <div className="flex items-center justify-between z-10 font-mono text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest pt-2">
+        <div className="flex items-center justify-between z-10 font-mono text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest pt-2 max-w-6xl mx-auto w-full">
           <span>01 / 05 · THE FORMULARY</span>
           <span className="inline-flex items-center gap-1.5 text-[#c44900] font-bold">
             <Sparkles size={12} className="animate-pulse" />
-            3D WEBGL ENGINE ACTIVE
+            3D WEBGL STUDIO ACTIVE
           </span>
-          <span className="hidden sm:inline">TOUCH + DRAG TO ROTATE 3D BOTTLE</span>
+          <span className="hidden sm:inline">360° · TOUCH + DRAG TO ROTATE BOTTLE</span>
         </div>
 
-        {/* Center Stage: Giant High-Fashion Editorial Typography + 3D WebGL Bottle */}
+        {/* Center Stage: Editorial Typography + 3D WebGL Bottle */}
         <div className="my-auto z-10 text-center max-w-6xl mx-auto flex flex-col items-center justify-center relative w-full">
           
           {/* Santioni Giant Editorial Headline */}
@@ -80,16 +89,16 @@ export default function Home() {
             
             {/* Prev / Next Navigation Controls */}
             <button
-              onClick={() => setActiveIdx((prev) => (prev === 0 ? products.length - 1 : prev - 1))}
-              className="absolute left-1 sm:left-6 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 border border-gray-200 shadow-xl text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer hover:scale-110"
+              onClick={() => handleProductSelect(leftIdx)}
+              className="absolute left-1 sm:left-6 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 border border-gray-200/90 shadow-xl text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer hover:scale-105"
               aria-label="Previous remedy"
             >
               <ChevronLeft size={22} />
             </button>
 
             <button
-              onClick={() => setActiveIdx((prev) => (prev === products.length - 1 ? 0 : prev + 1))}
-              className="absolute right-1 sm:right-6 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 border border-gray-200 shadow-xl text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer hover:scale-110"
+              onClick={() => handleProductSelect(rightIdx)}
+              className="absolute right-1 sm:right-6 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 border border-gray-200/90 shadow-xl text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer hover:scale-105"
               aria-label="Next remedy"
             >
               <ChevronRight size={22} />
@@ -101,8 +110,8 @@ export default function Home() {
               {/* Left Flank Bottle Preview */}
               <button
                 key={leftProduct.slug}
-                onClick={() => setActiveIdx(leftIdx)}
-                className="group relative flex-col items-center justify-end hidden sm:flex opacity-50 hover:opacity-100 transition-all duration-500 scale-90 hover:scale-95 cursor-pointer animate-float-1"
+                onClick={() => handleProductSelect(leftIdx)}
+                className="group relative flex-col items-center justify-end hidden sm:flex opacity-40 hover:opacity-100 transition-all duration-500 scale-85 hover:scale-95 cursor-pointer animate-float-1"
                 aria-label={`View ${leftProduct.name}`}
               >
                 <Image
@@ -110,7 +119,7 @@ export default function Home() {
                   alt={leftProduct.name}
                   width={240}
                   height={320}
-                  className="w-[110px] lg:w-[140px] h-auto object-contain mix-blend-multiply drop-shadow-md group-hover:drop-shadow-xl transition-all"
+                  className="w-[110px] lg:w-[140px] h-auto object-contain mix-blend-multiply drop-shadow-md transition-all"
                 />
                 <span className="font-mono text-[9px] uppercase tracking-widest text-gray-500 font-bold mt-2 bg-white/90 border border-gray-200 px-2 py-0.5 rounded-md shadow-xs">
                   0{leftIdx + 1} · {leftProduct.name}
@@ -118,12 +127,13 @@ export default function Home() {
               </button>
 
               {/* Center Active 3D WebGL Interactive Bottle Canvas */}
-              <div className="relative z-20 w-[240px] sm:w-[320px] h-[320px] sm:h-[400px]">
+              <div className={`relative z-20 w-[240px] sm:w-[320px] h-[320px] sm:h-[400px] transition-all duration-500 ${isSwitching ? "scale-90 opacity-40 blur-xs" : "scale-100 opacity-100"}`}>
                 <Bottle3DCanvas
                   key={activeProduct.slug}
                   productSlug={activeProduct.slug}
                   productName={activeProduct.name}
                   onBottleClick={() => setActiveModalProduct(activeProduct)}
+                  onUserInteract={() => setHasInteracted(true)}
                 />
 
                 {/* Sanskrit Devanagari Floating Pill */}
@@ -137,8 +147,8 @@ export default function Home() {
               {/* Right Flank Bottle Preview */}
               <button
                 key={rightProduct.slug}
-                onClick={() => setActiveIdx(rightIdx)}
-                className="group relative flex-col items-center justify-end hidden sm:flex opacity-50 hover:opacity-100 transition-all duration-500 scale-90 hover:scale-95 cursor-pointer animate-float-2"
+                onClick={() => handleProductSelect(rightIdx)}
+                className="group relative flex-col items-center justify-end hidden sm:flex opacity-40 hover:opacity-100 transition-all duration-500 scale-85 hover:scale-95 cursor-pointer animate-float-2"
                 aria-label={`View ${rightProduct.name}`}
               >
                 <Image
@@ -146,7 +156,7 @@ export default function Home() {
                   alt={rightProduct.name}
                   width={240}
                   height={320}
-                  className="w-[110px] lg:w-[140px] h-auto object-contain mix-blend-multiply drop-shadow-md group-hover:drop-shadow-xl transition-all"
+                  className="w-[110px] lg:w-[140px] h-auto object-contain mix-blend-multiply drop-shadow-md transition-all"
                 />
                 <span className="font-mono text-[9px] uppercase tracking-widest text-gray-500 font-bold mt-2 bg-white/90 border border-gray-200 px-2 py-0.5 rounded-md shadow-xs">
                   0{rightIdx + 1} · {rightProduct.name}
@@ -155,17 +165,17 @@ export default function Home() {
 
             </div>
 
-            {/* Touch Control Helper Pill */}
-            <div className="pt-2 font-mono text-[10px] text-gray-500 uppercase tracking-widest flex items-center gap-3">
-              <span>👆 Touch + Drag: Rotate 3D Bottle</span>
-              <span>•</span>
-              <span>🤏 Pinch: Zoom</span>
+            {/* 360° Interaction Hint Pill (Auto Fades Out on Touch/Drag) */}
+            <div className={`pt-2 font-mono text-[10px] text-gray-500 uppercase tracking-widest flex items-center gap-2 transition-opacity duration-700 ${hasInteracted ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+              <span className="bg-white/90 border border-gray-200 px-3 py-1 rounded-full shadow-xs">
+                ↔ DRAG TO ROTATE · PINCH TO ZOOM
+              </span>
             </div>
 
-            {/* Pedestal Stand Shadow */}
+            {/* Pedestal Ground Shadow */}
             <div
               aria-hidden="true"
-              className="mt-4 h-4 w-[240px] sm:w-[360px] rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(17,19,21,0.2),transparent_70%)] animate-pulse"
+              className="mt-3 h-4 w-[240px] sm:w-[360px] rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(17,19,21,0.18),transparent_70%)]"
             />
           </div>
 
@@ -174,20 +184,20 @@ export default function Home() {
             {activeProduct.tagline} · {activeProduct.unitsPerPack} TABLETS
           </p>
 
-          {/* Santioni Glassmorphism Action Buttons */}
-          <div className="flex flex-row items-center justify-center gap-3 pt-2">
+          {/* Santioni Action Buttons with Arrow Micro-interaction */}
+          <div className="flex flex-row items-center justify-center gap-3 pt-3">
             <Link
               href={`/products/${activeProduct.slug}`}
-              className="bg-[#111315] text-white hover:bg-[#c44900] px-8 py-3.5 rounded-full font-mono text-xs font-bold uppercase tracking-widest transition-all shadow-xl hover:scale-105 flex items-center gap-2 cursor-pointer"
+              className="group bg-[#111315] text-white hover:bg-[#c44900] px-8 py-3.5 rounded-full font-mono text-xs font-bold uppercase tracking-widest transition-all shadow-xl flex items-center gap-2 cursor-pointer"
             >
               <span>EXPLORE {activeProduct.name}</span>
-              <ArrowRight size={14} />
+              <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
             </Link>
             <a
               href="https://wa.me/918360053594"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center gap-2 text-[#111315] hover:text-[#c44900] hover:border-[#c44900] bg-white border border-gray-300 px-7 py-3.5 rounded-full font-mono text-xs font-bold uppercase tracking-widest transition-all shadow-xs hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 text-[#111315] hover:text-[#c44900] hover:border-[#c44900] bg-white border border-gray-300 px-7 py-3.5 rounded-full font-mono text-xs font-bold uppercase tracking-widest transition-all shadow-xs hover:scale-102"
             >
               <WhatsAppIcon size={15} className="text-[#25D366]" />
               <span>CONSULT DOCTOR</span>
@@ -195,13 +205,13 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Santioni Numbered Product Wheel Selector (Bottom Dock) */}
-        <div className="z-10 flex items-center justify-center gap-2 sm:gap-4 border-t border-gray-200/80 pt-4">
+        {/* Santioni Product Navigation Rail (Bottom Dock) */}
+        <div className="z-10 flex items-center justify-center gap-1.5 sm:gap-3 border-t border-gray-200/80 pt-4 max-w-4xl mx-auto w-full">
           {products.map((p, index) => (
             <button
               key={p.slug}
-              onClick={() => setActiveIdx(index)}
-              className={`font-mono text-xs px-3.5 py-1.5 rounded-full border transition-all cursor-pointer ${
+              onClick={() => handleProductSelect(index)}
+              className={`font-mono text-xs px-3 sm:px-4 py-1.5 rounded-full border transition-all cursor-pointer ${
                 activeIdx === index
                   ? "bg-[#111315] text-white border-[#111315] font-bold shadow-md scale-105"
                   : "bg-white/80 text-gray-500 border-gray-200 hover:border-[#c44900] hover:text-[#c44900]"
