@@ -367,51 +367,6 @@ export default function Home() {
       {/* ── 6 · THE OPEN FORMULARY ENGINE (INTERACTIVE COMPOSITION SELECTOR) ──── */}
       <FormularySection />
 
-      {/* ── 6b · ON THE PACK (LABEL PHOTOGRAPHY) ──────────────────────────────
-          The formulary table above is a claim about disclosure. This is the
-          evidence for it: the actual printed pack, so a buyer can check that
-          what the site publishes is what the label says. Photography only —
-          every therapeutic claim stays in the product's own copy, and none of
-          it is restated here as site voice. */}
-      <Reveal as="section" className="shell py-6 sm:py-12 border-b border-gray-100">
-        <div className="text-left max-w-2xl mb-5">
-          <span className="eyebrow text-[var(--ochre)] font-bold text-xs">THE PHYSICAL PACK</span>
-          <h2 className="font-serif h3 text-[#111315] font-bold mt-0.5">
-            What the label actually says.
-          </h2>
-          <p className="text-xs sm:text-sm text-gray-600 mt-1 leading-relaxed">
-            Every carton carries the Sanskrit and Devanagari name, the batch
-            details and the AYUSH licence number. Compare it against the
-            composition published above — they are the same document.
-          </p>
-        </div>
-
-        <div className="flex gap-3.5 overflow-x-auto no-scrollbar rail-mask snap-x snap-mandatory pb-3 -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
-          {products.map((p) => (
-            <figure
-              key={p.slug}
-              className="card-press w-[240px] sm:w-[300px] shrink-0 snap-start overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs"
-            >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-50">
-                <Image
-                  src={`/labels/${p.slug}-label.jpg`}
-                  alt={`Printed label detail for ${p.name}`}
-                  fill
-                  sizes="(max-width: 640px) 240px, 300px"
-                  className="object-cover"
-                />
-              </div>
-              <figcaption className="flex items-center justify-between gap-2 px-3 py-2.5 border-t border-gray-100">
-                <span className="font-serif text-sm font-bold text-[#111315]">{p.name}</span>
-                <span className="font-deva text-[13px] font-bold text-[var(--ochre)]">
-                  {p.devanagari}
-                </span>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </Reveal>
-
       {/* ── 7 · MANUFACTURING 6 STEPS (HORIZONTAL SWIPE CAROUSEL) ─────────────── */}
       <Reveal as="section" className="shell py-6 sm:py-12 border-b border-gray-100">
         <div className="text-left max-w-xl mb-4">
