@@ -1,13 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
-import { 
-  ArrowRight, 
-  ShieldCheck, 
-  FileText, 
-  Award, 
-  Microchip, 
+import {
+  ArrowRight,
+  ShieldCheck,
+  FileText,
+  Award,
+  Microchip,
   ChevronRight,
-  Star
+  Star,
+  Beaker,
+  Leaf
 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Accordion } from "@/components/ui/Disclosure";
@@ -241,14 +243,17 @@ export default function Home() {
 
               {/* Quality Badges */}
               <div className="flex flex-wrap gap-2 pt-1 font-mono text-[10px] sm:text-xs font-bold text-[#111315]">
-                <span className="bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs">
-                  🔬 NABL Lab Tested
+                <span className="inline-flex items-center gap-1.5 bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs">
+                  <Beaker size={13} className="shrink-0" />
+                  NABL Lab Tested
                 </span>
-                <span className="bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs">
-                  🛡️ Schedule T GMP
+                <span className="inline-flex items-center gap-1.5 bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs">
+                  <ShieldCheck size={13} className="shrink-0" />
+                  Schedule T GMP
                 </span>
-                <span className="bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs text-[var(--safe)]">
-                  🌿 100% Heavy Metal Free
+                <span className="inline-flex items-center gap-1.5 bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs text-[var(--safe)]">
+                  <Leaf size={13} className="shrink-0" />
+                  100% Heavy Metal Free
                 </span>
               </div>
 
