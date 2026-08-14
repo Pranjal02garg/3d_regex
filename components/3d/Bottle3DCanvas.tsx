@@ -21,61 +21,61 @@ const PRODUCT_LABELS: Record<string, { hindi: string; concern: string; color: st
 
 function createProceduralLabelCanvas(slug: string, name: string): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
-  canvas.width = 1024;
-  canvas.height = 512;
+  canvas.width = 2048;
+  canvas.height = 1024;
   const ctx = canvas.getContext("2d");
 
   const meta = PRODUCT_LABELS[slug] || { hindi: name, concern: "BOTANICAL FORMULATION", color: "#c44900", tagline: "Classical Botanical Remedy" };
 
   if (ctx) {
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, 1024, 512);
+    ctx.fillRect(0, 0, 2048, 1024);
 
     ctx.strokeStyle = "#e2dacd";
-    ctx.lineWidth = 12;
-    ctx.strokeRect(12, 12, 1000, 488);
+    ctx.lineWidth = 24;
+    ctx.strokeRect(24, 24, 2000, 976);
 
     ctx.fillStyle = meta.color;
-    ctx.fillRect(20, 20, 984, 75);
+    ctx.fillRect(40, 40, 1968, 150);
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 34px sans-serif";
+    ctx.font = "bold 68px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(`${meta.hindi}  •  ${meta.concern}`, 512, 68);
+    ctx.fillText(`${meta.hindi}  •  ${meta.concern}`, 1024, 136);
 
     ctx.fillStyle = "#111315";
-    ctx.font = "bold 26px sans-serif";
-    ctx.fillText("REGEX REMEDIES", 512, 140);
+    ctx.font = "bold 52px sans-serif";
+    ctx.fillText("REGEX REMEDIES", 1024, 280);
 
     ctx.fillStyle = "#6f6a62";
-    ctx.font = "16px sans-serif";
-    ctx.fillText("AYUSH LIC. PB/AY/000000  •  GMP CERTIFIED", 512, 168);
+    ctx.font = "32px sans-serif";
+    ctx.fillText("AYUSH LIC. PB/AY/000000  •  GMP CERTIFIED FACILITY", 1024, 336);
 
     ctx.strokeStyle = "#c44900";
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 8;
     ctx.beginPath();
-    ctx.moveTo(180, 190);
-    ctx.lineTo(844, 190);
+    ctx.moveTo(360, 380);
+    ctx.lineTo(1688, 380);
     ctx.stroke();
 
     ctx.fillStyle = "#111315";
-    ctx.font = "900 68px serif";
-    ctx.fillText(name.toUpperCase(), 512, 280);
+    ctx.font = "900 136px serif";
+    ctx.fillText(name.toUpperCase(), 1024, 560);
 
     ctx.fillStyle = "#4a453e";
-    ctx.font = "italic 22px serif";
-    ctx.fillText(`"${meta.tagline}"`, 512, 330);
+    ctx.font = "italic 44px serif";
+    ctx.fillText(`"${meta.tagline}"`, 1024, 660);
 
     ctx.fillStyle = "#f4d800";
-    ctx.fillRect(20, 380, 984, 112);
+    ctx.fillRect(40, 760, 1968, 224);
 
     ctx.fillStyle = "#111315";
-    ctx.font = "bold 26px sans-serif";
-    ctx.fillText("100% BOTANICAL FORMULATION", 512, 430);
+    ctx.font = "bold 52px sans-serif";
+    ctx.fillText("100% BOTANICAL FORMULATION", 1024, 860);
 
-    ctx.font = "bold 20px monospace";
+    ctx.font = "bold 40px monospace";
     ctx.fillStyle = "#111315";
-    ctx.fillText("SCHEDULE T GMP  •  NABL LAB TESTED  •  24 TABLETS", 512, 466);
+    ctx.fillText("SCHEDULE T GMP  •  NABL LAB TESTED  •  24 TABLETS", 1024, 932);
   }
 
   const texture = new THREE.CanvasTexture(canvas);
@@ -107,7 +107,7 @@ export default function Bottle3DCanvas({
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // 1. Three.js Scene Setup
+    // 1. Three.js Scene & Renderer Setup
     const scene = new THREE.Scene();
     const width = container.clientWidth || 340;
     const height = container.clientHeight || 420;
@@ -126,48 +126,78 @@ export default function Bottle3DCanvas({
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0; // Standard exposure to prevent washing out black plastic
+    renderer.toneMappingExposure = 1.0;
 
     container.appendChild(renderer.domElement);
 
-    // 2. DEDICATED HEROLIGHTING SETUP (Fixed in World Space)
-    // Soft Ambient Light
+    // 2. PHOTOREALISTIC STUDIO LIGHTING SETUP (Fixed in World Space)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
     scene.add(ambientLight);
 
-    // PRIMARY OVERHEAD LARGE SOFT KEY LIGHT (Softbox Overhead - 100% conceptual weight)
-    const keyLight = new THREE.DirectionalLight(0xfffdfa, 0.0); // Starts at 0, ramps smoothly to 1.6
+    // Primary Overhead Large Soft Key Light (Softbox Overhead)
+    const keyLight = new THREE.DirectionalLight(0xfffdfa, 0.0);
     keyLight.position.set(0.8, 4.2, 2.2);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
     keyLight.shadow.mapSize.height = 1024;
     scene.add(keyLight);
 
-    // SUBTLE RIM LIGHT (15-20% ratio for edge separation from parchment background)
+    // Subtle Rim Light for Back Edge Separation
     const rimLight = new THREE.DirectionalLight(0xfff5eb, 0.35);
     rimLight.position.set(-3.2, 2.5, -2.5);
     scene.add(rimLight);
 
-    // WEAK FRONT FILL LIGHT (15-20% ratio to keep product label crisp & un-overexposed)
+    // Soft Front Fill Light for Label Clarity
     const fillLight = new THREE.DirectionalLight(0xffffff, 0.22);
     fillLight.position.set(-1.5, 0.5, 3.8);
     scene.add(fillLight);
 
-    // Subtle Ground Bounce Light
+    // Ground Bounce Light
     const bounceLight = new THREE.DirectionalLight(0xf4efe6, 0.2);
     bounceLight.position.set(0, -4, 2);
     scene.add(bounceLight);
 
-    // 3. Build High-Precision Glossy Black Bottle Group
+    // 3. EXACT PHYSICAL RECONSTRUCTION OF KABZRAJ BOTTLE GEOMETRY
     const bottleGroup = new THREE.Group();
 
-    // Bottle Body Geometry
-    const bodyGeometry = new THREE.CylinderGeometry(0.75, 0.75, 1.65, 64);
+    // High-Precision Lathed Profile (Base -> Cylindrical Body -> Shoulder Curve -> Neck -> Ring)
+    const profilePoints: THREE.Vector2[] = [
+      new THREE.Vector2(0.0, -0.92),
+      new THREE.Vector2(0.68, -0.92), // Curved base bevel start
+      new THREE.Vector2(0.78, -0.82), // Base curve transition
+      new THREE.Vector2(0.78, 0.52),  // Top of main body
+      new THREE.Vector2(0.76, 0.66),  // Shoulder curve stage 1
+      new THREE.Vector2(0.68, 0.80),  // Shoulder curve stage 2
+      new THREE.Vector2(0.56, 0.92),  // Shoulder to neck transition
+      new THREE.Vector2(0.52, 0.96),  // Neck base
+      new THREE.Vector2(0.56, 1.02),  // Security collar ring
+      new THREE.Vector2(0.52, 1.08),  // Neck top under cap
+      new THREE.Vector2(0.0, 1.08),   // Top inner seal
+    ];
 
-    // Product Label Texture
+    const bodyGeometry = new THREE.LatheGeometry(profilePoints, 64);
+    bodyGeometry.computeVertexNormals();
+
+    // Deep Glossy Jet Black Plastic Material
+    const bodyMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x08090c,
+      roughness: 0.28,
+      metalness: 0.0,
+      clearcoat: 0.65,
+      clearcoatRoughness: 0.22,
+      reflectivity: 0.75,
+    });
+
+    const bottleBody = new THREE.Mesh(bodyGeometry, bodyMaterial);
+    bottleBody.castShadow = true;
+    bottleBody.receiveShadow = true;
+    bottleGroup.add(bottleBody);
+
+    // Front Product Label Geometry (Exact Curvature Wrap & Position)
+    const labelGeometry = new THREE.CylinderGeometry(0.785, 0.785, 1.34, 64, 1, true, -Math.PI / 2.2, Math.PI / 1.1);
     const labelTexture = createProceduralLabelCanvas(productSlug, productName);
     
-    // Attempt Image Texture Load
+    // Texture Loader with SRGB Color Space
     const textureLoader = new THREE.TextureLoader();
     textureLoader.load(
       `/products/${productSlug}.png`,
@@ -182,23 +212,6 @@ export default function Bottle3DCanvas({
       () => setLoading(false)
     );
 
-    // DEEP GLOSSY JET BLACK PLASTIC MATERIAL (NOT Grey, NOT Metallic)
-    const bodyMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x08090c, // Pure Deep Jet Black Plastic
-      roughness: 0.28,  // Soft realistic plastic sheen, NOT a harsh white vertical stripe
-      metalness: 0.0,   // Non-metallic plastic
-      clearcoat: 0.65,  // Restrained clearcoat
-      clearcoatRoughness: 0.22, // Broad, soft highlights across curvature
-      reflectivity: 0.75,
-    });
-
-    const bottleBody = new THREE.Mesh(bodyGeometry, bodyMaterial);
-    bottleBody.castShadow = true;
-    bottleBody.receiveShadow = true;
-    bottleGroup.add(bottleBody);
-
-    // Front Product Label Cylinder
-    const labelGeometry = new THREE.CylinderGeometry(0.76, 0.76, 1.45, 64, 1, true, -Math.PI / 2.2, Math.PI / 1.1);
     const labelMaterial = new THREE.MeshStandardMaterial({
       map: labelTexture,
       transparent: true,
@@ -207,17 +220,12 @@ export default function Bottle3DCanvas({
     });
 
     const labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
+    labelMesh.position.y = -0.15; // Centered over main cylindrical body
     bottleGroup.add(labelMesh);
 
-    // Bottle Neck & Cap
-    const neckGeometry = new THREE.CylinderGeometry(0.48, 0.68, 0.38, 32);
-    const neckMesh = new THREE.Mesh(neckGeometry, bodyMaterial);
-    neckMesh.position.y = 0.98;
-    bottleGroup.add(neckMesh);
-
-    // Ribbed Safety Cap Group (Deep Black Plastic with Subtle Ridge Highlights)
+    // Ribbed Safety Cap Group (Reconstructed per Physical Spec)
     const capGroup = new THREE.Group();
-    const capGeometry = new THREE.CylinderGeometry(0.52, 0.52, 0.36, 64);
+    const capGeometry = new THREE.CylinderGeometry(0.55, 0.56, 0.40, 64);
     const capMaterial = new THREE.MeshStandardMaterial({
       color: 0x121418,
       roughness: 0.30,
@@ -227,21 +235,21 @@ export default function Bottle3DCanvas({
     capMesh.castShadow = true;
     capGroup.add(capMesh);
 
-    // Vertical Cap Ridges
-    const ridgeGeo = new THREE.BoxGeometry(0.02, 0.34, 0.03);
+    // 32 Vertical Molded Plastic Cap Ridges
+    const ridgeGeo = new THREE.BoxGeometry(0.018, 0.38, 0.025);
     const ridgeMat = new THREE.MeshStandardMaterial({ color: 0x181b22, roughness: 0.32 });
     for (let i = 0; i < 32; i++) {
       const angle = (i / 32) * Math.PI * 2;
       const ridge = new THREE.Mesh(ridgeGeo, ridgeMat);
-      ridge.position.set(Math.cos(angle) * 0.525, 0, Math.sin(angle) * 0.525);
+      ridge.position.set(Math.cos(angle) * 0.562, 0, Math.sin(angle) * 0.562);
       ridge.rotation.y = -angle;
       capGroup.add(ridge);
     }
 
-    capGroup.position.y = 1.32;
+    capGroup.position.y = 1.28;
     bottleGroup.add(capGroup);
 
-    // Soft Contact Ground Drop Shadow (Subtle & Grounded)
+    // Soft Contact Ground Drop Shadow
     const shadowGeo = new THREE.PlaneGeometry(2.6, 2.6);
     const shadowMat = new THREE.MeshBasicMaterial({
       color: 0x111315,
@@ -251,12 +259,12 @@ export default function Bottle3DCanvas({
     });
     const shadowPlane = new THREE.Mesh(shadowGeo, shadowMat);
     shadowPlane.rotation.x = -Math.PI / 2;
-    shadowPlane.position.y = -1.15;
+    shadowPlane.position.y = -0.93;
     scene.add(shadowPlane);
 
     scene.add(bottleGroup);
 
-    // Phase 1 Entrance Animation Position
+    // Initial Position & Scale
     bottleGroup.position.y = -0.35;
     bottleGroup.scale.set(0.96, 0.96, 0.96);
 
@@ -357,7 +365,7 @@ export default function Bottle3DCanvas({
     domElement.addEventListener("touchend", onTouchEnd);
     domElement.addEventListener("wheel", onWheel, { passive: false });
 
-    // 5. Animation Timeline Loop (Key Light smooth fade-in 0 -> 1.6 over 1100ms)
+    // 5. Animation Timeline Loop (Key Light smooth fade-in 0 -> 1.6)
     let animationFrameId: number;
     const clock = new THREE.Clock();
 
@@ -365,7 +373,7 @@ export default function Bottle3DCanvas({
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Smooth Overhead Soft Key Light Fade-In (0 -> 1.6 intensity over 1100ms)
+      // Smooth Overhead Soft Key Light Fade-In
       if (keyLight.intensity < 1.6) {
         keyLight.intensity += (1.6 - keyLight.intensity) * 0.05;
       }
