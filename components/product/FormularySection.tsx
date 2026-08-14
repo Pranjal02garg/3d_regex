@@ -54,7 +54,9 @@ export default function FormularySection() {
                 {selectedProduct.classicalReference}
               </span>
             </div>
-            <FormulationTable product={selectedProduct} />
+            <div key={selectedSlug} className="animate-fade-in">
+              <FormulationTable product={selectedProduct} />
+            </div>
           </div>
         </div>
       </div>
