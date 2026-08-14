@@ -12,71 +12,6 @@ interface Bottle3DProps {
   onUserInteract?: () => void;
 }
 
-const PRODUCT_DETAILS: Record<
-  string,
-  {
-    hindi: string;
-    concern: string;
-    tagline: string;
-    accentColor: string;
-    yellowBandHindi: string;
-    ingredients: string[];
-    benefits: string[];
-    recommended: string[];
-  }
-> = {
-  kabzraj: {
-    hindi: "कबजरास",
-    concern: "BOWEL REGULATION",
-    tagline: "Classical Laxative & Constipation Relief Formulation",
-    accentColor: "#F4D800",
-    yellowBandHindi: "कबजरास",
-    ingredients: ["Senna", "Haritaki", "Baheda", "Amla", "Ajwain", "Saunf", "Triphala"],
-    benefits: ["Relieves Constipation", "Improves Bowel Movement", "Reduces Bloating & Gas", "Supports Gut Health", "Detoxifies System"],
-    recommended: ["Constipation", "Bloating", "Irregular Bowel"],
-  },
-  gasogex: {
-    hindi: "गैस-ओ-जेक्स",
-    concern: "DIGESTIVE CARE",
-    tagline: "Fast Relief from Bloating, Wind & Heavy Stomach",
-    accentColor: "#F4D800",
-    yellowBandHindi: "गैस-ओ-जेक्स",
-    ingredients: ["Hing", "Jeera", "Sounf", "Kala Namak", "Ajwain", "Pudina"],
-    benefits: ["Relieves Gas", "Reduces Bloating", "Eases Indigestion", "Calms Stomach"],
-    recommended: ["Acidity", "Gas & Flatulence", "Heavy Stomach"],
-  },
-  livgex: {
-    hindi: "लिवजेक्स",
-    concern: "LIVER PROTECTION",
-    tagline: "Herbal Liver Detox & Metabolic Support Formulation",
-    accentColor: "#F4D800",
-    yellowBandHindi: "लिवजेक्स",
-    ingredients: ["Bhumyamalaki", "Punarnava", "Katuki", "Kalmegh", "Makoy", "Kasani"],
-    benefits: ["Detoxifies Liver", "Improves Digestion", "Boosts Metabolism", "Protects Liver Cells"],
-    recommended: ["Fatty Liver", "Sluggish Metabolism", "Loss of Appetite"],
-  },
-  pilegex: {
-    hindi: "पाइलजेक्स",
-    concern: "PILES CARE",
-    tagline: "Soothing Relief for Anorectal Health & Pain Reduction",
-    accentColor: "#F4D800",
-    yellowBandHindi: "पाइलजेक्स",
-    ingredients: ["Suran", "Nagkesar", "Triphala", "Shuddha Guggulu", "Lajjalu"],
-    benefits: ["Reduces Pain & Swelling", "Controls Bleeding", "Promotes Healing", "Softens Stool"],
-    recommended: ["Haemorrhoids", "Fissures", "Anorectal Swelling"],
-  },
-  lucogex: {
-    hindi: "लुकोजेक्स",
-    concern: "WOMEN'S WELLNESS",
-    tagline: "Classical Herbal Remedy for Intimate Health & Vitality",
-    accentColor: "#F4D800",
-    yellowBandHindi: "लुकोजेक्स",
-    ingredients: ["Ashoka", "Lodhra", "Shatavari", "Dhataki", "Amalaki"],
-    benefits: ["Supports Intimate Health", "Balances Hormones", "Reduces Weakness", "Promotes Vitality"],
-    recommended: ["White Discharge", "Pelvic Discomfort", "General Weakness"],
-  },
-};
-
 // LOAD AND STITCH THE 4-VIEW REFERENCE LABELS (FRONT, LEFT, BACK, RIGHT) INTO A 2048x1024 360° TEXTURE
 function createStitched4ViewTexture(onTextureReady: (tex: THREE.CanvasTexture) => void): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
@@ -320,14 +255,25 @@ export default function Bottle3DCanvas({
     capGroup.position.y = 1.28;
     bottleGroup.add(capGroup);
 
-    // Attempt to load GLB model /models/kabzraj.glb if available
+    // Attempt to load GLB model /models/kabzraj.glb with Auto-Bounding Box Scale Normalization
     const gltfLoader = new GLTFLoader();
     gltfLoader.load(
       "/models/kabzraj.glb",
       (gltf) => {
         const model = gltf.scene;
-        model.scale.set(1.1, 1.1, 1.1);
-        model.position.set(0, -0.9, 0);
+
+        // Auto-Scale Model to fill stage at target height 2.6 units
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+
+        const targetHeight = 2.6;
+        const autoScale = targetHeight / (size.y || 1.0);
+        model.scale.setScalar(autoScale);
+
+        model.position.x = -center.x * autoScale;
+        model.position.y = -center.y * autoScale;
+        model.position.z = -center.z * autoScale;
 
         model.traverse((child) => {
           if ((child as THREE.Mesh).isMesh) {
@@ -345,7 +291,7 @@ export default function Bottle3DCanvas({
           }
         });
 
-        // Swap out fallback procedural bottle for GLB model
+        // Swap out fallback procedural bottle for auto-scaled GLB model
         bottleGroup.clear();
         bottleGroup.add(model);
         setLoading(false);
