@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 interface Bottle3DProps {
   productSlug: string;
@@ -76,217 +77,47 @@ const PRODUCT_DETAILS: Record<
   },
 };
 
-// FULL 360° HIGH-ACCURACY PRODUCT LABEL CANVAS GENERATOR
-function create360LabelCanvas(slug: string, name: string): THREE.CanvasTexture {
+// LOAD AND STITCH THE 4-VIEW REFERENCE LABELS (FRONT, LEFT, BACK, RIGHT) INTO A 2048x1024 360° TEXTURE
+function createStitched4ViewTexture(onTextureReady: (tex: THREE.CanvasTexture) => void): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   canvas.width = 2048;
   canvas.height = 1024;
   const ctx = canvas.getContext("2d");
 
-  const meta = PRODUCT_DETAILS[slug] || PRODUCT_DETAILS.kabzraj;
+  const canvasTexture = new THREE.CanvasTexture(canvas);
+  canvasTexture.colorSpace = THREE.SRGBColorSpace;
 
-  if (ctx) {
-    // Background Split: Top 54% White, Bottom 46% Vivid Yellow
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, 2048, 550);
+  if (!ctx) return canvasTexture;
 
-    ctx.fillStyle = meta.accentColor;
-    ctx.fillRect(0, 550, 2048, 474);
+  // Background white & yellow fill default
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, 2048, 550);
+  ctx.fillStyle = "#F4D800";
+  ctx.fillRect(0, 550, 2048, 474);
 
-    // ── SECTION 1: FRONT PANEL (x: 0 → 512) ───────────────────────────
-    ctx.save();
-    ctx.translate(0, 0);
+  const sources = [
+    { src: "/textures/label_front.png", x: 0 },
+    { src: "/textures/label_left.png", x: 512 },
+    { src: "/textures/label_back.png", x: 1024 },
+    { src: "/textures/label_right.png", x: 1536 },
+  ];
 
-    // Mortar & Pestle Circular Logo
-    ctx.strokeStyle = "#111315";
-    ctx.lineWidth = 6;
-    ctx.beginPath();
-    ctx.arc(256, 160, 80, 0, Math.PI * 2);
-    ctx.stroke();
+  let loadedCount = 0;
+  sources.forEach((item) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      ctx.drawImage(img, item.x, 0, 512, 1024);
+      loadedCount++;
+      canvasTexture.needsUpdate = true;
+      if (loadedCount === sources.length) {
+        onTextureReady(canvasTexture);
+      }
+    };
+    img.src = item.src;
+  });
 
-    ctx.fillStyle = "#111315";
-    ctx.font = "bold 20px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("REGEX", 256, 145);
-    ctx.font = "bold 14px sans-serif";
-    ctx.fillText("REMEDIES", 256, 175);
-
-    // Main Brand Headline
-    ctx.font = "900 76px serif";
-    ctx.fillText(name.toUpperCase(), 256, 360);
-
-    // Yellow Section: Hindi Title + Toilet Illustration + 3 Green Badges
-    ctx.fillStyle = "#111315";
-    ctx.font = "900 68px sans-serif";
-    ctx.fillText(meta.yellowBandHindi, 256, 640);
-
-    // Toilet Seat Illustration Placeholder Circle
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.arc(130, 800, 75, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "#111315";
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    ctx.fillStyle = "#c44900";
-    ctx.font = "bold 24px sans-serif";
-    ctx.fillText("HERBAL", 130, 795);
-    ctx.font = "bold 18px sans-serif";
-    ctx.fillText("FORMULA", 130, 820);
-
-    // 3 Green Badges
-    const badgeX = 230;
-    const badges = ["• No More Acidity", "• Strengthen Digestion", "• No Gas & Cures Gut-Pain"];
-    badges.forEach((b, i) => {
-      ctx.fillStyle = "#0d5c3a";
-      ctx.beginPath();
-      ctx.roundRect(badgeX, 720 + i * 55, 260, 44, 22);
-      ctx.fill();
-
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 18px sans-serif";
-      ctx.textAlign = "left";
-      ctx.fillText(b, badgeX + 16, 748 + i * 55);
-    });
-
-    ctx.restore();
-
-    // ── SECTION 2: LEFT PANEL / INGREDIENTS (x: 512 → 1024) ─────────
-    ctx.save();
-    ctx.translate(512, 0);
-
-    // White Top: Ingredients List
-    ctx.fillStyle = "#111315";
-    ctx.font = "bold 32px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("Ingredients:", 60, 100);
-
-    ctx.font = "500 24px sans-serif";
-    meta.ingredients.forEach((ing, i) => {
-      ctx.fillText(ing, 60, 150 + i * 36);
-    });
-
-    // Yellow Bottom: Features & Recommended For
-    ctx.font = "bold 24px sans-serif";
-    ctx.fillText("• Ayurvedic", 60, 610);
-    ctx.fillText("• Natural Laxative", 60, 650);
-    ctx.fillText("• Safe & Effective", 60, 690);
-
-    ctx.font = "bold 28px sans-serif";
-    ctx.fillText("Recommended For:", 60, 760);
-
-    ctx.font = "500 24px sans-serif";
-    meta.recommended.forEach((rec, i) => {
-      ctx.fillText(`• ${rec}`, 60, 805 + i * 40);
-    });
-
-    ctx.restore();
-
-    // ── SECTION 3: BACK PANEL / DOSAGE & BARCODE (x: 1024 → 1536) ─────
-    ctx.save();
-    ctx.translate(1024, 0);
-
-    // White Top: Dosage & Caution
-    ctx.fillStyle = "#111315";
-    ctx.font = "bold 30px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("Dosage:", 60, 90);
-    ctx.font = "400 20px sans-serif";
-    ctx.fillText("Take 1–2 capsules at night", 60, 125);
-    ctx.fillText("with lukewarm water or as", 60, 155);
-    ctx.fillText("directed by your physician.", 60, 185);
-
-    ctx.font = "bold 30px sans-serif";
-    ctx.fillText("Caution:", 60, 250);
-    ctx.font = "400 20px sans-serif";
-    ctx.fillText("• Keep out of reach of children.", 60, 285);
-    ctx.fillText("• Store in a cool, dry place.", 60, 315);
-    ctx.fillText("• Do not use if seal is broken.", 60, 345);
-    ctx.fillText("• For internal use only.", 60, 375);
-
-    // Yellow Bottom: Manufactured For, Badges & Barcode
-    ctx.font = "bold 22px sans-serif";
-    ctx.fillText("Manufactured for:", 60, 600);
-    ctx.font = "bold 28px serif";
-    ctx.fillText("Regex Remedies", 60, 635);
-    ctx.font = "italic 18px serif";
-    ctx.fillText("Heal Naturally. Live Better.", 60, 665);
-
-    // Circular GMP Badge
-    ctx.strokeStyle = "#111315";
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.arc(100, 750, 42, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.font = "bold 16px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("GMP", 100, 755);
-
-    // Circular 100% Natural Badge
-    ctx.beginPath();
-    ctx.arc(210, 750, 42, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.fillText("100%", 210, 745);
-    ctx.fillText("NATURAL", 210, 765);
-
-    // EAN-13 Vertical Barcode Lines
-    ctx.fillStyle = "#111315";
-    ctx.fillRect(320, 600, 120, 240);
-    ctx.fillStyle = "#ffffff";
-    for (let b = 0; b < 12; b++) {
-      ctx.fillRect(330 + b * 9, 610, 4, 220);
-    }
-    ctx.fillStyle = "#111315";
-    ctx.font = "bold 14px monospace";
-    ctx.textAlign = "center";
-    ctx.fillText("8 904195 453788", 380, 860);
-
-    ctx.restore();
-
-    // ── SECTION 4: RIGHT PANEL / BENEFITS & BATCH (x: 1536 → 2048) ────
-    ctx.save();
-    ctx.translate(1536, 0);
-
-    // White Top: Benefits List
-    ctx.fillStyle = "#111315";
-    ctx.font = "bold 32px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("Benefits:", 60, 90);
-
-    ctx.font = "500 22px sans-serif";
-    meta.benefits.forEach((ben, i) => {
-      ctx.fillText(`✔  ${ben}`, 60, 140 + i * 40);
-    });
-
-    // Yellow Bottom: Batch Details & MRP
-    ctx.font = "bold 22px monospace";
-    ctx.fillText("Batch No. : KR-001", 60, 610);
-    ctx.fillText("Mfg. Date : JAN 2025", 60, 650);
-    ctx.fillText("Exp. Date : DEC 2027", 60, 690);
-    ctx.fillText("MRP       : ₹499/-", 60, 730);
-    ctx.font = "16px sans-serif";
-    ctx.fillText("(Incl. of all taxes)", 240, 730);
-
-    ctx.font = "bold 26px sans-serif";
-    ctx.fillText("60 Capsules", 60, 810);
-
-    // Green Veg Square Badge (Green Dot in Square)
-    ctx.strokeStyle = "#0d5c3a";
-    ctx.lineWidth = 4;
-    ctx.strokeRect(320, 780, 40, 40);
-    ctx.fillStyle = "#0d5c3a";
-    ctx.beginPath();
-    ctx.arc(340, 800, 12, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.restore();
-  }
-
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.needsUpdate = true;
-  return texture;
+  return canvasTexture;
 }
 
 // CAP TOP EMBOSSED REGEX LOGO CANVAS
@@ -393,7 +224,7 @@ export default function Bottle3DCanvas({
     bounceLight.position.set(0, -4, 2);
     scene.add(bounceLight);
 
-    // 3. EXACT PHYSICAL RECONSTRUCTION OF KABZRAJ BOTTLE GEOMETRY
+    // 3. High-Precision Bottle Group
     const bottleGroup = new THREE.Group();
 
     // High-Precision Lathed Profile (Base -> Cylindrical Body -> Shoulder Curve -> Neck -> Ring)
@@ -429,31 +260,22 @@ export default function Bottle3DCanvas({
     bottleBody.receiveShadow = true;
     bottleGroup.add(bottleBody);
 
-    // Full 360° Wrap Product Label Geometry
+    // Full 360° Stitched 4-View Label Geometry (label_front, label_left, label_back, label_right)
     const labelGeometry = new THREE.CylinderGeometry(0.785, 0.785, 1.34, 64, 1, true, 0, Math.PI * 2);
-    const labelTexture = create360LabelCanvas(productSlug, productName);
-    
-    // Texture Loader with SRGB Color Space
-    const textureLoader = new THREE.TextureLoader();
-    textureLoader.load(
-      `/products/${productSlug}.png`,
-      (imgTex) => {
-        imgTex.colorSpace = THREE.SRGBColorSpace;
-        imgTex.needsUpdate = true;
-        labelMaterial.map = imgTex;
-        labelMaterial.needsUpdate = true;
-        setLoading(false);
-      },
-      undefined,
-      () => setLoading(false)
-    );
 
     const labelMaterial = new THREE.MeshStandardMaterial({
-      map: labelTexture,
       transparent: true,
       roughness: 0.25,
       metalness: 0.0,
     });
+
+    // Create & Stitch the 4-View PNG Textures
+    const stitchedTexture = createStitched4ViewTexture((tex) => {
+      labelMaterial.map = tex;
+      labelMaterial.needsUpdate = true;
+      setLoading(false);
+    });
+    labelMaterial.map = stitchedTexture;
 
     const labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
     labelMesh.position.y = -0.15; // Centered over main cylindrical body
@@ -497,6 +319,40 @@ export default function Bottle3DCanvas({
 
     capGroup.position.y = 1.28;
     bottleGroup.add(capGroup);
+
+    // Attempt to load GLB model /models/kabzraj.glb if available
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load(
+      "/models/kabzraj.glb",
+      (gltf) => {
+        const model = gltf.scene;
+        model.scale.set(1.1, 1.1, 1.1);
+        model.position.set(0, -0.9, 0);
+
+        model.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) {
+            const mesh = child as THREE.Mesh;
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+
+            // Apply stitched texture if material is label
+            if (mesh.name.toLowerCase().includes("label") || mesh.name.toLowerCase().includes("material")) {
+              if (mesh.material) {
+                (mesh.material as THREE.MeshStandardMaterial).map = stitchedTexture;
+                (mesh.material as THREE.MeshStandardMaterial).needsUpdate = true;
+              }
+            }
+          }
+        });
+
+        // Swap out fallback procedural bottle for GLB model
+        bottleGroup.clear();
+        bottleGroup.add(model);
+        setLoading(false);
+      },
+      undefined,
+      (err) => console.log("Using High-Precision Profile Fallback Mesh:", err)
+    );
 
     // Soft Contact Ground Drop Shadow
     const shadowGeo = new THREE.PlaneGeometry(2.6, 2.6);
