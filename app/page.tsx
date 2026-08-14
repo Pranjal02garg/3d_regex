@@ -33,36 +33,37 @@ export default function Home() {
       <section className="relative min-h-[92vh] flex flex-col justify-between overflow-hidden border-b border-white/10 bg-[radial-gradient(ellipse_at_top,rgba(28,35,44,0.8),#111315)] pt-12 pb-8 px-4 sm:px-6 lg:px-8">
         
         {/* Ambient Warm Glow */}
-        <div aria-hidden="true" className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-[#c4923e]/10 blur-[120px] pointer-events-none" />
+        <div aria-hidden="true" className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[650px] h-[380px] bg-[#c4923e]/15 blur-[120px] pointer-events-none animate-glow-pulse" />
 
         {/* Header Tag */}
         <div className="text-center pt-4 z-10">
-          <span className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs font-bold tracking-[0.3em] text-[#c4923e] uppercase border border-[#c4923e]/30 px-3.5 py-1 rounded-full bg-[#111315]/80 backdrop-blur-md">
-            <Sparkles size={12} className="text-[#c4923e]" />
+          <span className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs font-bold tracking-[0.3em] text-[#c4923e] uppercase border border-[#c4923e]/30 px-3.5 py-1 rounded-full bg-[#111315]/80 backdrop-blur-md shadow-lg">
+            <Sparkles size={12} className="text-[#c4923e] animate-pulse" />
             01 · THE SCIENCE OF BOTANICAL AYURVEDA
           </span>
         </div>
 
         {/* Center Stage Title & Bottle Showcase */}
         <div className="my-auto z-10 text-center max-w-5xl mx-auto space-y-6">
-          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white uppercase leading-none">
+          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white uppercase leading-none drop-shadow-md">
             NATURAL REMEDIES FOR A BETTER YOU
           </h1>
           <p className="text-xs sm:text-base text-gray-300 max-w-xl mx-auto font-sans leading-relaxed">
             Classical, lab-tested botanical formulations manufactured in our Schedule T GMP certified facility. 100% transparent ingredients, zero heavy metals.
           </p>
 
-          {/* Interactive 5-Bottle Center Stage Display */}
+          {/* Santioni-Style Interactive 5-Bottle 3D Floating Stage Display */}
           <div className="pt-4 pb-2">
             <div className="flex items-end justify-center gap-2 sm:gap-4 max-w-2xl mx-auto">
               {products.map((p, i) => {
                 const centre = (products.length - 1) / 2;
                 const lift = (1 - Math.abs(i - centre) / centre) * 16;
+                const animClass = i === 2 ? "animate-float-center" : (i % 2 === 0 ? "animate-float-1" : "animate-float-2");
                 return (
                   <button
                     key={p.slug}
                     onClick={() => setActiveProduct(p)}
-                    className="group relative flex-1 focus:outline-none transition-transform hover:scale-110 cursor-pointer"
+                    className={`group relative flex-1 focus:outline-none transition-all duration-300 hover:scale-125 hover:z-30 cursor-pointer ${animClass}`}
                     style={{ marginBottom: `${lift}px`, maxWidth: "20%" }}
                   >
                     <Image
@@ -71,9 +72,9 @@ export default function Home() {
                       width={400}
                       height={500}
                       priority={i < 3}
-                      className="w-full h-auto object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.7)] group-hover:drop-shadow-[0_20px_30px_rgba(196,146,62,0.4)] transition-all"
+                      className="w-full h-auto object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)] group-hover:drop-shadow-[0_25px_35px_rgba(196,146,62,0.6)] transition-all"
                     />
-                    <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 left-1/2 -translate-x-1/2 font-mono text-[9px] uppercase tracking-widest text-[#c4923e] font-bold whitespace-nowrap bg-[#111315] border border-[#c4923e]/40 px-2 py-0.5 rounded">
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute -bottom-7 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-widest text-[#c4923e] font-bold whitespace-nowrap bg-[#111315] border border-[#c4923e]/60 px-2.5 py-1 rounded-md shadow-2xl">
                       {p.name}
                     </span>
                   </button>
@@ -84,7 +85,7 @@ export default function Home() {
             {/* Stand Plane Shadow */}
             <div
               aria-hidden="true"
-              className="mx-auto mt-2 h-4 w-[75%] rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(196,146,62,0.3),transparent_70%)]"
+              className="mx-auto mt-2 h-4 w-[75%] rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(196,146,62,0.35),transparent_70%)] animate-pulse"
             />
           </div>
 

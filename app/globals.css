@@ -435,6 +435,43 @@
   .animate-shake-badge {
     animation: shake-gentle 3s infinite ease-in-out;
   }
+
+  /* Santioni Spirits 3D Floating Bottle Animations */
+  @keyframes float-bottle-1 {
+    0%, 100% { transform: translateY(0px) rotate(-2deg); }
+    50% { transform: translateY(-12px) rotate(1deg); }
+  }
+
+  @keyframes float-bottle-2 {
+    0%, 100% { transform: translateY(0px) rotate(1deg); }
+    50% { transform: translateY(-16px) rotate(-2deg); }
+  }
+
+  @keyframes float-bottle-center {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-20px) scale(1.04); }
+  }
+
+  @keyframes glow-warm-pulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+  }
+
+  .animate-float-1 {
+    animation: float-bottle-1 5s ease-in-out infinite;
+  }
+
+  .animate-float-2 {
+    animation: float-bottle-2 6s ease-in-out infinite 0.5s;
+  }
+
+  .animate-float-center {
+    animation: float-bottle-center 4.5s ease-in-out infinite;
+  }
+
+  .animate-glow-pulse {
+    animation: glow-warm-pulse 6s ease-in-out infinite;
+  }
 }
 
 /* ==========================================================================
