@@ -56,38 +56,66 @@ export default function Bottle3DCanvas({
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
+    renderer.toneMappingExposure = 1.35;
 
     container.appendChild(renderer.domElement);
 
-    // 4. Studio Lighting (Warm Key, Soft Blue Fill, Gold Rim, Ground Bounce)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
+    // 4. Procedural High-Gloss Studio Environment Map
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+
+    const envScene = new THREE.Scene();
+    envScene.background = new THREE.Color(0xfcfaf7);
+    
+    // Soft studio softbox lights for realistic glass reflections
+    const softbox1 = new THREE.Mesh(
+      new THREE.PlaneGeometry(10, 10),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide })
+    );
+    softbox1.position.set(5, 5, 5);
+    softbox1.lookAt(0, 0, 0);
+    envScene.add(softbox1);
+
+    const softbox2 = new THREE.Mesh(
+      new THREE.PlaneGeometry(8, 8),
+      new THREE.MeshBasicMaterial({ color: 0xd9e4ed, side: THREE.DoubleSide })
+    );
+    softbox2.position.set(-5, 2, -4);
+    softbox2.lookAt(0, 0, 0);
+    envScene.add(softbox2);
+
+    const envTexture = pmremGenerator.fromScene(envScene).texture;
+    scene.environment = envTexture;
+    pmremGenerator.dispose();
+
+    // Direct Lighting Setup
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xfff8ee, 3.2);
+    const keyLight = new THREE.DirectionalLight(0xfff9f2, 3.5);
     keyLight.position.set(4, 7, 5);
     keyLight.castShadow = true;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0x7fa8c4, 1.2);
-    fillLight.position.set(-6, -2, -3);
+    const fillLight = new THREE.DirectionalLight(0x8eb4cf, 1.4);
+    fillLight.position.set(-6, -1, -3);
     scene.add(fillLight);
 
-    const rimLight = new THREE.PointLight(0xc44900, 4.2, 12);
+    const rimLight = new THREE.PointLight(0xc44900, 4.5, 12);
     rimLight.position.set(0, 4, -2.5);
     scene.add(rimLight);
 
-    const bounceLight = new THREE.DirectionalLight(0xf4efe6, 0.8);
+    const bounceLight = new THREE.DirectionalLight(0xf4efe6, 1.0);
     bounceLight.position.set(0, -5, 2);
     scene.add(bounceLight);
 
     // 5. Build High-Precision 3D Bottle Group
     const bottleGroup = new THREE.Group();
 
-    // Body Geometry
+    // Bottle Body Geometry (Pharmaceutical Grade Jar)
     const bodyGeometry = new THREE.CylinderGeometry(0.75, 0.75, 1.65, 64);
     
-    // Texture Loader for Product Label
+    // Texture Loader for Product Label Image
     const textureLoader = new THREE.TextureLoader();
     const productTexture = textureLoader.load(
       `/products/${productSlug}.png`,
@@ -97,15 +125,16 @@ export default function Bottle3DCanvas({
     );
     productTexture.colorSpace = THREE.SRGBColorSpace;
 
-    // Premium Glossy Glass Material
+    // Premium Glossy Dark Amber/Smoke Resin Glass Material (NOT Pitch Black)
     const bodyMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x111315,
-      roughness: 0.08,
-      metalness: 0.08,
+      color: 0x36302b,
+      roughness: 0.12,
+      metalness: 0.12,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.05,
-      transmission: 0.22,
-      ior: 1.52,
+      clearcoatRoughness: 0.04,
+      transmission: 0.15,
+      ior: 1.54,
+      reflectivity: 0.9,
     });
 
     const bottleBody = new THREE.Mesh(bodyGeometry, bodyMaterial);
@@ -113,42 +142,57 @@ export default function Bottle3DCanvas({
     bottleBody.receiveShadow = true;
     bottleGroup.add(bottleBody);
 
-    // Front Product Label Cylinder
+    // Front Product Label Cylinder with High Visibility
     const labelGeometry = new THREE.CylinderGeometry(0.76, 0.76, 1.45, 64, 1, true, -Math.PI / 2.2, Math.PI / 1.1);
     const labelMaterial = new THREE.MeshStandardMaterial({
       map: productTexture,
       transparent: true,
-      roughness: 0.25,
-      metalness: 0.05,
+      roughness: 0.2,
+      metalness: 0.02,
       side: THREE.DoubleSide,
     });
 
     const labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
     bottleGroup.add(labelMesh);
 
-    // Bottle Neck & Cap
+    // Bottle Neck & Ribbed Cap
     const neckGeometry = new THREE.CylinderGeometry(0.48, 0.68, 0.38, 32);
     const neckMesh = new THREE.Mesh(neckGeometry, bodyMaterial);
     neckMesh.position.y = 0.98;
     bottleGroup.add(neckMesh);
 
-    const capGeometry = new THREE.CylinderGeometry(0.52, 0.52, 0.36, 32);
+    // Ribbed Safety Cap Group (With Realistic Plastic Ridges)
+    const capGroup = new THREE.Group();
+    const capGeometry = new THREE.CylinderGeometry(0.52, 0.52, 0.36, 64);
     const capMaterial = new THREE.MeshStandardMaterial({
-      color: 0x2d3748,
-      roughness: 0.35,
-      metalness: 0.25,
+      color: 0x2a2f38,
+      roughness: 0.28,
+      metalness: 0.35,
     });
     const capMesh = new THREE.Mesh(capGeometry, capMaterial);
-    capMesh.position.y = 1.32;
     capMesh.castShadow = true;
-    bottleGroup.add(capMesh);
+    capGroup.add(capMesh);
 
-    // Ground Contact Drop Shadow Disc
+    // Cap Ribbed Vertical Ridges
+    const ridgeGeo = new THREE.BoxGeometry(0.02, 0.34, 0.03);
+    const ridgeMat = new THREE.MeshStandardMaterial({ color: 0x22262e, roughness: 0.4 });
+    for (let i = 0; i < 32; i++) {
+      const angle = (i / 32) * Math.PI * 2;
+      const ridge = new THREE.Mesh(ridgeGeo, ridgeMat);
+      ridge.position.set(Math.cos(angle) * 0.525, 0, Math.sin(angle) * 0.525);
+      ridge.rotation.y = -angle;
+      capGroup.add(ridge);
+    }
+
+    capGroup.position.y = 1.32;
+    bottleGroup.add(capGroup);
+
+    // Ground Soft Drop Shadow Disc
     const shadowGeo = new THREE.PlaneGeometry(2.6, 2.6);
     const shadowMat = new THREE.MeshBasicMaterial({
       color: 0x111315,
       transparent: true,
-      opacity: 0.22,
+      opacity: 0.25,
       depthWrite: false,
     });
     const shadowPlane = new THREE.Mesh(shadowGeo, shadowMat);
@@ -158,7 +202,7 @@ export default function Bottle3DCanvas({
 
     scene.add(bottleGroup);
 
-    // Phase 1 Entrance Animation Initial Position (y: +35px, scale: 0.96)
+    // Phase 1 Entrance Animation Initial Position (y: -0.35, scale: 0.96)
     bottleGroup.position.y = -0.35;
     bottleGroup.scale.set(0.96, 0.96, 0.96);
 
@@ -167,7 +211,6 @@ export default function Bottle3DCanvas({
     const revealTargetY = prefersReducedMotion ? 0 : Math.PI * 0.78;
     let revealProgress = 0;
 
-    // Trigger interaction callback to hide instruction pill
     const notifyInteraction = () => {
       if (!userInteractedRef.current) {
         userInteractedRef.current = true;
@@ -175,7 +218,7 @@ export default function Bottle3DCanvas({
       }
     };
 
-    // 6. User Touch & Mouse Physics (With Inertia Damping)
+    // 6. User Touch & Mouse Physics (With Damped Inertia)
     const onMouseDown = (e: MouseEvent) => {
       isDraggingRef.current = true;
       notifyInteraction();
@@ -229,7 +272,6 @@ export default function Bottle3DCanvas({
         const dy = e.touches[0].clientY - e.touches[1].clientY;
         const newDist = Math.hypot(dx, dy);
         const factor = previousTouchRef.current.dist / newDist;
-        // Pinch zoom range (0.85x - 1.30x distance mapping)
         camera.position.z = Math.max(initialCamZ * 0.85, Math.min(initialCamZ * 1.35, camera.position.z * factor));
         previousTouchRef.current.dist = newDist;
       }
@@ -245,13 +287,10 @@ export default function Bottle3DCanvas({
       camera.position.z = Math.max(initialCamZ * 0.85, Math.min(initialCamZ * 1.35, camera.position.z + e.deltaY * 0.0025));
     };
 
-    // 7. Scroll-Driven 3D Animation Handler
     const handleScroll = () => {
       if (prefersReducedMotion) return;
       const scrollY = window.scrollY;
       const scrollProgress = Math.min(1.0, scrollY / 600);
-
-      // Scale 1.0 -> 1.08 on scroll stage
       targetScaleRef.current = 1.0 + scrollProgress * 0.08;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -265,7 +304,7 @@ export default function Bottle3DCanvas({
     domElement.addEventListener("touchend", onTouchEnd);
     domElement.addEventListener("wheel", onWheel, { passive: false });
 
-    // 8. Animation Timeline Loop
+    // 7. Animation Loop
     let animationFrameId: number;
     const clock = new THREE.Clock();
 
@@ -273,18 +312,14 @@ export default function Bottle3DCanvas({
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Phase 1 Entrance Settle (y: -0.35 -> -0.1, scale 0.96 -> 1.0)
-      if (currentScaleRef.current < targetScaleRef.current) {
-        currentScaleRef.current += (targetScaleRef.current - currentScaleRef.current) * 0.08;
-      } else {
-        currentScaleRef.current += (targetScaleRef.current - currentScaleRef.current) * 0.08;
-      }
+      // Entrance Scale & Settle
+      currentScaleRef.current += (targetScaleRef.current - currentScaleRef.current) * 0.08;
       bottleGroup.scale.setScalar(currentScaleRef.current);
 
       const targetYPos = -0.1 + (prefersReducedMotion ? 0 : Math.sin(elapsedTime * 1.4) * 0.04);
       bottleGroup.position.y += (targetYPos - bottleGroup.position.y) * 0.08;
 
-      // Phase 2 Initial 0° -> 140° Reveal Spin (then stop continuous rotation)
+      // Reveal Spin Target (0° -> 140°)
       if (!revealCompleted && !isDraggingRef.current) {
         revealProgress += 0.003;
         targetRotationRef.current.y = THREE.MathUtils.lerp(0, revealTargetY, Math.min(1, revealProgress));
@@ -293,14 +328,14 @@ export default function Bottle3DCanvas({
         }
       }
 
-      // Exponential Inertia & Damping
+      // Damped Rotation Mechanics
       bottleGroup.rotation.y += (targetRotationRef.current.y - bottleGroup.rotation.y) * 0.10;
       bottleGroup.rotation.x += (targetRotationRef.current.x - bottleGroup.rotation.x) * 0.10;
 
-      // Spin-down inertia when finger/mouse released
+      // Friction Inertia Decay
       if (!isDraggingRef.current) {
         targetRotationRef.current.y += velocityRef.current.y;
-        velocityRef.current.y *= 0.94; // Exponential momentum decay
+        velocityRef.current.y *= 0.94;
       }
 
       renderer.render(scene, camera);
@@ -333,7 +368,7 @@ export default function Bottle3DCanvas({
       }
       renderer.dispose();
     };
-  }, [productSlug]);
+  }, [productSlug, onUserInteract]);
 
   return (
     <div className={`relative w-full h-full min-h-[320px] sm:min-h-[420px] flex items-center justify-center ${className}`}>
