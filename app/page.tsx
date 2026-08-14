@@ -214,7 +214,7 @@ export default function Home() {
       <Reveal as="section" id="catalogue" className="shell py-6 sm:py-12 border-b border-gray-100 reveal--fast">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 text-left gap-2">
           <div>
-            <span className="eyebrow text-[var(--ochre)] font-bold text-xs">THE RANGE</span>
+            <span className="eyebrow text-[var(--ochre)] font-mono font-bold text-xs">02 · THE FORMULARY</span>
             <h2 className="font-serif h3 text-[#111315] font-bold mt-0.5">
               Our 5 Classical Formulations
             </h2>
@@ -242,7 +242,7 @@ export default function Home() {
       <Reveal as="section" className="shell py-6 sm:py-12 border-b border-gray-100">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 text-left gap-2">
           <div>
-            <span className="eyebrow text-[var(--ochre)] font-bold text-xs">TARGETED CARE</span>
+            <span className="eyebrow text-[var(--ochre)] font-mono font-bold text-xs">03 · TARGETED CLINICAL CARE</span>
             <h2 className="font-serif h3 text-[#111315] font-bold mt-0.5">
               What health concern are you dealing with?
             </h2>
@@ -296,8 +296,8 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center text-left">
             {/* Left Content Side */}
             <div className="md:col-span-7 space-y-3">
-              <span className="eyebrow text-[var(--ochre)] font-bold text-xs">
-                QUALITY & BOTANICAL PURITY
+              <span className="eyebrow text-[var(--ochre)] font-mono font-bold text-xs">
+                04 · BOTANICAL PURITY & LAB TEST
               </span>
               <h2 className="font-serif h3 text-[#111315] font-bold leading-tight">
                 Tested for Heavy Metals, Microbes & Assay Potency
@@ -395,7 +395,7 @@ export default function Home() {
       <Reveal as="section" className="shell py-8 sm:py-12 bg-[#faf7f1]/50 border-t border-gray-100">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 text-left gap-2">
           <div>
-            <span className="eyebrow text-[var(--ochre)] font-bold text-xs">WALL OF LOVE</span>
+            <span className="eyebrow text-[var(--ochre)] font-mono font-bold text-xs">05 · VERIFIED CLINICAL REVIEWS</span>
             <h2 className="font-serif h3 text-[#111315] font-bold mt-0.5">
               Don&apos;t just take our word for it.
             </h2>
@@ -437,7 +437,7 @@ export default function Home() {
       {/* ── 9 · FAQS (ACCORDION) ────────────────────────────────────────────── */}
       <Reveal as="section" className="shell py-6 sm:py-12">
         <div className="max-w-3xl mx-auto text-left">
-          <p className="eyebrow text-[var(--ochre)] mb-1 font-bold text-center">Frequently Asked Questions</p>
+          <p className="eyebrow text-[var(--ochre)] mb-1 font-mono font-bold text-center">06 · FREQUENTLY ASKED QUESTIONS</p>
           <h2 className="font-serif h3 text-[#111315] font-bold mb-6 text-center">Clear answers about our remedies.</h2>
           <Accordion items={[...HOME_FAQS]} />
         </div>
