@@ -164,7 +164,7 @@ export default function Home() {
         </div>
 
         {/* Horizontal Touch Carousel */}
-        <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-3 text-left -mx-5 px-5 sm:mx-0 sm:px-0">
+        <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-3 text-left -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
           {products.map((p, i) => (
             <div key={p.slug} className="w-[280px] sm:w-[320px] shrink-0 snap-start">
               <ProductCard product={p} priority={i < 3} />
@@ -188,7 +188,7 @@ export default function Home() {
         </div>
 
         {/* Horizontal Touch Carousel */}
-        <div className="flex gap-3.5 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-3 text-left -mx-5 px-5 sm:mx-0 sm:px-0">
+        <div className="flex gap-3.5 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-3 text-left -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
           {CONCERNS.map((c) => {
             const items = products.filter((p) => p.concernSlug === c.slug);
             return (
@@ -304,7 +304,7 @@ export default function Home() {
         </div>
 
         {/* Horizontal Touch Carousel */}
-        <div className="flex gap-3.5 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-3 text-left -mx-5 px-5 sm:mx-0 sm:px-0">
+        <div className="flex gap-3.5 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-3 text-left -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
           {MANUFACTURING_STEPS.map((s) => (
             <div key={s.n} className="w-[260px] sm:w-[280px] shrink-0 snap-start bg-white border border-gray-200 p-4 rounded-xl shadow-xs">
               <span className="font-mono text-xs font-bold text-[var(--ochre)]">{s.n}</span>
@@ -330,7 +330,7 @@ export default function Home() {
         </div>
 
         {/* Horizontal Touch Carousel */}
-        <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 text-left -mx-5 px-5 sm:mx-0 sm:px-0">
+        <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 text-left -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
           {reviews.filter((r) => r.rating >= 4).map((r) => (
             <div key={r.id} className="w-[300px] sm:w-[340px] shrink-0 snap-start bg-white border border-gray-200 p-5 rounded-2xl shadow-sm flex flex-col justify-between">
               <div>
