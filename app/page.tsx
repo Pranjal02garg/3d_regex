@@ -74,7 +74,7 @@ export default function Home() {
               <span className="font-mono text-xs sm:text-sm font-bold tracking-[0.2em] text-[var(--ochre)] uppercase">
                 The Science of Ayurveda
               </span>
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.1] text-[#111315]">
+              <h1 className="font-serif h1 leading-[1.1] text-[#111315]">
                 Natural Remedies for a Better You
               </h1>
               <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
@@ -150,7 +150,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 text-left gap-2">
           <div>
             <span className="eyebrow text-[var(--ochre)] font-bold text-xs">THE RANGE</span>
-            <h2 className="font-serif text-2xl sm:text-3xl text-[#111315] font-bold mt-0.5">
+            <h2 className="font-serif h3 text-[#111315] font-bold mt-0.5">
               Our 5 Classical Formulations
             </h2>
             <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
@@ -178,7 +178,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 text-left gap-2">
           <div>
             <span className="eyebrow text-[var(--ochre)] font-bold text-xs">TARGETED CARE</span>
-            <h2 className="font-serif text-2xl sm:text-3xl text-[#111315] font-bold mt-0.5">
+            <h2 className="font-serif h3 text-[#111315] font-bold mt-0.5">
               What health concern are you dealing with?
             </h2>
             <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
@@ -234,7 +234,7 @@ export default function Home() {
               <span className="eyebrow text-[var(--ochre)] font-bold text-xs">
                 QUALITY & BOTANICAL PURITY
               </span>
-              <h2 className="font-serif text-2xl sm:text-3xl text-[#111315] font-bold leading-tight">
+              <h2 className="font-serif h3 text-[#111315] font-bold leading-tight">
                 Tested for Heavy Metals, Microbes & Assay Potency
               </h2>
               <p className="text-xs sm:text-sm text-gray-700 leading-relaxed font-sans">
@@ -295,7 +295,7 @@ export default function Home() {
       <Reveal as="section" className="shell py-6 sm:py-12 border-b border-gray-100">
         <div className="text-left max-w-xl mb-4">
           <p className="eyebrow text-[var(--ochre)] font-bold">Manufacturing Standard</p>
-          <h2 className="display text-2xl sm:text-3xl text-[#111315] mt-0.5">
+          <h2 className="display h3 text-[#111315] mt-0.5">
             Six steps from field to finished formulation.
           </h2>
           <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
@@ -320,7 +320,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 text-left gap-2">
           <div>
             <span className="eyebrow text-[var(--ochre)] font-bold text-xs">WALL OF LOVE</span>
-            <h2 className="font-serif text-2xl sm:text-3xl text-[#111315] font-bold mt-0.5">
+            <h2 className="font-serif h3 text-[#111315] font-bold mt-0.5">
               Don&apos;t just take our word for it.
             </h2>
             <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
@@ -362,7 +362,7 @@ export default function Home() {
       <Reveal as="section" className="shell py-6 sm:py-12">
         <div className="max-w-3xl mx-auto text-left">
           <p className="eyebrow text-[var(--ochre)] mb-1 font-bold text-center">Frequently Asked Questions</p>
-          <h2 className="display text-2xl sm:text-3xl text-[#111315] mb-6 text-center">Clear answers about our remedies.</h2>
+          <h2 className="display h3 text-[#111315] mb-6 text-center">Clear answers about our remedies.</h2>
           <Accordion items={[...HOME_FAQS]} />
         </div>
       </Reveal>
