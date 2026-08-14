@@ -4,9 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, Search, ShieldCheck, ShoppingBag, User, X } from "lucide-react";
+import { Menu, Search, ShieldCheck, ShoppingBag, User } from "lucide-react";
 import { useCart } from "@/lib/cart";
-import { CONCERNS, products } from "@/content/products";
 import { FREE_SHIPPING_OVER, NAV_PRIMARY, REGISTRATIONS } from "@/content/site";
 import { cn } from "@/lib/utils";
 import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
@@ -89,11 +88,11 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Main Header Container */}
+      {/* Main Header Container (Warm Alabaster Glass) */}
       <header
         className={cn(
-          "fixed inset-x-0 top-8 z-50 bg-[#111315]/90 text-white backdrop-blur-md transition-all duration-200 border-b",
-          scrolled ? "border-white/15 shadow-2xl" : "border-white/10",
+          "fixed inset-x-0 top-8 z-50 bg-[#faf8f3]/95 text-[#111315] backdrop-blur-md transition-all duration-200 border-b",
+          scrolled ? "border-gray-200 shadow-md" : "border-gray-200/70",
         )}
         onMouseLeave={scheduleClose}
       >
@@ -105,14 +104,14 @@ export default function Header() {
               alt="Regex Remedies Logo"
               width={32}
               height={32}
-              className="h-7 sm:h-8 w-7 sm:w-8 object-contain brightness-200"
+              className="h-7 sm:h-8 w-7 sm:w-8 object-contain"
               priority
             />
             <span className="flex flex-col leading-none text-left">
-              <span className="display text-base sm:text-lg font-bold text-white tracking-wide">
+              <span className="display text-base sm:text-lg font-bold text-[#111315] tracking-wide">
                 Regex Remedies
               </span>
-              <span className="mt-[2px] hidden font-mono text-[9px] uppercase tracking-widest text-[#c4923e] font-bold sm:block">
+              <span className="mt-[2px] hidden font-mono text-[9px] uppercase tracking-widest text-[#c44900] font-bold sm:block">
                 Natural Ayurvedic Remedies
               </span>
             </span>
@@ -132,7 +131,7 @@ export default function Header() {
                   onClick={() => setMega((v) => !v)}
                   className={cn(
                     "text-[0.9375rem] font-bold transition-colors",
-                    mega || pathname.startsWith("/shop") ? "text-[#c4923e]" : "text-gray-200 hover:text-[#c4923e]",
+                    mega || pathname.startsWith("/shop") ? "text-[#c44900]" : "text-[#111315] hover:text-[#c44900]",
                   )}
                 >
                   {item.label}
@@ -144,7 +143,7 @@ export default function Header() {
                   onMouseEnter={scheduleClose}
                   className={cn(
                     "text-[0.9375rem] font-bold transition-colors",
-                    pathname.startsWith(item.href) ? "text-[#c4923e]" : "text-gray-200 hover:text-[#c4923e]",
+                    pathname.startsWith(item.href) ? "text-[#c44900]" : "text-[#111315] hover:text-[#c44900]",
                   )}
                 >
                   {item.label}
@@ -159,7 +158,7 @@ export default function Header() {
               type="button"
               onClick={openSearch}
               aria-label="Search remedies"
-              className="hidden md:inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white hover:border-[#c4923e] transition-colors"
+              className="hidden md:inline-flex items-center gap-2 rounded-full border border-gray-300 px-3 py-1.5 text-xs font-semibold text-[#111315] hover:border-[#c44900] transition-colors bg-white shadow-xs"
             >
               <Search size={14} strokeWidth={2} />
               <span>Search</span>
@@ -170,7 +169,7 @@ export default function Header() {
               type="button"
               onClick={openSearch}
               aria-label="Search"
-              className="press inline-flex h-9 w-9 items-center justify-center rounded-full text-white md:hidden active:bg-white/10"
+              className="press inline-flex h-9 w-9 items-center justify-center rounded-full text-[#111315] md:hidden hover:bg-gray-200/50"
             >
               <Search size={18} strokeWidth={2} />
             </button>
@@ -189,7 +188,7 @@ export default function Header() {
             <Link
               href="/account"
               aria-label="Account"
-              className="hidden h-9 w-9 items-center justify-center rounded-full text-white hover:bg-white/10 sm:inline-flex"
+              className="hidden h-9 w-9 items-center justify-center rounded-full text-[#111315] hover:bg-gray-200/50 sm:inline-flex"
             >
               <User size={18} strokeWidth={2} />
             </Link>
@@ -198,11 +197,11 @@ export default function Header() {
               type="button"
               onClick={openCart}
               aria-label="Cart"
-              className="press relative inline-flex h-9 w-9 items-center justify-center rounded-full text-white hover:bg-white/10 active:bg-white/20"
+              className="press relative inline-flex h-9 w-9 items-center justify-center rounded-full text-[#111315] hover:bg-gray-200/50"
             >
               <ShoppingBag size={18} strokeWidth={2} />
               {count > 0 && (
-                <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#c4923e] px-1 text-[9px] font-bold text-black">
+                <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#c44900] px-1 text-[9px] font-bold text-white">
                   {count}
                 </span>
               )}
@@ -212,170 +211,13 @@ export default function Header() {
               type="button"
               onClick={() => setMobile(true)}
               aria-label="Open menu"
-              className="press inline-flex h-9 w-9 items-center justify-center rounded-full text-white lg:hidden hover:bg-white/10 active:bg-white/20"
+              className="press inline-flex h-9 w-9 items-center justify-center rounded-full text-[#111315] lg:hidden hover:bg-gray-200/50"
             >
               <Menu size={20} strokeWidth={2} />
             </button>
           </div>
         </div>
-
-        {/* Mega Menu Desktop */}
-        {mega && (
-          <div
-            className="animate-fade-in absolute inset-x-0 top-16 hidden border-b border-gray-200 bg-white lg:block shadow-xl"
-            onMouseEnter={() => timer.current && clearTimeout(timer.current)}
-          >
-            <div className="shell grid grid-cols-12 gap-8 py-8 text-left">
-              <div className="col-span-3">
-                <p className="eyebrow mb-3">By Concern</p>
-                <ul className="flex flex-col gap-1">
-                  {CONCERNS.map((c) => (
-                    <li key={c.slug}>
-                      <Link
-                        href={`/shop/${c.slug}`}
-                        className="group flex flex-col p-2.5 rounded-lg hover:bg-gray-50 transition-colors"
-                      >
-                        <span className="text-sm font-bold text-[#111315] flex items-center justify-between">
-                          <span>{c.title}</span>
-                          <span className="font-deva text-[13px] text-[var(--ochre)]">{c.hindi}</span>
-                        </span>
-                        <span className="text-xs text-[var(--fg-2)] mt-0.5">{c.blurb}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="col-span-6">
-                <p className="eyebrow mb-3">The Range</p>
-                <ul className="grid grid-cols-3 gap-3">
-                  {products.map((p) => (
-                    <li key={p.slug}>
-                      <Link
-                        href={`/products/${p.slug}`}
-                        className="flex flex-col p-3 rounded-lg border border-gray-200 hover:border-[var(--ochre)] hover:shadow-sm transition-all"
-                      >
-                        <span className="relative flex aspect-square items-center justify-center overflow-hidden rounded-md bg-gray-50 mb-2">
-                          <Image
-                            src={`/products/${p.slug}.png`}
-                            alt={p.name}
-                            width={100}
-                            height={120}
-                            className="h-[85%] w-auto object-contain"
-                          />
-                        </span>
-                        <span className="text-sm font-bold text-[#111315] flex items-center justify-between">
-                          <span>{p.name}</span>
-                          <span className="font-deva text-[13px] text-[var(--ochre)]">{p.devanagari}</span>
-                        </span>
-                        <span className="text-xs text-gray-500 truncate">{p.tagline}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="col-span-3 border-l border-gray-200 pl-8">
-                <p className="eyebrow mb-3">Quick Links</p>
-                <ul className="flex flex-col gap-2 text-sm font-semibold">
-                  {[
-                    { href: "/find-your-remedy", label: "Find Your Remedy Quiz" },
-                    { href: "/quality", label: "Quality & Testing Protocol" },
-                    { href: "/ingredients", label: "Botanical Ingredient Index" },
-                    { href: "https://wa.me/918360053594", label: "Official WhatsApp Support" },
-                  ].map((l) => (
-                    <li key={l.href}>
-                      <Link href={l.href} className="block py-1 hover:text-[var(--ochre)] transition-colors">
-                        {l.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        )}
       </header>
-
-      {/* Mobile Drawer Navigation */}
-      {mobile && (
-        <div className="fixed inset-0 z-[60] lg:hidden">
-          <div
-            className="animate-fade-in absolute inset-0 bg-black/50"
-            onClick={() => setMobile(false)}
-          />
-          <div className="animate-slide-up absolute inset-x-0 bottom-0 max-h-[90dvh] overflow-y-auto rounded-t-2xl bg-white p-5 text-left">
-            <div className="flex items-center justify-between border-b border-gray-200 pb-4 mb-4">
-              <span className="display text-xl font-bold text-[#111315]">Regex Remedies</span>
-              <button
-                type="button"
-                onClick={() => setMobile(false)}
-                className="p-2 text-[#111315]"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <p className="eyebrow mb-2">By Concern</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {CONCERNS.map((c) => (
-                    <Link
-                      key={c.slug}
-                      href={`/shop/${c.slug}`}
-                      className="p-3 rounded-lg border border-gray-200 bg-gray-50 flex flex-col"
-                    >
-                      <span className="text-sm font-bold text-[#111315]">{c.title}</span>
-                      <span className="font-deva text-[13px] text-[var(--ochre)] font-semibold">{c.hindi}</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <p className="eyebrow mb-2">Our 5 Remedies</p>
-                <div className="flex flex-col gap-2">
-                  {products.map((p) => (
-                    <Link
-                      key={p.slug}
-                      href={`/products/${p.slug}`}
-                      className="flex items-center gap-3 p-2.5 rounded-lg border border-gray-200"
-                    >
-                      <Image
-                        src={`/products/${p.slug}.png`}
-                        alt={p.name}
-                        width={40}
-                        height={50}
-                        className="h-10 w-auto object-contain"
-                      />
-                      <div className="flex flex-col">
-                        <span className="text-sm font-bold text-[#111315] flex items-center gap-2">
-                          <span>{p.name}</span>
-                          <span className="font-deva text-[13px] text-[var(--ochre)]">{p.devanagari}</span>
-                        </span>
-                        <span className="text-xs text-gray-500">{p.tagline}</span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <a
-                  href="https://wa.me/918360053594?text=Hello%20Regex%20Remedies"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-mono text-xs font-bold py-3 rounded-full shadow-md"
-                >
-                  <WhatsAppIcon size={18} className="text-white" />
-                  <span>CHAT ON WHATSAPP NOW</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
