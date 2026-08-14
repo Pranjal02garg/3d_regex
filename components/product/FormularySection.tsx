@@ -9,21 +9,21 @@ export default function FormularySection() {
   const selectedProduct = products.find((p) => p.slug === selectedSlug) ?? products[0];
 
   return (
-    <section className="bg-gray-50 py-6 sm:py-12 border-b border-gray-200">
-      <div className="shell grid gap-6 lg:grid-cols-12 lg:gap-10 items-start">
-        <div className="lg:col-span-5 text-left space-y-3">
-          <span className="eyebrow text-[var(--ochre)] font-bold text-xs">FULL TRANSPARENCY</span>
-          <h2 className="font-serif h3 text-[#111315] font-bold">
-            100% Botanical Ingredient Disclosure
+    <section className="border-b border-line bg-surface-2 py-16 lg:py-24">
+      <div className="shell grid items-start gap-8 lg:grid-cols-12 lg:gap-10">
+        <div className="space-y-4 text-left lg:col-span-5">
+          <span className="section-mark">05 · Full Disclosure</span>
+          <h2 className="display h2 uppercase text-fg">
+            Every milligram, published
           </h2>
-          <p className="text-xs sm:text-sm leading-relaxed text-gray-700 font-sans">
-            We publish exact Sanskrit names, botanical binomials, plant parts used, and milligram quantities per dose for every remedy we make.
+          <p className="body-base text-fg-2">
+            Exact Sanskrit names, botanical binomials, the plant part used and the
+            milligram quantity per dose — for every remedy we make.
           </p>
 
-          {/* Interactive Remedy Tab Selector */}
           <div className="pt-2">
-            <span className="eyebrow text-[10px] text-gray-500 font-bold block mb-2">
-              SELECT A REMEDY TO VIEW COMPOSITION:
+            <span className="mb-3 block font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-fg-3">
+              Select a remedy
             </span>
             <div className="flex flex-wrap gap-2">
               {products.map((p) => (
@@ -31,10 +31,11 @@ export default function FormularySection() {
                   key={p.slug}
                   type="button"
                   onClick={() => setSelectedSlug(p.slug)}
-                  className={`px-3 py-1.5 rounded-full font-mono text-xs font-bold transition-all border ${
+                  aria-pressed={selectedSlug === p.slug}
+                  className={`press rounded-full border px-3 py-1.5 font-mono text-xs font-bold transition-colors ${
                     selectedSlug === p.slug
-                      ? "bg-[#111315] text-white border-[#111315] shadow-xs"
-                      : "bg-white text-gray-700 border-gray-200 hover:border-[var(--ochre)]"
+                      ? "border-accent bg-accent text-brand-fg"
+                      : "border-line bg-fg/5 text-fg-2 hover:border-accent hover:text-accent"
                   }`}
                 >
                   {p.name}
@@ -45,12 +46,12 @@ export default function FormularySection() {
         </div>
 
         <div className="lg:col-span-7">
-          <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-xs">
-            <div className="flex items-center justify-between mb-3 border-b border-gray-100 pb-2">
-              <span className="eyebrow text-[var(--ochre)] font-bold text-xs">
-                Formulary Audit · {selectedProduct.name}
+          <div className="panel p-4 sm:p-6">
+            <div className="mb-4 flex items-center justify-between gap-3 border-b border-line-2 pb-3">
+              <span className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
+                Formulary audit · {selectedProduct.name}
               </span>
-              <span className="font-mono text-xs text-gray-500 font-semibold">
+              <span className="font-mono text-[11px] font-semibold text-fg-3">
                 {selectedProduct.classicalReference}
               </span>
             </div>

@@ -1,45 +1,60 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   FORCE LIGHT MODE OVERALL (NO DARK THEME)
+   DARK APOTHECARY THEME
+   --------------------------------------------------------------------------
+   One theme, committed. The neutrals are warmed and pushed a few points
+   toward green rather than sitting on true grey — an untinted dark ramp reads
+   as a default, and green is the only hue this brand already owns. Pure black
+   and pure white never appear: the floor is #0B0D0C and the ceiling #F1EDE3,
+   so nothing on the page hits the limits of the display.
    ========================================================================== */
 :root, .dark {
-  color-scheme: light !important;
+  color-scheme: dark;
 
-  --ink: #111315;
-  --ink-2: #2d3136;
-  --ink-3: #5c636c;
-  --paper: #ffffff;
-  --paper-2: #faf9f5;
-  --paper-3: #f2f0e8;
+  --ink: #0b0d0c;
+  --ink-2: #101413;
+  --ink-3: #171c1a;
+  --paper: #f1ede3;
+  --paper-2: #c6c2b6;
+  --paper-3: #8d8b81;
 
-  --vetiver: #1c232c;
-  --vetiver-deep: #12161b;
-  --ochre: #c4923e;
-  --clinic: #1e4d6b;
+  --vetiver: #1a201d;
+  --vetiver-deep: #0b0d0c;
+  --ochre: #c9a15e;
+  --clinic: #7fa8c4;
 
-  /* Medical semantics */
-  --safe: #1c684e;
-  --caution: #8a5f12;
-  --contra: #8c3a2e;
-  --info: #1e4d6b;
+  /* Medical semantics, re-lit for a dark ground. The light-mode values were
+     mixed for contrast against white and every one of them fails against
+     #0B0D0C, so these are lifted and desaturated rather than reused. */
+  --safe: #6e9c79;
+  --caution: #d0a851;
+  --contra: #cf7f6d;
+  --info: #7fa8c4;
 
-  /* Semantic surface tokens */
-  --surface: #ffffff;
-  --surface-2: #faf9f5;
-  --surface-3: #f2f0e8;
-  --surface-raised: #ffffff;
-  --fg: #111315;
-  --fg-2: #2d3136;
-  --fg-3: #5c636c;
-  --line: rgba(17, 19, 21, 0.12);
-  --line-2: rgba(17, 19, 21, 0.07);
-  --line-strong: rgba(17, 19, 21, 0.25);
-  --brand: #1c232c;
-  --brand-fg: #ffffff;
-  --accent: #c4923e;
-  --ring: #1c232c;
-  --scrim: rgba(17, 19, 21, 0.4);
+  /* Semantic surface tokens. The ramp is deliberately shallow — four steps
+     inside 18 points of luminance — because on a dark page a large surface
+     shift reads as a mistake rather than as depth. Separation comes from the
+     hairlines below, not from the fills. */
+  --surface: #0b0d0c;
+  --surface-2: #101413;
+  --surface-3: #171c1a;
+  --surface-raised: #121716;
+  --fg: #f1ede3;
+  --fg-2: #c6c2b6;
+  --fg-3: #8d8b81;
+  --line: rgba(241, 237, 227, 0.11);
+  --line-2: rgba(241, 237, 227, 0.06);
+  --line-strong: rgba(241, 237, 227, 0.24);
+  --brand: #c9a15e;
+  --brand-fg: #0b0d0c;
+  --accent: #c9a15e;
+  --accent-bright: #e3c489;
+  --ring: #c9a15e;
+  --scrim: rgba(5, 7, 6, 0.72);
+
+  /* Warm light pooled behind the product stage. */
+  --glow: rgba(201, 161, 94, 0.18);
 }
 
 @theme inline {
@@ -63,10 +78,11 @@
   --color-contra: var(--contra);
   --color-info: var(--info);
 
-  --color-vetiver: #1c232c;
-  --color-vetiver-deep: #12161b;
-  --color-ink: #111315;
-  --color-paper: #ffffff;
+  --color-accent-bright: var(--accent-bright);
+  --color-vetiver: var(--vetiver);
+  --color-vetiver-deep: var(--vetiver-deep);
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-playfair), ui-serif, Georgia, serif;
@@ -122,13 +138,13 @@
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
     scroll-padding-top: 5rem;
-    background-color: #ffffff !important;
-    color: #111315 !important;
+    background-color: var(--surface);
+    color: var(--fg);
   }
 
   body {
-    background-color: #ffffff !important;
-    color: #111315 !important;
+    background-color: var(--surface);
+    color: var(--fg);
     font-family: var(--font-sans);
     font-size: 17px;
     line-height: 1.6;
@@ -140,7 +156,12 @@
   h1, h2, h3, h4, h5 {
     font-weight: 600;
     line-height: 1.15;
-    color: #111315;
+    color: var(--fg);
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--brand-fg);
   }
 
   button, a {
@@ -183,6 +204,107 @@
   }
   @media (min-width: 640px) {
     .shell { padding-inline: 2rem; }
+  }
+
+  /* ── Dark-ground surfaces ───────────────────────────────────────────────
+
+     On paper a card was a white fill with a shadow. Neither transfers: a
+     lighter fill on a dark page reads as a wash rather than as a raised
+     object, and a shadow has nothing darker to fall onto. So the card is a
+     near-flat fill separated by a hairline, with the light coming from a
+     single hairline highlight along the top edge — the same cue a physical
+     object gets from a light source above it. */
+  .panel {
+    background-color: var(--surface-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    position: relative;
+  }
+
+  .panel::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(241, 237, 227, 0.14) 22%,
+      rgba(241, 237, 227, 0.14) 78%,
+      transparent
+    );
+    pointer-events: none;
+  }
+
+  /* Pill control, glass over the dark ground. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    padding: 0.8125rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    /* Named, not `all`: this element also carries a hover translate, and
+       transitioning layout properties by accident is what makes pills judder. */
+    transition: background-color 200ms var(--ease-out),
+      border-color 200ms var(--ease-out), color 200ms var(--ease-out),
+      transform 160ms var(--ease-out);
+  }
+
+  .pill-solid {
+    background-color: var(--accent);
+    color: var(--brand-fg);
+    border: 1px solid var(--accent);
+  }
+
+  .pill-ghost {
+    background-color: rgba(241, 237, 227, 0.04);
+    color: var(--fg);
+    border: 1px solid var(--line-strong);
+    backdrop-filter: blur(8px);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pill-solid:hover {
+      background-color: var(--accent-bright);
+      border-color: var(--accent-bright);
+    }
+    .pill-ghost:hover {
+      background-color: rgba(241, 237, 227, 0.09);
+      border-color: var(--accent);
+      color: var(--accent-bright);
+    }
+  }
+
+  .pill:active {
+    transform: scale(0.97);
+  }
+
+  /* Section number + label, the editorial spine of the page. */
+  .section-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .section-mark::after {
+    content: "";
+    width: clamp(1.5rem, 6vw, 4rem);
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
   }
 }
 
@@ -434,6 +556,63 @@
 
   .animate-shake-badge {
     animation: shake-gentle 3s infinite ease-in-out;
+  }
+
+  /* ── Product stage ──────────────────────────────────────────────────────
+
+     A dark page with flat fills looks switched off. Three cues do the work:
+     a warm pool of light behind the bottles, a grain overlay so the large
+     dark areas have texture instead of banding, and a floor reflection so
+     the bottles stand on something. */
+
+  .stage-glow {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: min(64rem, 120vw);
+    aspect-ratio: 16 / 9;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse at center,
+      var(--glow) 0%,
+      rgba(201, 161, 94, 0.06) 38%,
+      transparent 70%
+    );
+  }
+
+  /* An SVG feTurbulence rendered to a data URI — no network request, and it
+     tiles, so a 160px patch covers any viewport. Kept under 4% opacity: the
+     point is to break up the flat fill, and any more starts to look like
+     deliberate texture. */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Mirrored copy of a bottle, fading out downward. Sells the floor far more
+     cheaply than a shadow does, because a reflection carries the product's own
+     colour and a shadow on a near-black ground carries nothing. */
+  .reflect {
+    transform: scaleY(-1);
+    opacity: 0.22;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 62%);
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 62%);
+    pointer-events: none;
+  }
+
+  /* The floor the bottles stand on. */
+  .stage-floor {
+    background: radial-gradient(
+      ellipse at center,
+      rgba(201, 161, 94, 0.22) 0%,
+      rgba(201, 161, 94, 0.07) 42%,
+      transparent 72%
+    );
   }
 
   /* Santioni Spirits 3D Floating Bottle Animations */

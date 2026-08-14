@@ -28,21 +28,23 @@ import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
 export default function Home() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [activeModalProduct, setActiveModalProduct] = useState<Product | null>(null);
-  
-  // Mouse 3D Parallax Tilt state
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const stageRef = useRef<HTMLDivElement>(null);
 
   const activeProduct = products[activeIdx];
+  const leftIdx = (activeIdx - 1 + products.length) % products.length;
+  const leftProduct = products[leftIdx];
+  const rightIdx = (activeIdx + 1) % products.length;
+  const rightProduct = products[rightIdx];
 
-  // Mouse move 3D tilt effect matching Santioni Spirits physics
+  // Mouse move 3D tilt effect matching Santioni Spirits
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!stageRef.current) return;
       const rect = stageRef.current.getBoundingClientRect();
       const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
       const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
-      setTilt({ x: x * 15, y: -y * 15 });
+      setTilt({ x: x * 18, y: -y * 18 });
     };
 
     const handleMouseLeave = () => setTilt({ x: 0, y: 0 });
@@ -63,113 +65,141 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#faf8f3] text-[#111315] font-sans antialiased selection:bg-[#c44900] selection:text-white">
       
-      {/* ── 1 · HERO STAGE (SANTIONI 3D INTERACTIVE HERO STAGE) ─────────────── */}
+      {/* ── 1 · SANTIONI FULL-SCREEN 3D EDITORIAL HERO STAGE ─────────────────── */}
       <section
         ref={stageRef}
-        className="relative min-h-[92vh] flex flex-col justify-between overflow-hidden border-b border-gray-200/80 bg-[radial-gradient(ellipse_at_top,#ffffff,#faf8f3)] pt-14 pb-8 px-4 sm:px-6 lg:px-8 select-none"
+        className="relative h-[94vh] flex flex-col justify-between overflow-hidden border-b border-gray-200/80 bg-[radial-gradient(ellipse_at_top,#ffffff,#faf8f3)] pt-16 pb-6 px-4 sm:px-8 select-none"
       >
         
-        {/* Ambient Warm Golden Sun Glow */}
-        <div aria-hidden="true" className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[750px] h-[420px] bg-[#c44900]/12 blur-[140px] pointer-events-none animate-glow-pulse" />
+        {/* Ambient Radial Golden Sun Aura */}
+        <div aria-hidden="true" className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[480px] bg-[#c44900]/12 blur-[150px] pointer-events-none animate-glow-pulse" />
 
-        {/* Top Header Tag */}
-        <div className="text-center pt-4 z-10">
-          <span className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs font-bold tracking-[0.3em] text-[#c44900] uppercase border border-[#c44900]/30 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-xs">
-            <Sparkles size={12} className="text-[#c44900] animate-pulse" />
-            01 · SANTIONI CRAFTED BOTANICAL AYURVEDA
+        {/* Top Kicker Bar */}
+        <div className="flex items-center justify-between z-10 font-mono text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest pt-2">
+          <span>01 / 05 · THE FORMULARY</span>
+          <span className="inline-flex items-center gap-1.5 text-[#c44900] font-bold">
+            <Sparkles size={12} className="animate-pulse" />
+            SCHEDULE T GMP CERTIFIED
           </span>
+          <span className="hidden sm:inline">EST. 2026</span>
         </div>
 
-        {/* Center Stage Spotlight Container */}
-        <div className="my-auto z-10 text-center max-w-5xl mx-auto space-y-6">
+        {/* Center Stage: Giant High-Fashion Editorial Typography + 3-BOTTLE 3D LINEUP */}
+        <div className="my-auto z-10 text-center max-w-6xl mx-auto flex flex-col items-center justify-center relative w-full">
           
-          {/* Main Giant Headline */}
-          <div className="overflow-hidden">
-            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#111315] uppercase leading-none transition-all duration-700">
-              INDULGE IN PURE BOTANICAL WELLNESS
-            </h1>
-          </div>
+          {/* Santioni Giant Editorial Headline */}
+          <h1 className="font-serif text-5xl sm:text-7xl lg:text-9xl font-bold tracking-tight text-[#111315] uppercase leading-none drop-shadow-xs pointer-events-none z-0">
+            BOTANICAL REMEDIES
+          </h1>
 
-          <p className="text-xs sm:text-base text-gray-600 max-w-xl mx-auto font-sans leading-relaxed">
-            Classical, lab-tested formulations crafted with 100% transparent botanical extracts in our Schedule T GMP facility.
-          </p>
-
-          {/* 3D Interactive Floating Bottle Pedestal */}
-          <div className="relative py-4 flex flex-col items-center justify-center min-h-[300px]">
+          {/* 3-BOTTLE 3D LEVITATING LINEUP CONTAINER */}
+          <div className="relative -mt-6 sm:-mt-14 z-10 flex flex-col items-center justify-center w-full">
             
-            {/* Prev / Next Navigation Arrows */}
+            {/* Prev / Next Navigation Controls */}
             <button
               onClick={() => setActiveIdx((prev) => (prev === 0 ? products.length - 1 : prev - 1))}
-              className="absolute left-2 sm:left-12 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/80 border border-gray-200/80 shadow-lg text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer"
+              className="absolute -left-2 sm:left-2 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 border border-gray-200 shadow-xl text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer hover:scale-110"
               aria-label="Previous remedy"
             >
-              <ChevronLeft size={20} />
+              <ChevronLeft size={22} />
             </button>
 
             <button
               onClick={() => setActiveIdx((prev) => (prev === products.length - 1 ? 0 : prev + 1))}
-              className="absolute right-2 sm:right-12 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/80 border border-gray-200/80 shadow-lg text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer"
+              className="absolute -right-2 sm:right-2 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 border border-gray-200 shadow-xl text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer hover:scale-110"
               aria-label="Next remedy"
             >
-              <ChevronRight size={20} />
+              <ChevronRight size={22} />
             </button>
 
-            {/* 3D Floating Bottle with Mouse Inertia */}
-            <div
-              className="relative transition-transform duration-200 ease-out cursor-pointer animate-float-center"
-              style={{
-                transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale3d(1.05, 1.05, 1.05)`,
-              }}
-              onClick={() => setActiveModalProduct(activeProduct)}
-            >
-              <Image
-                key={activeProduct.slug}
-                src={`/products/${activeProduct.slug}.png`}
-                alt={activeProduct.name}
-                width={380}
-                height={480}
-                priority
-                className="w-[220px] sm:w-[280px] h-auto object-contain mix-blend-multiply drop-shadow-[0_25px_35px_rgba(0,0,0,0.25)] hover:drop-shadow-[0_35px_45px_rgba(196,73,0,0.35)] transition-all duration-500"
-              />
+            {/* 3-BOTTLE LINEUP DISPLAY */}
+            <div className="flex items-center justify-center gap-2 sm:gap-6 lg:gap-10 max-w-4xl mx-auto py-2">
+              
+              {/* Left Flank Bottle */}
+              <button
+                key={leftProduct.slug}
+                onClick={() => setActiveIdx(leftIdx)}
+                className="group relative flex-col items-center justify-end hidden sm:flex opacity-60 hover:opacity-100 transition-all duration-500 scale-90 hover:scale-95 cursor-pointer animate-float-1"
+                aria-label={`View ${leftProduct.name}`}
+              >
+                <Image
+                  src={`/products/${leftProduct.slug}.png`}
+                  alt={leftProduct.name}
+                  width={240}
+                  height={320}
+                  className="w-[110px] lg:w-[140px] h-auto object-contain mix-blend-multiply drop-shadow-md group-hover:drop-shadow-xl transition-all"
+                />
+                <span className="font-mono text-[9px] uppercase tracking-widest text-gray-500 font-bold mt-2 bg-white/90 border border-gray-200 px-2 py-0.5 rounded-md shadow-xs">
+                  0{leftIdx + 1} · {leftProduct.name}
+                </span>
+              </button>
 
-              {/* Sanskrit Devanagari Floating Tag */}
-              <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 font-mono text-[11px] uppercase tracking-widest text-[#c44900] font-bold whitespace-nowrap bg-white border border-gray-200 px-3 py-1 rounded-md shadow-xl flex items-center gap-1.5">
-                <span className="font-deva text-xs font-bold">{activeProduct.devanagari}</span>
-                <span>· {activeProduct.name}</span>
-              </span>
+              {/* Center Active Hero Bottle (3D Parallax Mouse Tilt) */}
+              <div
+                className="animate-float-center relative cursor-pointer transition-transform duration-200 z-20"
+                style={{
+                  transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale3d(1.05, 1.05, 1.05)`,
+                }}
+                onClick={() => setActiveModalProduct(activeProduct)}
+              >
+                <Image
+                  key={activeProduct.slug}
+                  src={`/products/${activeProduct.slug}.png`}
+                  alt={`${activeProduct.name} — ${activeProduct.tagline}`}
+                  width={420}
+                  height={520}
+                  priority
+                  className="w-[190px] sm:w-[260px] lg:w-[300px] h-auto object-contain mix-blend-multiply drop-shadow-[0_30px_45px_rgba(0,0,0,0.25)] hover:drop-shadow-[0_40px_60px_rgba(196,73,0,0.4)] transition-all duration-500"
+                />
+
+                {/* Sanskrit Devanagari Floating Pill */}
+                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 font-mono text-xs uppercase tracking-widest text-[#c44900] font-bold whitespace-nowrap bg-white border border-gray-200/90 px-4 py-1.5 rounded-full shadow-xl flex items-center gap-2">
+                  <span className="font-deva text-sm font-bold text-[#c44900]">{activeProduct.devanagari}</span>
+                  <span className="text-gray-300">•</span>
+                  <span className="text-[#111315]">{activeProduct.name}</span>
+                </div>
+              </div>
+
+              {/* Right Flank Bottle */}
+              <button
+                key={rightProduct.slug}
+                onClick={() => setActiveIdx(rightIdx)}
+                className="group relative flex-col items-center justify-end hidden sm:flex opacity-60 hover:opacity-100 transition-all duration-500 scale-90 hover:scale-95 cursor-pointer animate-float-2"
+                aria-label={`View ${rightProduct.name}`}
+              >
+                <Image
+                  src={`/products/${rightProduct.slug}.png`}
+                  alt={rightProduct.name}
+                  width={240}
+                  height={320}
+                  className="w-[110px] lg:w-[140px] h-auto object-contain mix-blend-multiply drop-shadow-md group-hover:drop-shadow-xl transition-all"
+                />
+                <span className="font-mono text-[9px] uppercase tracking-widest text-gray-500 font-bold mt-2 bg-white/90 border border-gray-200 px-2 py-0.5 rounded-md shadow-xs">
+                  0{rightIdx + 1} · {rightProduct.name}
+                </span>
+              </button>
+
             </div>
 
-            {/* Stand Pedestal Radial Glow */}
+            {/* Pedestal Stand Shadow */}
             <div
               aria-hidden="true"
-              className="mt-6 h-5 w-[240px] sm:w-[320px] rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(196,73,0,0.3),transparent_70%)] animate-pulse"
+              className="mt-6 h-4 w-[240px] sm:w-[360px] rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(17,19,21,0.2),transparent_70%)] animate-pulse"
             />
           </div>
 
-          {/* Numbered Bottle Selector Wheel (Santioni Pedestal Rotator) */}
-          <div className="flex items-center justify-center gap-2 sm:gap-3 pt-2">
-            {products.map((p, index) => (
-              <button
-                key={p.slug}
-                onClick={() => setActiveIdx(index)}
-                className={`font-mono text-xs px-3.5 py-1.5 rounded-full border transition-all cursor-pointer ${
-                  activeIdx === index
-                    ? "bg-[#111315] text-white border-[#111315] font-bold shadow-md scale-105"
-                    : "bg-white/80 text-gray-600 border-gray-200 hover:border-[#c44900] hover:text-[#c44900]"
-                }`}
-              >
-                0{index + 1} · {p.name}
-              </button>
-            ))}
-          </div>
+          {/* Minimal Editorial Subtitle */}
+          <p className="text-xs sm:text-sm text-gray-600 font-mono uppercase tracking-widest pt-2">
+            {activeProduct.tagline} · {activeProduct.unitsPerPack} TABLETS
+          </p>
 
           {/* Santioni Glassmorphism Action Buttons */}
-          <div className="flex flex-row items-center justify-center gap-3 pt-4">
+          <div className="flex flex-row items-center justify-center gap-3 pt-2">
             <Link
               href={`/products/${activeProduct.slug}`}
-              className="bg-[#111315] text-white hover:bg-[#c44900] px-8 py-3.5 rounded-full font-mono text-xs font-bold uppercase tracking-widest transition-all shadow-xl hover:scale-105 flex items-center gap-2"
+              className="bg-[#111315] text-white hover:bg-[#c44900] px-8 py-3.5 rounded-full font-mono text-xs font-bold uppercase tracking-widest transition-all shadow-xl hover:scale-105 flex items-center gap-2 cursor-pointer"
             >
-              <span>INSPECT {activeProduct.name}</span>
+              <span>EXPLORE {activeProduct.name}</span>
               <ArrowRight size={14} />
             </Link>
             <a
@@ -184,11 +214,21 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Stage Subtitle Footer */}
-        <div className="z-10 text-center border-t border-gray-200/80 pt-4">
-          <p className="font-mono text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-gray-500">
-            ACTIVE FORMULATION: {activeProduct.name} ({activeProduct.devanagari}) — {activeProduct.tagline}
-          </p>
+        {/* Santioni Numbered Product Wheel Selector (Bottom Dock) */}
+        <div className="z-10 flex items-center justify-center gap-2 sm:gap-4 border-t border-gray-200/80 pt-4">
+          {products.map((p, index) => (
+            <button
+              key={p.slug}
+              onClick={() => setActiveIdx(index)}
+              className={`font-mono text-xs px-3.5 py-1.5 rounded-full border transition-all cursor-pointer ${
+                activeIdx === index
+                  ? "bg-[#111315] text-white border-[#111315] font-bold shadow-md scale-105"
+                  : "bg-white/80 text-gray-500 border-gray-200 hover:border-[#c44900] hover:text-[#c44900]"
+              }`}
+            >
+              0{index + 1} · {p.name}
+            </button>
+          ))}
         </div>
       </section>
 
@@ -196,7 +236,7 @@ export default function Home() {
       <section className="py-4 bg-[#f4efe6] border-b border-gray-200/80 font-mono text-xs text-gray-700">
         <div className="shell grid grid-cols-2 md:flex items-center justify-around gap-4 font-bold text-center md:text-left">
           <div className="flex items-center justify-center md:justify-start gap-1.5">
-            <Award size={14} className="text-[#c44900]" />
+            <ShieldCheck size={14} className="text-[#c44900]" />
             <span>AYUSH LICENCE: <strong className="text-[#c44900]">PB/AY/000000</strong></span>
           </div>
           <span className="hidden md:inline text-gray-300">•</span>
@@ -206,13 +246,8 @@ export default function Home() {
           </div>
           <span className="hidden md:inline text-gray-300">•</span>
           <div className="flex items-center justify-center md:justify-start gap-1.5">
-            <Microchip size={14} className="text-[#1e4d6b]" />
+            <Beaker size={14} className="text-[#1e4d6b]" />
             <span>100% <strong className="text-[#1e4d6b]">BOTANICAL DISCLOSURE</strong></span>
-          </div>
-          <span className="hidden md:inline text-gray-300">•</span>
-          <div className="flex items-center justify-center md:justify-start gap-1.5">
-            <FileText size={14} className="text-[#c44900]" />
-            <span>NABL <strong className="text-[#111315]">LAB TESTED BATCHES</strong></span>
           </div>
         </div>
       </section>
@@ -224,8 +259,8 @@ export default function Home() {
             <span className="font-mono text-xs font-bold tracking-widest text-[#c44900] uppercase">
               02 · THE FORMULARY
             </span>
-            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#111315] uppercase mt-1">
-              OUR 5 CLASSICAL FORMULATIONS
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#111315] uppercase mt-1">
+              FIVE CLASSICAL FORMULATIONS
             </h2>
           </div>
           <p className="font-mono text-xs text-gray-500">
@@ -250,7 +285,7 @@ export default function Home() {
             <span className="font-mono text-xs font-bold tracking-widest text-[#c44900] uppercase">
               03 · TARGETED CLINICAL CARE
             </span>
-            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#111315] uppercase mt-1">
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#111315] uppercase mt-1">
               HEALTH CONCERN SPECIFIC CARE
             </h2>
           </div>
@@ -263,19 +298,19 @@ export default function Home() {
               <Link
                 key={c.slug}
                 href={`/shop/${c.slug}`}
-                className="group bg-white border border-gray-200/90 hover:border-[#c44900] rounded-xl p-5 flex flex-col justify-between shadow-xs hover:shadow-lg transition-all hover:-translate-y-1"
+                className="group bg-white border border-gray-200/90 hover:border-[#c44900] rounded-2xl p-6 flex flex-col justify-between shadow-xs hover:shadow-xl transition-all hover:-translate-y-1.5"
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <span className="font-deva text-base text-[#c44900] font-bold">
                       {c.hindi}
                     </span>
-                    <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 font-bold">
+                    <span className="font-mono text-[10px] px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-700 font-bold">
                       {items.length} REMEDY
                     </span>
                   </div>
 
-                  <h3 className="font-serif text-xl font-bold text-[#111315] mb-2 group-hover:text-[#c44900] transition-colors">
+                  <h3 className="font-serif text-2xl font-bold text-[#111315] mb-2 group-hover:text-[#c44900] transition-colors">
                     {c.title}
                   </h3>
                   <p className="text-xs text-gray-600 leading-relaxed mb-4">
@@ -293,74 +328,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 5 · BOTANICAL PURITY & LAB BANNER (STAGE 04) ──────────────────── */}
-      <section className="shell py-12 lg:py-16 border-b border-gray-200/70">
-        <div className="bg-[#f4efe6] border border-gray-300/80 rounded-2xl p-6 sm:p-10 shadow-xs">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center text-left">
-            <div className="md:col-span-7 space-y-4">
-              <span className="font-mono text-xs font-bold tracking-widest text-[#c44900] uppercase">
-                04 · BOTANICAL PURITY & LAB TEST
-              </span>
-              <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#111315] leading-tight uppercase">
-                TESTED FOR HEAVY METALS, MICROBES & ASSAY POTENCY
-              </h2>
-              <p className="text-xs sm:text-sm text-gray-700 leading-relaxed font-sans">
-                Every batch manufactured in our Schedule T certified facility undergoes independent NABL laboratory testing before release.
-              </p>
-
-              <div className="flex flex-wrap gap-2 pt-2 font-mono text-xs font-bold">
-                <span className="inline-flex items-center gap-1.5 bg-white border border-gray-200 px-3 py-1.5 rounded-full text-[#111315] shadow-2xs">
-                  <Beaker size={14} className="text-[#c44900]" />
-                  NABL Lab Tested
-                </span>
-                <span className="inline-flex items-center gap-1.5 bg-white border border-gray-200 px-3 py-1.5 rounded-full text-[#111315] shadow-2xs">
-                  <ShieldCheck size={14} className="text-[#1c684e]" />
-                  Schedule T GMP
-                </span>
-                <span className="inline-flex items-center gap-1.5 bg-white border border-gray-200 px-3 py-1.5 rounded-full text-[#1c684e] shadow-2xs">
-                  <Leaf size={14} />
-                  100% Heavy Metal Free
-                </span>
-              </div>
-
-              <div className="pt-3">
-                <a
-                  href="https://wa.me/918360053594?text=Hello%20Regex%20Remedies%2C%20I%20have%20a%20quality%20query"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 bg-[#25D366] text-white px-5 py-3 rounded-full font-mono text-xs font-bold hover:bg-[#20ba5a] transition-all shadow-md"
-                >
-                  <WhatsAppIcon size={16} className="text-white" />
-                  <span>WHATSAPP QUALITY DESK</span>
-                </a>
-              </div>
-            </div>
-
-            <div className="md:col-span-5 relative rounded-xl overflow-hidden bg-white border border-gray-200 p-2 shadow-sm">
-              <Image
-                src="/images/banner-lab-quality.jpg"
-                alt="Regex Remedies Lab Quality"
-                width={800}
-                height={600}
-                className="w-full h-auto object-contain block rounded-lg"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 6 · FORMULARY ENGINE ──────────────────────────────────────────── */}
+      {/* ── 5 · FORMULARY ENGINE ──────────────────────────────────────────── */}
       <FormularySection />
 
-      {/* ── 7 · VERIFIED CLINICAL REVIEWS (STAGE 05) ──────────────────────── */}
+      {/* ── 6 · VERIFIED CLINICAL REVIEWS (STAGE 05) ──────────────────────── */}
       <section className="shell py-12 lg:py-16 border-b border-gray-200/70 bg-[#f4efe6]/50">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 text-left gap-2">
           <div>
             <span className="font-mono text-xs font-bold tracking-widest text-[#c44900] uppercase">
               05 · VERIFIED CLINICAL REVIEWS
             </span>
-            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#111315] uppercase mt-1">
-              DON&apos;T JUST TAKE OUR WORD FOR IT
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#111315] uppercase mt-1">
+              CLINICAL FEEDBACK
             </h2>
           </div>
           <p className="font-mono text-xs text-gray-500">
@@ -396,13 +375,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 8 · FAQS (STAGE 06) ───────────────────────────────────────────── */}
+      {/* ── 7 · FAQS (STAGE 06) ───────────────────────────────────────────── */}
       <section className="shell py-12 lg:py-16">
         <div className="max-w-3xl mx-auto text-left">
           <span className="block text-center font-mono text-xs font-bold tracking-widest text-[#c44900] uppercase mb-1">
             06 · FREQUENTLY ASKED QUESTIONS
           </span>
-          <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#111315] uppercase text-center mb-8">
+          <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#111315] uppercase text-center mb-8">
             CLEAR ANSWERS ABOUT OUR REMEDIES
           </h2>
           <Accordion items={[...HOME_FAQS]} />

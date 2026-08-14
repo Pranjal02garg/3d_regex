@@ -76,8 +76,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
-  colorScheme: "light",
+  themeColor: "#0b0d0c",
+  colorScheme: "dark",
 };
 
 import { Inter, Playfair_Display, IBM_Plex_Sans_Devanagari, IBM_Plex_Mono } from "next/font/google";
@@ -108,7 +108,10 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600", "700"],
 });
 
-const THEME_SCRIPT = `(function(){try{document.documentElement.classList.remove("dark")}catch(e){}})();`;
+/* The site ships one theme. The class is asserted rather than stripped so a
+   stale `dark`/`light` class left in the DOM by an earlier build cannot leave
+   the document disagreeing with the tokens. */
+const THEME_SCRIPT = `(function(){try{document.documentElement.classList.add("dark")}catch(e){}})();`;
 
 /* Load-in motion is anchored to the first paint, not to element creation.
    A bare CSS animation starts the moment the element exists — measured at
@@ -125,7 +128,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: Readonly<React.ReactNode> }>) {
   return (
-    <html lang="en-IN" className="light" style={{ colorScheme: "light" }} suppressHydrationWarning>
+    <html lang="en-IN" className="dark" style={{ colorScheme: "dark" }} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <script dangerouslySetInnerHTML={{ __html: MOTION_READY_SCRIPT }} />

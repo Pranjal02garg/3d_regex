@@ -20,15 +20,31 @@ SRC = Path("public/products")
 OUT = SRC / "cutout"
 SLUGS = ["livgex", "kabzraj", "gasogex", "pilegex", "lucogex"]
 
-# How far from pure white still counts as background. Generous enough to catch
-# the studio's soft vignette in the corners, tight enough to stop at the
-# bottle's own edge and its drop shadow.
-TOLERANCE = 18
+# How far from pure white still counts as background.
+#
+# Zero, and that is deliberate. These shots come back from the studio with the
+# backdrop already flattened to exactly 255,255,255 — measured, it is 60.7% of
+# the livgex frame and every sampled background pixel is exact. The bottles
+# never are: livgex is a white bottle, and even its cap has a median distance
+# of 13 from white with only 1.3% of cap pixels landing on exact white. Any
+# tolerance wide enough to matter (18 was tried) opens a path between the cap's
+# moulded ridges and the fill eats the whole cap. Exact-match has no such path.
+TOLERANCE = 0
 
-# Half-width of the flatness window, in pixels. A pixel only seeds the fill if
-# everything within this radius is background-white too, which is what stops
-# the fill entering narrow white passages — see `cut`.
-FLATNESS = 4
+# Exact-match leaves a thin rim of not-quite-white backdrop around each bottle —
+# the studio's soft contact shadow — which reads as a bright halo on a dark
+# page. These two absorb it: grow the confirmed background outward into
+# near-white, but only so far.
+#
+# The bound is the whole point. Growth into near-white never converges on its
+# own, because the bottles have near-white parts of their own that touch the
+# backdrop; measured, the first ~5 steps recover the halo (livgex 60.5% -> 62.0%
+# background) and everything after is the fill creeping into the cap at a few
+# hundred pixels a step until it has eaten the lot. Stopping at 5 takes the
+# halo and leaves at most a 5px nibble on genuinely white bottle edges, which
+# is not visible at any size the page renders these at.
+SOFT_TOLERANCE = 18
+SOFT_GROW = 5
 
 
 def _dilate(mask: np.ndarray) -> np.ndarray:
@@ -37,28 +53,6 @@ def _dilate(mask: np.ndarray) -> np.ndarray:
     out[:-1, :] |= mask[1:, :]
     out[:, 1:] |= mask[:, :-1]
     out[:, :-1] |= mask[:, 1:]
-    return out
-
-
-def _erode(mask: np.ndarray, radius: int) -> np.ndarray:
-    """Shrink `mask` by `radius`, treating outside the frame as still inside.
-
-    Border pixels must survive erosion or the fill would have nowhere to start,
-    so the edges are padded with True rather than False.
-    """
-    out = mask.copy()
-    for _ in range(radius):
-        shrunk = out.copy()
-        shrunk[1:, :] &= out[:-1, :]
-        shrunk[:-1, :] &= out[1:, :]
-        shrunk[:, 1:] &= out[:, :-1]
-        shrunk[:, :-1] &= out[:, 1:]
-        # Re-assert the frame edge, which the shifts above always clear.
-        shrunk[0, :] = out[0, :]
-        shrunk[-1, :] = out[-1, :]
-        shrunk[:, 0] = out[:, 0]
-        shrunk[:, -1] = out[:, -1]
-        out = shrunk
     return out
 
 
@@ -91,23 +85,12 @@ def cut(slug: str) -> None:
     # Distance from white, collapsed to one channel so a pixel that is bright
     # in only one channel still counts as coloured.
     dist = (255 - arr.min(axis=2)).astype(np.uint8)
-    white = dist <= TOLERANCE
 
-    # Livgex is a white bottle photographed on white: its cap is the same value
-    # as the background, and the only thing separating them is the thin grey
-    # ridge shading. A fill run on `white` alone pours down between those
-    # ridges and eats the cap. Requiring a *flat* white neighbourhood closes
-    # every passage narrower than 2*FLATNESS, which the ridge gaps are, while
-    # the open background is unaffected.
-    core = flood_from_border(_erode(white, FLATNESS))
+    background = flood_from_border(dist <= TOLERANCE)
 
-    # Erosion also pulled the background back off every silhouette by FLATNESS
-    # pixels. Regrow by exactly that much, constrained to white, so the cut
-    # lands on the true edge again — the narrow passages stay sealed because
-    # the regrowth is bounded and cannot travel their length.
-    background = core
-    for _ in range(FLATNESS):
-        background = _dilate(background) & white
+    soft = dist <= SOFT_TOLERANCE
+    for _ in range(SOFT_GROW):
+        background = _dilate(background) & soft
 
     alpha = np.where(background, 0, 255).astype(np.uint8)
     alpha_img = Image.fromarray(alpha, mode="L")
