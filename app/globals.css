@@ -99,7 +99,16 @@
   --shadow-md: 0 4px 14px rgba(17, 19, 21, 0.08);
   --shadow-lg: 0 10px 30px rgba(17, 19, 21, 0.12);
 
+  /* Snappy expo-out. Correct for press feedback, where the response should
+     feel instant. Measured on a 300ms entrance it reaches 83% opacity and
+     covers 15 of 18px within the first 75ms, so the motion is over before
+     the eye engages and the rest is a sub-pixel tail. */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Entrances use a gentler ease-out that spreads the change across the
+     whole duration (~44% at the quarter mark, not 83%), so a 300ms move
+     actually reads as a move. */
+  --ease-entrance: cubic-bezier(0.22, 0.61, 0.36, 1);
 
   --container-content: 1240px;
 }
@@ -230,8 +239,8 @@
 
   .reveal {
     opacity: 0;
-    transform: translateY(6px);
-    transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out);
+    transform: translateY(16px);
+    transition: opacity 400ms var(--ease-entrance), transform 400ms var(--ease-entrance);
   }
   .reveal[data-shown="true"] {
     opacity: 1;
@@ -241,8 +250,8 @@
   /* Fast reveal for above-fold content (hero, first section) */
   .reveal--fast {
     opacity: 0;
-    transform: translateY(6px);
-    transition: opacity 250ms var(--ease-out), transform 250ms var(--ease-out);
+    transform: translateY(12px);
+    transition: opacity 250ms var(--ease-entrance), transform 250ms var(--ease-entrance);
   }
   .reveal--fast[data-shown="true"] {
     opacity: 1;
@@ -257,7 +266,7 @@
   @keyframes rise-in {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(18px);
     }
     to {
       opacity: 1;
@@ -265,8 +274,17 @@
     }
   }
 
+  /* Held at the start state until <html data-motion-ready> lands (two rAFs
+     after DOMContentLoaded). Without the gate the animation is keyed to
+     element creation and burns off during load — measured start 334ms vs
+     first paint 376ms, i.e. mostly spent before the hero was visible. */
   .rise-in {
-    animation: rise-in 300ms var(--ease-out) both;
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  [data-motion-ready] .rise-in {
+    animation: rise-in 300ms var(--ease-entrance) both;
     animation-delay: calc(var(--rise-step, 0) * 60ms);
   }
 
@@ -274,8 +292,8 @@
      it fires once — Reveal disconnects its observer after the first hit. */
   .stagger-item {
     opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out);
+    transform: translateY(14px);
+    transition: opacity 300ms var(--ease-entrance), transform 300ms var(--ease-entrance);
     transition-delay: calc(var(--stagger-step, 0) * 60ms);
   }
   [data-shown="true"] .stagger-item {
@@ -320,16 +338,28 @@
      competes with content. Lives on a wrapper so the anchor keeps its own
      press/hover transform — an animation on the same element would override
      the transition silently. */
+  /* Two beats, not one. A single 1.04 blip occupied ~800ms of an 8s cycle —
+     sampling the live element caught motion in 2 frames out of 16, which is
+     below the threshold where anyone notices. The beat window is now ~1.4s
+     of the cycle and doubled, so the eye catches the second beat even if it
+     missed the first. Peak stays at 1.04: at this amplitude cadence is the
+     only lever left, and a taller scale would start competing with content. */
   @keyframes fab-pulse {
     0%,
-    86%,
+    82%,
     100% {
       transform: scale(1);
     }
-    91% {
+    86% {
       transform: scale(1.04);
     }
-    96% {
+    90% {
+      transform: scale(1.008);
+    }
+    94% {
+      transform: scale(1.03);
+    }
+    98% {
       transform: scale(1);
     }
   }

@@ -110,13 +110,30 @@ const plexMono = IBM_Plex_Mono({
 
 const THEME_SCRIPT = `(function(){try{document.documentElement.classList.remove("dark")}catch(e){}})();`;
 
+/* Load-in motion is anchored to the first paint, not to element creation.
+   A bare CSS animation starts the moment the element exists — measured at
+   334ms here, against a first paint of 376ms — so the hero cascade was
+   30-70% spent before anything was on screen. Two rAFs after DOMContentLoaded
+   puts the start just after the user can actually see the hero. */
+const MOTION_READY_SCRIPT = `(function(){function g(){requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.setAttribute("data-motion-ready","")})})}if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",g)}else{g()}})();`;
+
+/* suppressHydrationWarning on <html>: the theme and motion-ready scripts both
+   stamp the element before React hydrates, so the server markup intentionally
+   differs from the client DOM. It is scoped to this element's own attributes
+   and does not suppress anything in the tree below. */
 export default function RootLayout({
   children,
 }: Readonly<{ children: Readonly<React.ReactNode> }>) {
   return (
-    <html lang="en-IN" className="light" style={{ colorScheme: "light" }}>
+    <html lang="en-IN" className="light" style={{ colorScheme: "light" }} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: MOTION_READY_SCRIPT }} />
+        {/* Load-in holds elements at opacity 0 until the ready flag lands, so
+            without JS they would never appear. Restore them outright. */}
+        <noscript>
+          <style>{`.rise-in,.stagger-item,.reveal,.reveal--fast{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
       </head>
       <body className={`${inter.variable} ${playfair.variable} ${plexDevanagari.variable} ${plexMono.variable} font-sans`}>
         <a
