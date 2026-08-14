@@ -68,25 +68,40 @@ export default function Home() {
       <section className="bg-[#faf9f5] border-b border-gray-200">
         <div className="shell flex flex-col-reverse lg:flex-row items-center justify-between gap-10 py-12 lg:py-20">
           
-          {/* Text Content */}
+          {/* Text Content.
+              Load-in is pure CSS (.rise-in + --rise-step), not the scroll-driven
+              Reveal: the hero is always above the fold, so an observer adds
+              nothing, and per-child steps give the cascade a group fade can't. */}
           <div className="w-full lg:w-5/12 space-y-6 text-center lg:text-left">
-            <Reveal className="space-y-4 reveal--fast">
-              <span className="font-mono text-xs sm:text-sm font-bold tracking-[0.2em] text-[var(--ochre)] uppercase">
+            <div className="space-y-4">
+              <span
+                className="rise-in block font-mono text-xs sm:text-sm font-bold tracking-[0.2em] text-[var(--ochre)] uppercase"
+                style={{ "--rise-step": 1 } as React.CSSProperties}
+              >
                 The Science of Ayurveda
               </span>
-              <h1 className="font-serif h1 leading-[1.1] text-[#111315]">
+              <h1
+                className="rise-in font-serif h1 leading-[1.1] text-[#111315]"
+                style={{ "--rise-step": 2 } as React.CSSProperties}
+              >
                 Natural Remedies for a Better You
               </h1>
-              <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
+              <p
+                className="rise-in text-sm sm:text-base text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0"
+                style={{ "--rise-step": 3 } as React.CSSProperties}
+              >
                 Classical, lab-tested botanical formulations manufactured in our Schedule T GMP certified facility. 100% transparent ingredients, zero heavy metals.
               </p>
-            </Reveal>
+            </div>
 
-            <Reveal className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 justify-center lg:justify-start pt-2 delay-100 reveal--fast">
+            <div
+              className="rise-in flex flex-col sm:flex-row items-center gap-3 sm:gap-4 justify-center lg:justify-start pt-2"
+              style={{ "--rise-step": 4 } as React.CSSProperties}
+            >
               <ButtonLink
                 href="#catalogue"
                 size="lg"
-                className="w-full sm:w-auto rounded-none bg-[#111315] text-white hover:bg-[var(--ochre)] hover:text-white px-8 py-3.5 font-sans font-medium tracking-wide text-sm transition-colors border border-transparent"
+                className="press w-full sm:w-auto rounded-none bg-[#111315] text-white hover:bg-[var(--ochre)] hover:text-white px-8 py-3.5 font-sans font-medium tracking-wide text-sm transition-colors border border-transparent"
               >
                 Explore Formulations
               </ButtonLink>
@@ -94,16 +109,17 @@ export default function Home() {
                 href="https://wa.me/918360053594"
                 target="_blank"
                 rel="noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#111315] hover:text-[var(--ochre)] hover:border-[var(--ochre)] bg-transparent border border-[#111315] px-8 py-3.5 font-sans font-medium text-sm transition-colors"
+                className="press w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#111315] hover:text-[var(--ochre)] hover:border-[var(--ochre)] bg-transparent border border-[#111315] px-8 py-3.5 font-sans font-medium text-sm transition-colors"
               >
                 <WhatsAppIcon size={16} className="text-current" />
                 <span>Consult Our Experts</span>
               </a>
-            </Reveal>
+            </div>
           </div>
 
-          {/* Hero Image */}
-          <Reveal className="w-full lg:w-7/12 delay-200 reveal--fast">
+          {/* Hero Image — step 0: on mobile the column reverses, so this sits at
+              the very top and should not be the last thing to arrive. */}
+          <div className="rise-in w-full lg:w-7/12" style={{ "--rise-step": 0 } as React.CSSProperties}>
             <div className="relative w-full rounded-sm overflow-hidden shadow-sm bg-white p-1 border border-gray-100">
               <Image
                 src="/images/banner-natural-remedies.jpg"
@@ -115,7 +131,7 @@ export default function Home() {
                 className="w-full h-auto object-contain block"
               />
             </div>
-          </Reveal>
+          </div>
 
         </div>
       </section>
@@ -164,7 +180,7 @@ export default function Home() {
         </div>
 
         {/* Horizontal Touch Carousel */}
-        <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-3 text-left -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
+        <div className="flex gap-4 overflow-x-auto no-scrollbar rail-mask snap-x snap-mandatory pb-3 text-left -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
           {products.map((p, i) => (
             <div key={p.slug} className="w-[280px] sm:w-[320px] shrink-0 snap-start">
               <ProductCard product={p} priority={i < 3} />
@@ -188,18 +204,18 @@ export default function Home() {
         </div>
 
         {/* Horizontal Touch Carousel */}
-        <div className="flex gap-3.5 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-3 text-left -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
+        <div className="flex gap-3.5 overflow-x-auto no-scrollbar rail-mask snap-x snap-mandatory pb-3 text-left -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
           {CONCERNS.map((c) => {
             const items = products.filter((p) => p.concernSlug === c.slug);
             return (
               <Link
                 key={c.slug}
                 href={`/shop/${c.slug}`}
-                className="w-[260px] sm:w-[280px] shrink-0 snap-start group bg-white border border-gray-200 hover:border-[var(--ochre)] rounded-xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md transition-all"
+                className="card-press w-[260px] sm:w-[280px] shrink-0 snap-start group bg-white border border-gray-200 hover:border-[var(--ochre)] rounded-xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-deva text-sm text-[var(--ochre)] font-bold">
+                    <span className="font-deva text-[15px] text-[var(--ochre)] font-bold">
                       {c.hindi}
                     </span>
                     <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 font-bold">
@@ -241,17 +257,28 @@ export default function Home() {
                 Every batch manufactured in our Schedule T certified facility undergoes independent NABL laboratory testing before release.
               </p>
 
-              {/* Quality Badges */}
+              {/* Quality Badges — the three claims that carry the section, so
+                  they arrive one at a time and get read one at a time. Stagger
+                  is driven by the parent Reveal's data-shown, which fires once. */}
               <div className="flex flex-wrap gap-2 pt-1 font-mono text-[10px] sm:text-xs font-bold text-[#111315]">
-                <span className="inline-flex items-center gap-1.5 bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs">
+                <span
+                  className="stagger-item inline-flex items-center gap-1.5 bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs"
+                  style={{ "--stagger-step": 0 } as React.CSSProperties}
+                >
                   <Beaker size={13} className="shrink-0" />
                   NABL Lab Tested
                 </span>
-                <span className="inline-flex items-center gap-1.5 bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs">
+                <span
+                  className="stagger-item inline-flex items-center gap-1.5 bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs"
+                  style={{ "--stagger-step": 1 } as React.CSSProperties}
+                >
                   <ShieldCheck size={13} className="shrink-0" />
                   Schedule T GMP
                 </span>
-                <span className="inline-flex items-center gap-1.5 bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs text-[var(--safe)]">
+                <span
+                  className="stagger-item inline-flex items-center gap-1.5 bg-white border border-gray-200 px-2.5 py-1 rounded-full shadow-2xs text-[var(--safe)]"
+                  style={{ "--stagger-step": 2 } as React.CSSProperties}
+                >
                   <Leaf size={13} className="shrink-0" />
                   100% Heavy Metal Free
                 </span>
@@ -304,7 +331,7 @@ export default function Home() {
         </div>
 
         {/* Horizontal Touch Carousel */}
-        <div className="flex gap-3.5 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-3 text-left -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
+        <div className="flex gap-3.5 overflow-x-auto no-scrollbar rail-mask snap-x snap-mandatory pb-3 text-left -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
           {MANUFACTURING_STEPS.map((s) => (
             <div key={s.n} className="w-[260px] sm:w-[280px] shrink-0 snap-start bg-white border border-gray-200 p-4 rounded-xl shadow-xs">
               <span className="font-mono text-xs font-bold text-[var(--ochre)]">{s.n}</span>
@@ -330,7 +357,7 @@ export default function Home() {
         </div>
 
         {/* Horizontal Touch Carousel */}
-        <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 text-left -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
+        <div className="flex gap-4 overflow-x-auto no-scrollbar rail-mask snap-x snap-mandatory pb-4 text-left -mx-5 pl-5 pr-[70px] sm:mx-0 sm:pl-0 sm:pr-0">
           {reviews.filter((r) => r.rating >= 4).map((r) => (
             <div key={r.id} className="w-[300px] sm:w-[340px] shrink-0 snap-start bg-white border border-gray-200 p-5 rounded-2xl shadow-sm flex flex-col justify-between">
               <div>

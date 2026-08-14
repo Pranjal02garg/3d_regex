@@ -178,28 +178,40 @@
 }
 
 @layer utilities {
+  /* Devanagari is an abugida: it carries matras above and below the shirorekha,
+     so it needs more headroom than Latin and reads optically smaller at the
+     same px. The headroom lives here — every .font-deva usage in this codebase
+     is a single-line inline label, so 1.45 clears the matras without inflating
+     pill heights (multi-line Devanagari copy would want ~1.7).
+
+     The optical size does NOT live here. A `font-size: 1.Xem` on this class
+     lands in the same cascade layer as Tailwind's text-* utilities but later
+     in source order, so it silently wins over every size utility on the same
+     element — the badge asks for text-xs and renders at 18px. Optical
+     compensation is a value you pick per context, so each call site sets a
+     Devanagari size roughly one step above the Latin it sits beside. */
   .font-deva {
     font-family: var(--font-plex-deva);
-    line-height: 1.6;
-    font-size: 1.1em;
+    line-height: 1.45;
   }
 
-  /* Pressable elements: buttons, cards, links */
-  button, a[href], [role="button"] {
+  /* Press feedback. Opt-in via .press / .card-press rather than a blanket
+     element selector — a global a[href] transform rule collides with any
+     element that owns a transform animation (the FAB pulse) or a hover
+     scale, and last-declaration-wins makes that collision silent. */
+  .press {
     transition: transform 120ms var(--ease-out);
   }
-
-  button:active, a[href]:active, [role="button"]:active {
+  .press:active {
     transform: scale(0.97);
   }
 
-  /* Product cards and concern cards */
-  article:has(a[href]), .group:has(a[href]) {
-    transition: transform 120ms var(--ease-out);
+  .card-press {
+    transition: transform 160ms var(--ease-out), border-color 200ms var(--ease-out),
+      box-shadow 200ms var(--ease-out);
   }
-
-  article:active, .group:active {
-    transform: scale(0.97);
+  .card-press:active {
+    transform: scale(0.98);
   }
 
   /* Content crossfade (e.g., table switching) */
@@ -235,6 +247,95 @@
   .reveal--fast[data-shown="true"] {
     opacity: 1;
     transform: none;
+  }
+
+  /* ── Presence motion ──────────────────────────────────────────────────── */
+
+  /* Hero load-in. CSS animation with fill `both` runs on mount and does not
+     replay on re-render (the element is never remounted), which is exactly
+     the "once, above the fold" requirement — no JS state needed. */
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .rise-in {
+    animation: rise-in 300ms var(--ease-out) both;
+    animation-delay: calc(var(--rise-step, 0) * 60ms);
+  }
+
+  /* Scroll-triggered stagger. Driven off the Reveal wrapper's data-shown, so
+     it fires once — Reveal disconnects its observer after the first hit. */
+  .stagger-item {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out);
+    transition-delay: calc(var(--stagger-step, 0) * 60ms);
+  }
+  [data-shown="true"] .stagger-item {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Card media: the wrapper is a fixed, clipping frame; only the image inside
+     scales. Scaling the wrapper (the previous behaviour) moved the frame and
+     its border along with it, which reads as the whole tile wobbling rather
+     than as depth. */
+  .card-media img {
+    transition: transform 400ms var(--ease-out);
+  }
+  .group:hover .card-media img,
+  .card-press:active .card-media img {
+    transform: scale(1.04);
+  }
+
+  /* Rail edge fade. The peeking card is cut by the viewport edge; without this
+     it reads as clipped/broken rather than as content that continues. Mobile
+     only — at >=640px the rails end on a card boundary and there is nothing
+     to imply. */
+  .rail-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      #000 0,
+      #000 calc(100% - 64px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 64px), transparent 100%);
+  }
+  @media (min-width: 640px) {
+    .rail-mask {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+  }
+
+  /* Primary conversion action. One slow breath every 8s: long enough that it
+     reads as ambient rather than nagging, shallow enough (1.04) that it never
+     competes with content. Lives on a wrapper so the anchor keeps its own
+     press/hover transform — an animation on the same element would override
+     the transition silently. */
+  @keyframes fab-pulse {
+    0%,
+    86%,
+    100% {
+      transform: scale(1);
+    }
+    91% {
+      transform: scale(1.04);
+    }
+    96% {
+      transform: scale(1);
+    }
+  }
+
+  .fab-pulse {
+    animation: fab-pulse 8s var(--ease-out) infinite;
   }
 
   @keyframes marquee-continuous {
@@ -290,5 +391,49 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   Gentler, not off. Opacity and color changes carry meaning and rarely
+   trigger motion sickness, so they stay; every positional/scale change goes.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal,
+  .reveal--fast,
+  .rise-in,
+  .stagger-item {
+    transform: none !important;
+  }
+
+  .rise-in {
+    animation-name: fade-in;
+  }
+
+  .press:active,
+  .card-press:active,
+  .card-media img,
+  .group:hover .card-media img,
+  .card-press:active .card-media img {
+    transform: none !important;
+  }
+
+  .fab-pulse {
+    animation: none !important;
+  }
+
+  /* The ticker is not decorative — it carries the licence number and the
+     shipping threshold. Freezing it would strand half that text off-screen,
+     so hand the user manual scrolling instead of stopping mid-sentence. */
+  .animate-marquee-continuous {
+    animation: none !important;
+  }
+  .marquee-viewport {
+    overflow-x: auto !important;
   }
 }

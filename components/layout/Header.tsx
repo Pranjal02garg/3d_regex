@@ -82,7 +82,7 @@ export default function Header() {
   return (
     <>
       {/* ── CONTINUOUS INFINITE MARQUEE TICKER ─────────────────────────── */}
-      <div className="fixed inset-x-0 top-0 z-[51] bg-[#111315] text-[#ffffff] font-mono shadow-sm overflow-hidden h-8 flex items-center">
+      <div className="marquee-viewport fixed inset-x-0 top-0 z-[51] bg-[#111315] text-[#ffffff] font-mono shadow-sm overflow-hidden h-8 flex items-center">
         <div className="animate-marquee-continuous font-bold tracking-wider py-0.5">
           {marqueeText}
           {marqueeText}
@@ -170,7 +170,7 @@ export default function Header() {
               type="button"
               onClick={openSearch}
               aria-label="Search"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#111315] md:hidden active:bg-gray-100"
+              className="press inline-flex h-9 w-9 items-center justify-center rounded-full text-[#111315] md:hidden active:bg-gray-100"
             >
               <Search size={18} strokeWidth={2} />
             </button>
@@ -198,7 +198,7 @@ export default function Header() {
               type="button"
               onClick={openCart}
               aria-label="Cart"
-              className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-[#111315] active:bg-gray-100"
+              className="press relative inline-flex h-9 w-9 items-center justify-center rounded-full text-[#111315] active:bg-gray-100"
             >
               <ShoppingBag size={18} strokeWidth={2} />
               {count > 0 && (
@@ -212,7 +212,7 @@ export default function Header() {
               type="button"
               onClick={() => setMobile(true)}
               aria-label="Open menu"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#111315] lg:hidden active:bg-gray-100"
+              className="press inline-flex h-9 w-9 items-center justify-center rounded-full text-[#111315] lg:hidden active:bg-gray-100"
             >
               <Menu size={20} strokeWidth={2} />
             </button>
@@ -237,7 +237,7 @@ export default function Header() {
                       >
                         <span className="text-sm font-bold text-[#111315] flex items-center justify-between">
                           <span>{c.title}</span>
-                          <span className="font-deva text-xs text-[var(--ochre)]">{c.hindi}</span>
+                          <span className="font-deva text-[13px] text-[var(--ochre)]">{c.hindi}</span>
                         </span>
                         <span className="text-xs text-[var(--fg-2)] mt-0.5">{c.blurb}</span>
                       </Link>
@@ -266,7 +266,7 @@ export default function Header() {
                         </span>
                         <span className="text-sm font-bold text-[#111315] flex items-center justify-between">
                           <span>{p.name}</span>
-                          <span className="font-deva text-xs text-[var(--ochre)]">{p.devanagari}</span>
+                          <span className="font-deva text-[13px] text-[var(--ochre)]">{p.devanagari}</span>
                         </span>
                         <span className="text-xs text-gray-500 truncate">{p.tagline}</span>
                       </Link>
@@ -327,7 +327,7 @@ export default function Header() {
                       className="p-3 rounded-lg border border-gray-200 bg-gray-50 flex flex-col"
                     >
                       <span className="text-sm font-bold text-[#111315]">{c.title}</span>
-                      <span className="font-deva text-xs text-[var(--ochre)] font-semibold">{c.hindi}</span>
+                      <span className="font-deva text-[13px] text-[var(--ochre)] font-semibold">{c.hindi}</span>
                     </Link>
                   ))}
                 </div>
@@ -352,7 +352,7 @@ export default function Header() {
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-[#111315] flex items-center gap-2">
                           <span>{p.name}</span>
-                          <span className="font-deva text-xs text-[var(--ochre)]">{p.devanagari}</span>
+                          <span className="font-deva text-[13px] text-[var(--ochre)]">{p.devanagari}</span>
                         </span>
                         <span className="text-xs text-gray-500">{p.tagline}</span>
                       </div>

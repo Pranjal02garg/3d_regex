@@ -37,7 +37,7 @@ export default function FormulationTable({ product }: { product: Product }) {
               <tr key={row.ingredient} className="hover:bg-gray-50/80 transition-colors">
                 <td className="py-3 pr-2 font-bold text-[#111315]">
                   <span>{ing.sanskrit}</span>
-                  <span className="ml-2 font-deva text-xs font-semibold text-[var(--ochre)] bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60">
+                  <span className="ml-2 font-deva text-[13px] font-semibold text-[var(--ochre)] bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60">
                     {ing.devanagari}
                   </span>
                 </td>
@@ -73,7 +73,7 @@ export default function FormulationTable({ product }: { product: Product }) {
               <div className="flex items-center justify-between gap-2">
                 <div className="font-bold text-[#111315] flex items-center gap-1.5">
                   <span>{ing.sanskrit}</span>
-                  <span className="font-deva text-[11px] text-[var(--ochre)] font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                  <span className="font-deva text-[12px] text-[var(--ochre)] font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
                     {ing.devanagari}
                   </span>
                 </div>

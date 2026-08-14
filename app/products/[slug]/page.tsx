@@ -135,7 +135,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                 >
                   {product.concern}
                 </Link>
-                <span className="font-deva text-base font-bold text-[var(--ochre)] px-3 py-0.5 rounded-full border border-gray-200">
+                <span className="font-deva text-[17px] font-bold text-[var(--ochre)] px-3 py-0.5 rounded-full border border-gray-200">
                   {product.devanagari}
                 </span>
               </div>
