@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -13,7 +13,9 @@ import {
   Beaker,
   Leaf,
   Sparkles,
-  X
+  X,
+  ArrowRight,
+  ChevronLeft
 } from "lucide-react";
 import { Accordion } from "@/components/ui/Disclosure";
 import ProductCard from "@/components/product/ProductCard";
@@ -24,84 +26,157 @@ import { reviews } from "@/content/reviews";
 import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
 
 export default function Home() {
-  const [activeProduct, setActiveProduct] = useState<Product | null>(null);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [activeModalProduct, setActiveModalProduct] = useState<Product | null>(null);
+  
+  // Mouse 3D Parallax Tilt state
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  const activeProduct = products[activeIdx];
+
+  // Mouse move 3D tilt effect matching Santioni Spirits physics
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!stageRef.current) return;
+      const rect = stageRef.current.getBoundingClientRect();
+      const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+      const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+      setTilt({ x: x * 15, y: -y * 15 });
+    };
+
+    const handleMouseLeave = () => setTilt({ x: 0, y: 0 });
+
+    const currentStage = stageRef.current;
+    if (currentStage) {
+      currentStage.addEventListener("mousemove", handleMouseMove);
+      currentStage.addEventListener("mouseleave", handleMouseLeave);
+    }
+    return () => {
+      if (currentStage) {
+        currentStage.removeEventListener("mousemove", handleMouseMove);
+        currentStage.removeEventListener("mouseleave", handleMouseLeave);
+      }
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#faf8f3] text-[#111315] font-sans antialiased selection:bg-[#c44900] selection:text-white">
       
-      {/* ── 1 · HERO STAGE (SANTIONI ALABASTER PARCHMENT FORMAT) ───────────── */}
-      <section className="relative min-h-[90vh] flex flex-col justify-between overflow-hidden border-b border-gray-200/80 bg-[radial-gradient(ellipse_at_top,#ffffff,#faf8f3)] pt-14 pb-8 px-4 sm:px-6 lg:px-8">
+      {/* ── 1 · HERO STAGE (SANTIONI 3D INTERACTIVE HERO STAGE) ─────────────── */}
+      <section
+        ref={stageRef}
+        className="relative min-h-[92vh] flex flex-col justify-between overflow-hidden border-b border-gray-200/80 bg-[radial-gradient(ellipse_at_top,#ffffff,#faf8f3)] pt-14 pb-8 px-4 sm:px-6 lg:px-8 select-none"
+      >
         
         {/* Ambient Warm Golden Sun Glow */}
-        <div aria-hidden="true" className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[#c44900]/10 blur-[130px] pointer-events-none animate-glow-pulse" />
+        <div aria-hidden="true" className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[750px] h-[420px] bg-[#c44900]/12 blur-[140px] pointer-events-none animate-glow-pulse" />
 
-        {/* Header Tag */}
+        {/* Top Header Tag */}
         <div className="text-center pt-4 z-10">
-          <span className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs font-bold tracking-[0.3em] text-[#c44900] uppercase border border-[#c44900]/30 px-3.5 py-1 rounded-full bg-white/90 backdrop-blur-md shadow-xs">
+          <span className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs font-bold tracking-[0.3em] text-[#c44900] uppercase border border-[#c44900]/30 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-xs">
             <Sparkles size={12} className="text-[#c44900] animate-pulse" />
-            01 · THE SCIENCE OF BOTANICAL AYURVEDA
+            01 · SANTIONI CRAFTED BOTANICAL AYURVEDA
           </span>
         </div>
 
-        {/* Center Stage Title & Bottle Showcase */}
+        {/* Center Stage Spotlight Container */}
         <div className="my-auto z-10 text-center max-w-5xl mx-auto space-y-6">
-          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#111315] uppercase leading-none">
-            NATURAL REMEDIES FOR A BETTER YOU
-          </h1>
+          
+          {/* Main Giant Headline */}
+          <div className="overflow-hidden">
+            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#111315] uppercase leading-none transition-all duration-700">
+              INDULGE IN PURE BOTANICAL WELLNESS
+            </h1>
+          </div>
+
           <p className="text-xs sm:text-base text-gray-600 max-w-xl mx-auto font-sans leading-relaxed">
-            Classical, lab-tested botanical formulations manufactured in our Schedule T GMP certified facility. 100% transparent ingredients, zero heavy metals.
+            Classical, lab-tested formulations crafted with 100% transparent botanical extracts in our Schedule T GMP facility.
           </p>
 
-          {/* Santioni 3D Floating 5-Bottle Stage Display */}
-          <div className="pt-4 pb-2">
-            <div className="flex items-end justify-center gap-2 sm:gap-4 max-w-2xl mx-auto">
-              {products.map((p, i) => {
-                const centre = (products.length - 1) / 2;
-                const lift = (1 - Math.abs(i - centre) / centre) * 16;
-                const animClass = i === 2 ? "animate-float-center" : (i % 2 === 0 ? "animate-float-1" : "animate-float-2");
-                return (
-                  <button
-                    key={p.slug}
-                    onClick={() => setActiveProduct(p)}
-                    className={`group relative flex-1 focus:outline-none transition-all duration-300 hover:scale-125 hover:z-30 cursor-pointer ${animClass}`}
-                    style={{ marginBottom: `${lift}px`, maxWidth: "20%" }}
-                  >
-                    <Image
-                      src={`/products/${p.slug}.png`}
-                      alt={p.name}
-                      width={400}
-                      height={500}
-                      priority={i < 3}
-                      className="w-full h-auto object-contain mix-blend-multiply drop-shadow-lg group-hover:drop-shadow-2xl transition-all"
-                    />
-                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute -bottom-7 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-widest text-[#c44900] font-bold whitespace-nowrap bg-white border border-gray-200 px-2.5 py-1 rounded-md shadow-xl">
-                      {p.name}
-                    </span>
-                  </button>
-                );
-              })}
+          {/* 3D Interactive Floating Bottle Pedestal */}
+          <div className="relative py-4 flex flex-col items-center justify-center min-h-[300px]">
+            
+            {/* Prev / Next Navigation Arrows */}
+            <button
+              onClick={() => setActiveIdx((prev) => (prev === 0 ? products.length - 1 : prev - 1))}
+              className="absolute left-2 sm:left-12 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/80 border border-gray-200/80 shadow-lg text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer"
+              aria-label="Previous remedy"
+            >
+              <ChevronLeft size={20} />
+            </button>
+
+            <button
+              onClick={() => setActiveIdx((prev) => (prev === products.length - 1 ? 0 : prev + 1))}
+              className="absolute right-2 sm:right-12 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/80 border border-gray-200/80 shadow-lg text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer"
+              aria-label="Next remedy"
+            >
+              <ChevronRight size={20} />
+            </button>
+
+            {/* 3D Floating Bottle with Mouse Inertia */}
+            <div
+              className="relative transition-transform duration-200 ease-out cursor-pointer animate-float-center"
+              style={{
+                transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale3d(1.05, 1.05, 1.05)`,
+              }}
+              onClick={() => setActiveModalProduct(activeProduct)}
+            >
+              <Image
+                key={activeProduct.slug}
+                src={`/products/${activeProduct.slug}.png`}
+                alt={activeProduct.name}
+                width={380}
+                height={480}
+                priority
+                className="w-[220px] sm:w-[280px] h-auto object-contain mix-blend-multiply drop-shadow-[0_25px_35px_rgba(0,0,0,0.25)] hover:drop-shadow-[0_35px_45px_rgba(196,73,0,0.35)] transition-all duration-500"
+              />
+
+              {/* Sanskrit Devanagari Floating Tag */}
+              <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 font-mono text-[11px] uppercase tracking-widest text-[#c44900] font-bold whitespace-nowrap bg-white border border-gray-200 px-3 py-1 rounded-md shadow-xl flex items-center gap-1.5">
+                <span className="font-deva text-xs font-bold">{activeProduct.devanagari}</span>
+                <span>· {activeProduct.name}</span>
+              </span>
             </div>
 
-            {/* Stand Plane Shadow */}
+            {/* Stand Pedestal Radial Glow */}
             <div
               aria-hidden="true"
-              className="mx-auto mt-2 h-4 w-[75%] rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(17,19,21,0.16),transparent_70%)] animate-pulse"
+              className="mt-6 h-5 w-[240px] sm:w-[320px] rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(196,73,0,0.3),transparent_70%)] animate-pulse"
             />
           </div>
 
-          {/* Santioni-Style Pill Action Buttons */}
-          <div className="flex flex-row items-center justify-center gap-3 pt-2">
-            <a
-              href="#catalogue"
-              className="bg-[#111315] text-white hover:bg-[#c44900] px-7 py-3 rounded-full font-mono text-xs font-bold uppercase tracking-widest transition-all shadow-lg hover:scale-105"
+          {/* Numbered Bottle Selector Wheel (Santioni Pedestal Rotator) */}
+          <div className="flex items-center justify-center gap-2 sm:gap-3 pt-2">
+            {products.map((p, index) => (
+              <button
+                key={p.slug}
+                onClick={() => setActiveIdx(index)}
+                className={`font-mono text-xs px-3.5 py-1.5 rounded-full border transition-all cursor-pointer ${
+                  activeIdx === index
+                    ? "bg-[#111315] text-white border-[#111315] font-bold shadow-md scale-105"
+                    : "bg-white/80 text-gray-600 border-gray-200 hover:border-[#c44900] hover:text-[#c44900]"
+                }`}
+              >
+                0{index + 1} · {p.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Santioni Glassmorphism Action Buttons */}
+          <div className="flex flex-row items-center justify-center gap-3 pt-4">
+            <Link
+              href={`/products/${activeProduct.slug}`}
+              className="bg-[#111315] text-white hover:bg-[#c44900] px-8 py-3.5 rounded-full font-mono text-xs font-bold uppercase tracking-widest transition-all shadow-xl hover:scale-105 flex items-center gap-2"
             >
-              EXPLORE RANGE
-            </a>
+              <span>INSPECT {activeProduct.name}</span>
+              <ArrowRight size={14} />
+            </Link>
             <a
               href="https://wa.me/918360053594"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center gap-2 text-[#111315] hover:text-[#c44900] hover:border-[#c44900] bg-white border border-gray-300 px-7 py-3 rounded-full font-mono text-xs font-bold uppercase tracking-widest transition-all shadow-xs hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 text-[#111315] hover:text-[#c44900] hover:border-[#c44900] bg-white border border-gray-300 px-7 py-3.5 rounded-full font-mono text-xs font-bold uppercase tracking-widest transition-all shadow-xs hover:scale-105"
             >
               <WhatsAppIcon size={15} className="text-[#25D366]" />
               <span>CONSULT DOCTOR</span>
@@ -112,7 +187,7 @@ export default function Home() {
         {/* Stage Subtitle Footer */}
         <div className="z-10 text-center border-t border-gray-200/80 pt-4">
           <p className="font-mono text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-gray-500">
-            THE COMPLETE RANGE · FIVE CLASSICAL FORMULATIONS
+            ACTIVE FORMULATION: {activeProduct.name} ({activeProduct.devanagari}) — {activeProduct.tagline}
           </p>
         </div>
       </section>
@@ -335,11 +410,11 @@ export default function Home() {
       </section>
 
       {/* Interactive Detail Modal for Selected Bottle */}
-      {activeProduct && (
+      {activeModalProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
           <div className="relative w-full max-w-lg bg-white border border-gray-200 rounded-2xl p-6 shadow-2xl text-left">
             <button
-              onClick={() => setActiveProduct(null)}
+              onClick={() => setActiveModalProduct(null)}
               className="absolute top-4 right-4 text-gray-500 hover:text-black p-1 rounded-full bg-gray-100"
             >
               <X size={20} />
@@ -347,20 +422,20 @@ export default function Home() {
 
             <div className="flex items-center gap-4 mb-4">
               <div className="w-20 h-20 bg-[#faf7f1] rounded-xl p-2 flex items-center justify-center shrink-0 border border-gray-200">
-                <Image src={`/products/${activeProduct.slug}.png`} alt={activeProduct.name} width={100} height={100} className="object-contain max-h-full" />
+                <Image src={`/products/${activeModalProduct.slug}.png`} alt={activeModalProduct.name} width={100} height={100} className="object-contain max-h-full" />
               </div>
               <div>
-                <span className="font-deva text-xs font-bold text-[#c44900]">{activeProduct.devanagari}</span>
-                <h3 className="font-serif text-2xl font-bold text-[#111315]">{activeProduct.name}</h3>
-                <p className="text-xs text-gray-500 font-mono mt-0.5">{activeProduct.tagline}</p>
+                <span className="font-deva text-xs font-bold text-[#c44900]">{activeModalProduct.devanagari}</span>
+                <h3 className="font-serif text-2xl font-bold text-[#111315]">{activeModalProduct.name}</h3>
+                <p className="text-xs text-gray-500 font-mono mt-0.5">{activeModalProduct.tagline}</p>
               </div>
             </div>
 
             <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
-              <span className="font-mono text-xl font-bold text-[#111315]">₹{activeProduct.price}</span>
+              <span className="font-mono text-xl font-bold text-[#111315]">₹{activeModalProduct.price}</span>
               <Link
-                href={`/products/${activeProduct.slug}`}
-                onClick={() => setActiveProduct(null)}
+                href={`/products/${activeModalProduct.slug}`}
+                onClick={() => setActiveModalProduct(null)}
                 className="bg-[#111315] text-white px-5 py-2 rounded-full font-mono text-xs font-bold hover:bg-[#c44900] transition-colors"
               >
                 VIEW FULL DETAILS
