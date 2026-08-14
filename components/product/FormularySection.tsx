@@ -9,7 +9,7 @@ export default function FormularySection() {
   const selectedProduct = products.find((p) => p.slug === selectedSlug) ?? products[0];
 
   return (
-    <section className="bg-gray-50 py-6 sm:py-10 border-b border-gray-200">
+    <section className="bg-gray-50 py-6 sm:py-12 border-b border-gray-200">
       <div className="shell grid gap-6 lg:grid-cols-12 lg:gap-10 items-start">
         <div className="lg:col-span-5 text-left space-y-3">
           <span className="eyebrow text-[var(--ochre)] font-bold text-xs">FULL TRANSPARENCY</span>

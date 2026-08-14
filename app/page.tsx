@@ -121,7 +121,7 @@ export default function Home() {
       </section>
 
       {/* ── 2 · ULTRA-COMPACT MOBILE TRUST BAR ──────────────────────────────── */}
-      <section className="py-2.5 bg-[#faf7f1]/80 border-y border-gray-200/70 font-mono text-[#111315]">
+      <section className="py-4 bg-[#faf7f1]/80 border-y border-gray-200/70 font-mono text-[#111315]">
         <div className="shell grid grid-cols-2 md:flex items-center justify-around gap-2 sm:gap-4 text-[10px] sm:text-xs font-bold leading-tight text-center md:text-left">
           <div className="flex items-center justify-center md:justify-start gap-1">
             <Award size={13} className="shrink-0 text-[var(--ochre)]" />
@@ -146,7 +146,7 @@ export default function Home() {
       </section>
 
       {/* ── 3 · OUR 5 MANUFACTURED REMEDIES (HORIZONTAL SWIPE CAROUSEL) ────────── */}
-      <Reveal as="section" id="catalogue" className="shell py-6 sm:py-10 border-b border-gray-100">
+      <Reveal as="section" id="catalogue" className="shell py-6 sm:py-12 border-b border-gray-100">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 text-left gap-2">
           <div>
             <span className="eyebrow text-[var(--ochre)] font-bold text-xs">THE RANGE</span>
@@ -174,7 +174,7 @@ export default function Home() {
       </Reveal>
 
       {/* ── 4 · SHOP BY HEALTH CONCERN (HORIZONTAL SWIPE CAROUSEL) ─────────────── */}
-      <Reveal as="section" className="shell py-6 sm:py-10 border-b border-gray-100">
+      <Reveal as="section" className="shell py-6 sm:py-12 border-b border-gray-100">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 text-left gap-2">
           <div>
             <span className="eyebrow text-[var(--ochre)] font-bold text-xs">TARGETED CARE</span>
@@ -226,7 +226,7 @@ export default function Home() {
       </Reveal>
 
       {/* ── 5 · PROMOTIONAL LAB QUALITY BANNER (CLEAN LIGHT MODE CARD) ───────── */}
-      <Reveal as="section" className="shell py-6 sm:py-10 border-b border-gray-100">
+      <Reveal as="section" className="shell py-6 sm:py-12 border-b border-gray-100">
         <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-8 shadow-xs">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center text-left">
             {/* Left Content Side */}
@@ -292,7 +292,7 @@ export default function Home() {
       <FormularySection />
 
       {/* ── 7 · MANUFACTURING 6 STEPS (HORIZONTAL SWIPE CAROUSEL) ─────────────── */}
-      <Reveal as="section" className="shell py-6 sm:py-10 border-b border-gray-100">
+      <Reveal as="section" className="shell py-6 sm:py-12 border-b border-gray-100">
         <div className="text-left max-w-xl mb-4">
           <p className="eyebrow text-[var(--ochre)] font-bold">Manufacturing Standard</p>
           <h2 className="display text-2xl sm:text-3xl text-[#111315] mt-0.5">
@@ -359,7 +359,7 @@ export default function Home() {
       </Reveal>
 
       {/* ── 9 · FAQS (ACCORDION) ────────────────────────────────────────────── */}
-      <Reveal as="section" className="shell py-6 sm:py-10">
+      <Reveal as="section" className="shell py-6 sm:py-12">
         <div className="max-w-3xl mx-auto text-left">
           <p className="eyebrow text-[var(--ochre)] mb-1 font-bold text-center">Frequently Asked Questions</p>
           <h2 className="display text-2xl sm:text-3xl text-[#111315] mb-6 text-center">Clear answers about our remedies.</h2>
