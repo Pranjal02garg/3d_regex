@@ -126,67 +126,39 @@ export default function Bottle3DCanvas({
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.4;
+    renderer.toneMappingExposure = 1.0; // Standard exposure to prevent washing out black plastic
 
     container.appendChild(renderer.domElement);
 
-    // 2. High-Gloss Studio Environment Softbox Setup
-    const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    pmremGenerator.compileEquirectangularShader();
-
-    const envScene = new THREE.Scene();
-    envScene.background = new THREE.Color(0xfaf8f3);
-    
-    // Large Bright White Studio Softbox directly overhead
-    const softboxOverhead = new THREE.Mesh(
-      new THREE.PlaneGeometry(16, 16),
-      new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide })
-    );
-    softboxOverhead.position.set(0, 6, 2);
-    softboxOverhead.rotation.x = Math.PI / 2;
-    envScene.add(softboxOverhead);
-
-    const envTexture = pmremGenerator.fromScene(envScene).texture;
-    scene.environment = envTexture;
-    pmremGenerator.dispose();
-
-    // 3. DEDICATED HIGH-INTENSITY HERO OVERHEAD LIGHTING (Fixed in World Space)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
+    // 2. DEDICATED HEROLIGHTING SETUP (Fixed in World Space)
+    // Soft Ambient Light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
     scene.add(ambientLight);
 
-    // PRIMARY OVERHEAD LARGE SOFT KEY LIGHT (Directly illuminates Cap & Shoulders)
-    const keyLight = new THREE.DirectionalLight(0xffffff, 10.0);
-    keyLight.position.set(0, 4.5, 1.8);
+    // PRIMARY OVERHEAD LARGE SOFT KEY LIGHT (Softbox Overhead - 100% conceptual weight)
+    const keyLight = new THREE.DirectionalLight(0xfffdfa, 0.0); // Starts at 0, ramps smoothly to 1.6
+    keyLight.position.set(0.8, 4.2, 2.2);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
     keyLight.shadow.mapSize.height = 1024;
     scene.add(keyLight);
 
-    // DEDICATED SPOTLIGHT FOCUSED ON CAP & SHOULDERS
-    const capSpotlight = new THREE.SpotLight(0xffffff, 14.0);
-    capSpotlight.position.set(0, 4.0, 1.5);
-    capSpotlight.angle = Math.PI / 4;
-    capSpotlight.penumbra = 0.8;
-    capSpotlight.target.position.set(0, 0.8, 0);
-    scene.add(capSpotlight);
-    scene.add(capSpotlight.target);
-
-    // Subtle Rim Light for Back Edge Separation
-    const rimLight = new THREE.DirectionalLight(0xfff8ee, 3.5);
-    rimLight.position.set(-3.5, 3.0, -2.8);
+    // SUBTLE RIM LIGHT (15-20% ratio for edge separation from parchment background)
+    const rimLight = new THREE.DirectionalLight(0xfff5eb, 0.35);
+    rimLight.position.set(-3.2, 2.5, -2.5);
     scene.add(rimLight);
 
-    // Soft Front Fill Light for Label Clarity
-    const fillLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    fillLight.position.set(0, 0.5, 4.5);
+    // WEAK FRONT FILL LIGHT (15-20% ratio to keep product label crisp & un-overexposed)
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.22);
+    fillLight.position.set(-1.5, 0.5, 3.8);
     scene.add(fillLight);
 
-    // Bottom Bounce Light
-    const bounceLight = new THREE.DirectionalLight(0xf4efe6, 0.8);
-    bounceLight.position.set(0, -5, 2);
+    // Subtle Ground Bounce Light
+    const bounceLight = new THREE.DirectionalLight(0xf4efe6, 0.2);
+    bounceLight.position.set(0, -4, 2);
     scene.add(bounceLight);
 
-    // 4. Build High-Precision Glossy Black Bottle Group
+    // 3. Build High-Precision Glossy Black Bottle Group
     const bottleGroup = new THREE.Group();
 
     // Bottle Body Geometry
@@ -210,14 +182,14 @@ export default function Bottle3DCanvas({
       () => setLoading(false)
     );
 
-    // Glossy Jet Black Plastic Material
+    // DEEP GLOSSY JET BLACK PLASTIC MATERIAL (NOT Grey, NOT Metallic)
     const bodyMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x0c0e12, // Pure Deep Glossy Black Plastic
-      roughness: 0.14,
-      metalness: 0.05,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.04,
-      reflectivity: 0.95,
+      color: 0x08090c, // Pure Deep Jet Black Plastic
+      roughness: 0.28,  // Soft realistic plastic sheen, NOT a harsh white vertical stripe
+      metalness: 0.0,   // Non-metallic plastic
+      clearcoat: 0.65,  // Restrained clearcoat
+      clearcoatRoughness: 0.22, // Broad, soft highlights across curvature
+      reflectivity: 0.75,
     });
 
     const bottleBody = new THREE.Mesh(bodyGeometry, bodyMaterial);
@@ -230,8 +202,8 @@ export default function Bottle3DCanvas({
     const labelMaterial = new THREE.MeshStandardMaterial({
       map: labelTexture,
       transparent: true,
-      roughness: 0.18,
-      metalness: 0.02,
+      roughness: 0.25,
+      metalness: 0.0,
     });
 
     const labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
@@ -243,13 +215,13 @@ export default function Bottle3DCanvas({
     neckMesh.position.y = 0.98;
     bottleGroup.add(neckMesh);
 
-    // Ribbed Safety Cap Group
+    // Ribbed Safety Cap Group (Deep Black Plastic with Subtle Ridge Highlights)
     const capGroup = new THREE.Group();
     const capGeometry = new THREE.CylinderGeometry(0.52, 0.52, 0.36, 64);
     const capMaterial = new THREE.MeshStandardMaterial({
-      color: 0x14161c,
-      roughness: 0.2,
-      metalness: 0.15,
+      color: 0x121418,
+      roughness: 0.30,
+      metalness: 0.0,
     });
     const capMesh = new THREE.Mesh(capGeometry, capMaterial);
     capMesh.castShadow = true;
@@ -257,7 +229,7 @@ export default function Bottle3DCanvas({
 
     // Vertical Cap Ridges
     const ridgeGeo = new THREE.BoxGeometry(0.02, 0.34, 0.03);
-    const ridgeMat = new THREE.MeshStandardMaterial({ color: 0x222630, roughness: 0.25 });
+    const ridgeMat = new THREE.MeshStandardMaterial({ color: 0x181b22, roughness: 0.32 });
     for (let i = 0; i < 32; i++) {
       const angle = (i / 32) * Math.PI * 2;
       const ridge = new THREE.Mesh(ridgeGeo, ridgeMat);
@@ -269,12 +241,12 @@ export default function Bottle3DCanvas({
     capGroup.position.y = 1.32;
     bottleGroup.add(capGroup);
 
-    // Soft Contact Ground Drop Shadow
+    // Soft Contact Ground Drop Shadow (Subtle & Grounded)
     const shadowGeo = new THREE.PlaneGeometry(2.6, 2.6);
     const shadowMat = new THREE.MeshBasicMaterial({
       color: 0x111315,
       transparent: true,
-      opacity: 0.22,
+      opacity: 0.20,
       depthWrite: false,
     });
     const shadowPlane = new THREE.Mesh(shadowGeo, shadowMat);
@@ -284,7 +256,7 @@ export default function Bottle3DCanvas({
 
     scene.add(bottleGroup);
 
-    // Phase 1 Entrance Animation
+    // Phase 1 Entrance Animation Position
     bottleGroup.position.y = -0.35;
     bottleGroup.scale.set(0.96, 0.96, 0.96);
 
@@ -299,7 +271,7 @@ export default function Bottle3DCanvas({
       }
     };
 
-    // 5. Touch & Drag Controls
+    // 4. Touch & Drag Controls
     const onMouseDown = (e: MouseEvent) => {
       isDraggingRef.current = true;
       notifyInteraction();
@@ -385,13 +357,18 @@ export default function Bottle3DCanvas({
     domElement.addEventListener("touchend", onTouchEnd);
     domElement.addEventListener("wheel", onWheel, { passive: false });
 
-    // 6. Animation Timeline & Render Loop
+    // 5. Animation Timeline Loop (Key Light smooth fade-in 0 -> 1.6 over 1100ms)
     let animationFrameId: number;
     const clock = new THREE.Clock();
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
+
+      // Smooth Overhead Soft Key Light Fade-In (0 -> 1.6 intensity over 1100ms)
+      if (keyLight.intensity < 1.6) {
+        keyLight.intensity += (1.6 - keyLight.intensity) * 0.05;
+      }
 
       // Entrance Scale & Settle
       currentScaleRef.current += (targetScaleRef.current - currentScaleRef.current) * 0.08;
