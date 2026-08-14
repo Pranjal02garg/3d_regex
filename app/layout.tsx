@@ -80,7 +80,7 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display, IBM_Plex_Sans_Devanagari, IBM_Plex_Mono } from "next/font/google";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -94,6 +94,20 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
 });
 
+const plexDevanagari = IBM_Plex_Sans_Devanagari({
+  subsets: ["devanagari"],
+  display: "swap",
+  variable: "--font-plex-deva",
+  weight: ["400", "500", "600", "700"],
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-plex-mono",
+  weight: ["400", "500", "600", "700"],
+});
+
 const THEME_SCRIPT = `(function(){try{document.documentElement.classList.remove("dark")}catch(e){}})();`;
 
 export default function RootLayout({
@@ -104,7 +118,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} font-sans`}>
+      <body className={`${inter.variable} ${playfair.variable} ${plexDevanagari.variable} ${plexMono.variable} font-sans`}>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-brand focus:px-4 focus:py-2.5 focus:text-sm focus:font-medium focus:text-brand-fg"

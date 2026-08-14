@@ -168,6 +168,12 @@
 }
 
 @layer utilities {
+  .font-deva {
+    font-family: var(--font-plex-deva);
+    line-height: 1.6;
+    font-size: 1.1em;
+  }
+
   .reveal {
     opacity: 0;
     transform: translateY(6px);
