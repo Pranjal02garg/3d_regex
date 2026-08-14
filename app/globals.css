@@ -184,6 +184,24 @@
     font-size: 1.1em;
   }
 
+  /* Pressable elements: buttons, cards, links */
+  button, a[href], [role="button"] {
+    transition: transform 120ms var(--ease-out);
+  }
+
+  button:active, a[href]:active, [role="button"]:active {
+    transform: scale(0.97);
+  }
+
+  /* Product cards and concern cards */
+  article:has(a[href]), .group:has(a[href]) {
+    transition: transform 120ms var(--ease-out);
+  }
+
+  article:active, .group:active {
+    transform: scale(0.97);
+  }
+
   .reveal {
     opacity: 0;
     transform: translateY(6px);
