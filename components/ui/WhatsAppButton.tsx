@@ -27,7 +27,7 @@ export default function WhatsAppButton() {
           playful, which is the wrong register for a medicine site whose
           buyers are mostly older. */}
       {showBadge && !dismissed && (
-        <div className="pointer-events-auto animate-fade-in flex items-center gap-1 rounded-full border border-[#25D366] bg-[#111315]/95 pr-1 shadow-xl backdrop-blur-md">
+        <div className="pointer-events-auto animate-shake-badge flex items-center gap-1 rounded-full border border-[#25D366] bg-[#111315]/95 pr-1 shadow-2xl backdrop-blur-md">
           <a
             href="https://wa.me/918360053594?text=Hello%20Regex%20Remedies%2C%20I%20have%20a%20query"
             target="_blank"
