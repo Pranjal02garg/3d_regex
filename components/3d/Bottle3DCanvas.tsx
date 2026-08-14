@@ -13,23 +13,25 @@ interface Bottle3DProps {
 }
 
 // CAP TOP EMBOSSED REGEX LOGO CANVAS
-function createCapTopCanvas(): THREE.CanvasTexture {
+function createCapTopCanvas(capBgColor = "#121418"): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   canvas.width = 512;
   canvas.height = 512;
   const ctx = canvas.getContext("2d");
 
   if (ctx) {
-    ctx.fillStyle = "#121418";
+    ctx.fillStyle = capBgColor;
     ctx.fillRect(0, 0, 512, 512);
 
-    ctx.strokeStyle = "#2e3440";
+    ctx.strokeStyle = "#ffffff";
+    ctx.globalAlpha = 0.3;
     ctx.lineWidth = 12;
     ctx.beginPath();
     ctx.arc(256, 256, 220, 0, Math.PI * 2);
     ctx.stroke();
 
-    ctx.fillStyle = "#5c6578";
+    ctx.globalAlpha = 0.8;
+    ctx.fillStyle = "#ffffff";
     ctx.font = "bold 44px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("REGEX", 256, 240);
@@ -116,20 +118,55 @@ export default function Bottle3DCanvas({
     bounceLight.position.set(0, -4, 2);
     scene.add(bounceLight);
 
-    // 3. Deep Glossy Jet Black Plastic Material Definition
-    const glossyBlackPlasticMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x08090c, // Pure Glossy Jet Black Plastic
-      roughness: 0.28,
+    // 3. Product-Specific Color & Material Configuration
+    let bodyColor = 0x08090c;
+    let capColor = 0x121418;
+    let ridgeColor = 0x181b22;
+    let labelTexturePath = "/textures/label_atlas.png";
+    let capHexStr = "#121418";
+
+    if (productSlug === "gasogex") {
+      bodyColor = 0x008a4b; // Emerald Green Transparent PET
+      capColor = 0x00994d;  // Emerald Green Safety Cap
+      ridgeColor = 0x00b359;
+      labelTexturePath = "/textures/gasogex_label.png";
+      capHexStr = "#00994d";
+    } else if (productSlug === "livgex") {
+      bodyColor = 0x103652; // Deep Navy PET
+      capColor = 0x0a2438;
+      ridgeColor = 0x183d5a;
+      capHexStr = "#0a2438";
+    } else if (productSlug === "pilegex") {
+      bodyColor = 0x3d1a0e; // Rich Amber Brown PET
+      capColor = 0x240e07;
+      ridgeColor = 0x471d0e;
+      capHexStr = "#240e07";
+    } else if (productSlug === "lucogex") {
+      bodyColor = 0x4a1829; // Magenta Pink PET
+      capColor = 0x300e19;
+      ridgeColor = 0x5e1f34;
+      capHexStr = "#300e19";
+    }
+
+    const bottleBodyMaterial = new THREE.MeshPhysicalMaterial({
+      color: bodyColor,
+      roughness: 0.22,
       metalness: 0.0,
-      clearcoat: 0.65,
-      clearcoatRoughness: 0.22,
-      reflectivity: 0.75,
+      clearcoat: 0.70,
+      clearcoatRoughness: 0.18,
+      reflectivity: 0.85,
     });
 
-    // 4. Load Official 360° Reference Label Atlas (`label_atlas.png`)
+    const capMaterial = new THREE.MeshStandardMaterial({
+      color: capColor,
+      roughness: 0.25,
+      metalness: 0.0,
+    });
+
+    // 4. Load Official 360° Reference Label Texture
     const textureLoader = new THREE.TextureLoader();
-    const labelAtlasTexture = textureLoader.load(
-      "/textures/label_atlas.png",
+    const labelTexture = textureLoader.load(
+      labelTexturePath,
       (tex) => {
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.needsUpdate = true;
@@ -140,7 +177,7 @@ export default function Bottle3DCanvas({
     );
 
     const labelMaterial = new THREE.MeshStandardMaterial({
-      map: labelAtlasTexture,
+      map: labelTexture,
       transparent: true,
       roughness: 0.25,
       metalness: 0.0,
@@ -167,7 +204,7 @@ export default function Bottle3DCanvas({
 
     const bodyGeometry = new THREE.LatheGeometry(profilePoints, 64);
     bodyGeometry.computeVertexNormals();
-    const bottleBody = new THREE.Mesh(bodyGeometry, glossyBlackPlasticMaterial);
+    const bottleBody = new THREE.Mesh(bodyGeometry, bottleBodyMaterial);
     bottleBody.castShadow = true;
     bottleBody.receiveShadow = true;
     bottleGroup.add(bottleBody);
@@ -181,20 +218,19 @@ export default function Bottle3DCanvas({
     // Ribbed Safety Cap Group
     const capGroup = new THREE.Group();
     const capGeometry = new THREE.CylinderGeometry(0.55, 0.56, 0.40, 64);
-    const capMaterial = new THREE.MeshStandardMaterial({ color: 0x121418, roughness: 0.30, metalness: 0.0 });
     const capMesh = new THREE.Mesh(capGeometry, capMaterial);
     capMesh.castShadow = true;
     capGroup.add(capMesh);
 
     const capTopGeo = new THREE.CircleGeometry(0.54, 64);
-    const capTopMat = new THREE.MeshStandardMaterial({ map: createCapTopCanvas(), roughness: 0.35, metalness: 0.0 });
+    const capTopMat = new THREE.MeshStandardMaterial({ map: createCapTopCanvas(capHexStr), roughness: 0.35, metalness: 0.0 });
     const capTopMesh = new THREE.Mesh(capTopGeo, capTopMat);
     capTopMesh.rotation.x = -Math.PI / 2;
     capTopMesh.position.y = 0.201;
     capGroup.add(capTopMesh);
 
     const ridgeGeo = new THREE.BoxGeometry(0.018, 0.38, 0.025);
-    const ridgeMat = new THREE.MeshStandardMaterial({ color: 0x181b22, roughness: 0.32 });
+    const ridgeMat = new THREE.MeshStandardMaterial({ color: ridgeColor, roughness: 0.30 });
     for (let i = 0; i < 32; i++) {
       const angle = (i / 32) * Math.PI * 2;
       const ridge = new THREE.Mesh(ridgeGeo, ridgeMat);
@@ -205,7 +241,7 @@ export default function Bottle3DCanvas({
     capGroup.position.y = 1.28;
     bottleGroup.add(capGroup);
 
-    // Load User's Reference GLB Model (`/models/base.glb`) & Wrap Official 360° Reference Label (`label_atlas.png`)
+    // Load User's Reference GLB Model (`/models/base.glb`) & Wrap Official 360° Reference Label (`labelTexturePath`)
     const gltfLoader = new GLTFLoader();
     gltfLoader.load(
       "/models/base.glb",
@@ -225,13 +261,13 @@ export default function Bottle3DCanvas({
         model.position.y = -center.y * autoScale;
         model.position.z = -center.z * autoScale;
 
-        // Override untextured grey CAD material with glossy jet black plastic material!
+        // Override untextured grey CAD material with product body material!
         model.traverse((child) => {
           if ((child as THREE.Mesh).isMesh) {
             const mesh = child as THREE.Mesh;
             mesh.castShadow = true;
             mesh.receiveShadow = true;
-            mesh.material = glossyBlackPlasticMaterial;
+            mesh.material = bottleBodyMaterial;
           }
         });
 
