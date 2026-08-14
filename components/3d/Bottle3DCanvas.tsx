@@ -73,7 +73,7 @@ export default function Bottle3DCanvas({
     const width = container.clientWidth || 340;
     const height = container.clientHeight || 420;
 
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 1000);
     const initialCamZ = 4.4;
     camera.position.set(0, 0, initialCamZ);
 
@@ -92,53 +92,59 @@ export default function Bottle3DCanvas({
     container.appendChild(renderer.domElement);
 
     // 2. PHOTOREALISTIC STUDIO LIGHTING SETUP
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xfffdfa, 1.6);
-    keyLight.position.set(0.8, 4.2, 2.2);
+    const keyLight = new THREE.DirectionalLight(0xfffdfa, 1.8);
+    keyLight.position.set(1.2, 4.5, 2.5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
     keyLight.shadow.mapSize.height = 1024;
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0xfff5eb, 0.35);
-    rimLight.position.set(-3.2, 2.5, -2.5);
+    const rimLight = new THREE.DirectionalLight(0xfff5eb, 0.45);
+    rimLight.position.set(-3.5, 2.8, -2.5);
     scene.add(rimLight);
 
-    const fillLight = new THREE.DirectionalLight(0xffffff, 0.22);
-    fillLight.position.set(-1.5, 0.5, 3.8);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.35);
+    fillLight.position.set(-1.8, 0.8, 3.8);
     scene.add(fillLight);
 
-    const bounceLight = new THREE.DirectionalLight(0xf4efe6, 0.2);
+    const bounceLight = new THREE.DirectionalLight(0xf4efe6, 0.25);
     bounceLight.position.set(0, -4, 2);
     scene.add(bounceLight);
 
-    // 3. Product-Specific Color & Material Configuration
+    // 3. Product Configuration & GLB Source Path
+    let glbPath = "/models/base.glb";
     let bodyColor = 0x08090c;
     let capColor = 0x121418;
     let ridgeColor = 0x181b22;
     let labelTexturePath = "/textures/label_atlas.png";
     let capHexStr = "#121418";
+    let isBakedModel = false;
 
-    if (productSlug === "gasogex") {
+    if (productSlug === "kabzraj") {
+      glbPath = "/models/kabzraj.glb"; // User's 77.6MB complete baked 3D model!
+      isBakedModel = true;
+    } else if (productSlug === "gasogex") {
+      glbPath = "/models/base.glb";
       bodyColor = 0x008a4b; // Emerald Green Transparent PET
-      capColor = 0x00994d;  // Emerald Green Safety Cap
+      capColor = 0x00994d;
       ridgeColor = 0x00b359;
       labelTexturePath = "/textures/gasogex_label.png";
       capHexStr = "#00994d";
     } else if (productSlug === "livgex") {
-      bodyColor = 0x103652; // Deep Navy PET
+      bodyColor = 0x103652;
       capColor = 0x0a2438;
       ridgeColor = 0x183d5a;
       capHexStr = "#0a2438";
     } else if (productSlug === "pilegex") {
-      bodyColor = 0x3d1a0e; // Rich Amber Brown PET
+      bodyColor = 0x3d1a0e;
       capColor = 0x240e07;
       ridgeColor = 0x471d0e;
       capHexStr = "#240e07";
     } else if (productSlug === "lucogex") {
-      bodyColor = 0x4a1829; // Magenta Pink PET
+      bodyColor = 0x4a1829;
       capColor = 0x300e19;
       ridgeColor = 0x5e1f34;
       capHexStr = "#300e19";
@@ -159,17 +165,14 @@ export default function Bottle3DCanvas({
       metalness: 0.0,
     });
 
-    // 4. Load Official 360° Reference Label Texture
+    // Load Label Texture for standard models
     const textureLoader = new THREE.TextureLoader();
     const labelTexture = textureLoader.load(
       labelTexturePath,
       (tex) => {
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.needsUpdate = true;
-        setLoading(false);
-      },
-      undefined,
-      () => setLoading(false)
+      }
     );
 
     const labelMaterial = new THREE.MeshStandardMaterial({
@@ -180,10 +183,10 @@ export default function Bottle3DCanvas({
       side: THREE.DoubleSide,
     });
 
-    // 5. Bottle Group & Model Importer
+    // 4. Bottle Group
     const bottleGroup = new THREE.Group();
 
-    // High-Precision Lathed Profile Fallback Geometry
+    // High-Precision Lathed Profile Fallback
     const profilePoints: THREE.Vector2[] = [
       new THREE.Vector2(0.0, -0.92),
       new THREE.Vector2(0.68, -0.92),
@@ -236,13 +239,14 @@ export default function Bottle3DCanvas({
     capGroup.position.y = 1.28;
     bottleGroup.add(capGroup);
 
-    // Load User's Reference GLB Model (`/models/base.glb`) & Wrap Official Label
+    // 5. Load GLB Model
     const gltfLoader = new GLTFLoader();
     gltfLoader.load(
-      "/models/base.glb",
+      glbPath,
       (gltf) => {
         const model = gltf.scene;
 
+        // Auto-scale GLB model to target height 2.6 units
         const box = new THREE.Box3().setFromObject(model);
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
@@ -258,20 +262,51 @@ export default function Bottle3DCanvas({
         model.traverse((child) => {
           if ((child as THREE.Mesh).isMesh) {
             const mesh = child as THREE.Mesh;
+            const meshName = mesh.name.toLowerCase();
+
+            // Hide extraneous environment planes / floor boxes baked in CAD
+            if (
+              meshName.includes("plane") ||
+              meshName.includes("floor") ||
+              meshName.includes("background") ||
+              meshName.includes("cube")
+            ) {
+              mesh.visible = false;
+              return;
+            }
+
             mesh.castShadow = true;
             mesh.receiveShadow = true;
-            mesh.material = bottleBodyMaterial;
+
+            if (isBakedModel) {
+              // Preserve baked textures and materials from user's GLB model!
+              if (Array.isArray(mesh.material)) {
+                mesh.material.forEach((m) => {
+                  if ((m as THREE.MeshStandardMaterial).map) {
+                    (m as THREE.MeshStandardMaterial).map!.colorSpace = THREE.SRGBColorSpace;
+                  }
+                });
+              } else if ((mesh.material as THREE.MeshStandardMaterial).map) {
+                (mesh.material as THREE.MeshStandardMaterial).map!.colorSpace = THREE.SRGBColorSpace;
+              }
+            } else {
+              // Override untextured materials for standard GLB base
+              mesh.material = bottleBodyMaterial;
+            }
           }
         });
 
-        const unscaledRadius = (size.x / 2.0) * 1.01;
-        const unscaledLabelHeight = size.y * 0.52;
-        const glbLabelMesh = new THREE.Mesh(
-          new THREE.CylinderGeometry(unscaledRadius, unscaledRadius, unscaledLabelHeight, 64, 1, true, 0, Math.PI * 2),
-          labelMaterial
-        );
-        glbLabelMesh.position.y = center.y - size.y * 0.08;
-        model.add(glbLabelMesh);
+        // Only attach extra label cylinder if it's NOT a baked model
+        if (!isBakedModel) {
+          const unscaledRadius = (size.x / 2.0) * 1.01;
+          const unscaledLabelHeight = size.y * 0.52;
+          const glbLabelMesh = new THREE.Mesh(
+            new THREE.CylinderGeometry(unscaledRadius, unscaledRadius, unscaledLabelHeight, 64, 1, true, 0, Math.PI * 2),
+            labelMaterial
+          );
+          glbLabelMesh.position.y = center.y - size.y * 0.08;
+          model.add(glbLabelMesh);
+        }
 
         bottleGroup.clear();
         bottleGroup.add(model);
@@ -369,14 +404,11 @@ export default function Bottle3DCanvas({
       camera.position.z = Math.max(initialCamZ * 0.85, Math.min(initialCamZ * 1.35, camera.position.z + e.deltaY * 0.0025));
     };
 
-    // Scroll Handler: Smoothly return bottle pitch (X) to 0 upright angle on scroll!
     const handleScroll = () => {
       if (prefersReducedMotion) return;
       const scrollY = window.scrollY;
       const scrollProgress = Math.min(1.0, scrollY / 600);
       targetScaleRef.current = 1.0 + scrollProgress * 0.08;
-
-      // Reset pitch to upright level position on scroll
       targetRotationRef.current.x *= 0.85;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -390,7 +422,7 @@ export default function Bottle3DCanvas({
     domElement.addEventListener("touchend", onTouchEnd);
     domElement.addEventListener("wheel", onWheel, { passive: false });
 
-    // Render Loop: CONTINUOUS SMOOTH AUTO-ROTATION + SPRING DAMPING
+    // Render Loop
     let animationFrameId: number;
     const clock = new THREE.Clock();
 
@@ -398,22 +430,17 @@ export default function Bottle3DCanvas({
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Scale lerp
       currentScaleRef.current += (targetScaleRef.current - currentScaleRef.current) * 0.08;
       bottleGroup.scale.setScalar(currentScaleRef.current);
 
-      // Floating Y motion
       const targetYPos = -0.1 + (prefersReducedMotion ? 0 : Math.sin(elapsedTime * 1.4) * 0.04);
       bottleGroup.position.y += (targetYPos - bottleGroup.position.y) * 0.08;
 
-      // CONTINUOUS IDLE AUTO-ROTATION: Keep model continuously rotating smoothly at all times!
       if (!isDraggingRef.current) {
         targetRotationRef.current.y += 0.005;
-        // Smoothly return pitch X angle back to 0 level position
         targetRotationRef.current.x += (0 - targetRotationRef.current.x) * 0.08;
       }
 
-      // Rotation Damping Lerp
       bottleGroup.rotation.y += (targetRotationRef.current.y - bottleGroup.rotation.y) * 0.10;
       bottleGroup.rotation.x += (targetRotationRef.current.x - bottleGroup.rotation.x) * 0.10;
 

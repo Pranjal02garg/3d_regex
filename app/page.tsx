@@ -206,12 +206,12 @@ export default function Home() {
         </div>
 
         {/* Santioni Product Navigation Rail (Bottom Dock) */}
-        <div className="z-10 flex items-center justify-center gap-1.5 sm:gap-3 border-t border-gray-200/80 pt-4 max-w-4xl mx-auto w-full">
+        <div className="z-10 flex items-center justify-start sm:justify-center gap-2 sm:gap-3 border-t border-gray-200/80 pt-4 pb-1 max-w-4xl mx-auto w-full overflow-x-auto scrollbar-none whitespace-nowrap">
           {products.map((p, index) => (
             <button
               key={p.slug}
               onClick={() => handleProductSelect(index)}
-              className={`font-mono text-xs px-3 sm:px-4 py-1.5 rounded-full border transition-all cursor-pointer ${
+              className={`shrink-0 font-mono text-[11px] sm:text-xs px-3.5 sm:px-4 py-1.5 rounded-full border transition-all cursor-pointer ${
                 activeIdx === index
                   ? "bg-[#111315] text-white border-[#111315] font-bold shadow-md scale-105"
                   : "bg-white/80 text-gray-500 border-gray-200 hover:border-[#c44900] hover:text-[#c44900]"
