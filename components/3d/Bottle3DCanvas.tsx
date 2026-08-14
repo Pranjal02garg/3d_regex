@@ -67,7 +67,7 @@ export default function Bottle3DCanvas({
     const envScene = new THREE.Scene();
     envScene.background = new THREE.Color(0xfcfaf7);
     
-    // Soft studio softbox lights for realistic glass reflections
+    // Soft studio softbox lights
     const softbox1 = new THREE.Mesh(
       new THREE.PlaneGeometry(10, 10),
       new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide })
@@ -88,14 +88,37 @@ export default function Bottle3DCanvas({
     scene.environment = envTexture;
     pmremGenerator.dispose();
 
-    // Direct Lighting Setup
+    // 5. DRAMATIC OVERHEAD STUDIO SPOTLIGHT
+    const studioSpotlight = new THREE.SpotLight(0xfffaed, 8.5);
+    studioSpotlight.position.set(0, 4.8, 1.8);
+    studioSpotlight.angle = Math.PI / 4.5;
+    studioSpotlight.penumbra = 0.85;
+    studioSpotlight.decay = 1.2;
+    studioSpotlight.distance = 12;
+    studioSpotlight.castShadow = true;
+    studioSpotlight.shadow.mapSize.width = 1024;
+    studioSpotlight.shadow.mapSize.height = 1024;
+    studioSpotlight.target.position.set(0, -0.2, 0);
+    scene.add(studioSpotlight);
+    scene.add(studioSpotlight.target);
+
+    // Volumetric Warm Light Cone Mesh Beaming Down from Above
+    const coneGeo = new THREE.CylinderGeometry(0.18, 1.75, 4.5, 32, 1, true);
+    const coneMat = new THREE.MeshBasicMaterial({
+      color: 0xc44900,
+      transparent: true,
+      opacity: 0.12,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const lightCone = new THREE.Mesh(coneGeo, coneMat);
+    lightCone.position.set(0, 1.8, 0);
+    scene.add(lightCone);
+
+    // Direct Fill & Rim Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
-
-    const keyLight = new THREE.DirectionalLight(0xfff9f2, 3.5);
-    keyLight.position.set(4, 7, 5);
-    keyLight.castShadow = true;
-    scene.add(keyLight);
 
     const fillLight = new THREE.DirectionalLight(0x8eb4cf, 1.4);
     fillLight.position.set(-6, -1, -3);
@@ -109,7 +132,7 @@ export default function Bottle3DCanvas({
     bounceLight.position.set(0, -5, 2);
     scene.add(bounceLight);
 
-    // 5. Build High-Precision 3D Bottle Group
+    // 6. Build High-Precision 3D Bottle Group
     const bottleGroup = new THREE.Group();
 
     // Bottle Body Geometry (Pharmaceutical Grade Jar)
@@ -119,13 +142,16 @@ export default function Bottle3DCanvas({
     const textureLoader = new THREE.TextureLoader();
     const productTexture = textureLoader.load(
       `/products/${productSlug}.png`,
-      () => setLoading(false),
+      (tex) => {
+        tex.needsUpdate = true;
+        setLoading(false);
+      },
       undefined,
       () => setLoading(false)
     );
     productTexture.colorSpace = THREE.SRGBColorSpace;
 
-    // Premium Glossy Dark Amber/Smoke Resin Glass Material (NOT Pitch Black)
+    // Premium Glossy Dark Amber/Smoke Resin Glass Material
     const bodyMaterial = new THREE.MeshPhysicalMaterial({
       color: 0x36302b,
       roughness: 0.12,
@@ -218,7 +244,7 @@ export default function Bottle3DCanvas({
       }
     };
 
-    // 6. User Touch & Mouse Physics (With Damped Inertia)
+    // 7. User Touch & Mouse Physics
     const onMouseDown = (e: MouseEvent) => {
       isDraggingRef.current = true;
       notifyInteraction();
@@ -304,7 +330,7 @@ export default function Bottle3DCanvas({
     domElement.addEventListener("touchend", onTouchEnd);
     domElement.addEventListener("wheel", onWheel, { passive: false });
 
-    // 7. Animation Loop
+    // 8. Animation Loop
     let animationFrameId: number;
     const clock = new THREE.Clock();
 
@@ -318,6 +344,9 @@ export default function Bottle3DCanvas({
 
       const targetYPos = -0.1 + (prefersReducedMotion ? 0 : Math.sin(elapsedTime * 1.4) * 0.04);
       bottleGroup.position.y += (targetYPos - bottleGroup.position.y) * 0.08;
+
+      // Pulse spotlight volumetric cone opacity
+      lightCone.material.opacity = 0.12 + Math.sin(elapsedTime * 2.0) * 0.03;
 
       // Reveal Spin Target (0° -> 140°)
       if (!revealCompleted && !isDraggingRef.current) {

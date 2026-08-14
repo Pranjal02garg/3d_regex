@@ -66,6 +66,13 @@ export default function Home() {
         {/* Ambient Radial Golden Sun Aura */}
         <div aria-hidden="true" className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[480px] bg-[#c44900]/10 blur-[160px] pointer-events-none animate-glow-pulse" />
 
+        {/* Overhead Golden Studio Spotlight Beam */}
+        <div
+          aria-hidden="true"
+          className="absolute top-8 left-1/2 -translate-x-1/2 w-[320px] sm:w-[500px] h-[540px] bg-gradient-to-b from-[#c44900]/22 via-[#c44900]/05 to-transparent pointer-events-none z-0"
+          style={{ clipPath: "polygon(38% 0%, 62% 0%, 100% 100%, 0% 100%)" }}
+        />
+
         {/* Top Kicker Bar */}
         <div className="flex items-center justify-between z-10 font-mono text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest pt-2 max-w-6xl mx-auto w-full">
           <span>01 / 05 · THE FORMULARY</span>
