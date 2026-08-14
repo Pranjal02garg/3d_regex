@@ -9,8 +9,8 @@
     },
     {
       "name": "regex-remedies-3007",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "-p", "3007"],
+      "runtimeExecutable": "./node_modules/.bin/next",
+      "runtimeArgs": ["dev", "-p", "3007"],
       "port": 3007
     }
   ]

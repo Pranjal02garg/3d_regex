@@ -1,21 +1,18 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import {
   ShieldCheck,
-  FileText,
-  Award,
-  Microchip,
-  ChevronRight,
-  Star,
-  Beaker,
-  Leaf,
   Sparkles,
   X,
   ArrowRight,
-  ChevronLeft
+  ChevronLeft,
+  ChevronRight,
+  Beaker,
+  Star
 } from "lucide-react";
 import { Accordion } from "@/components/ui/Disclosure";
 import ProductCard from "@/components/product/ProductCard";
@@ -25,11 +22,19 @@ import { HOME_FAQS } from "@/content/trust";
 import { reviews } from "@/content/reviews";
 import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
 
+// Dynamically import 3D WebGL Canvas for Client Side
+const Bottle3DCanvas = dynamic(() => import("@/components/3d/Bottle3DCanvas"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-[220px] sm:w-[300px] h-[300px] sm:h-[380px] flex items-center justify-center">
+      <div className="w-10 h-10 border-2 border-[#c44900] border-t-transparent rounded-full animate-spin" />
+    </div>
+  ),
+});
+
 export default function Home() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [activeModalProduct, setActiveModalProduct] = useState<Product | null>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const stageRef = useRef<HTMLDivElement>(null);
 
   const activeProduct = products[activeIdx];
   const leftIdx = (activeIdx - 1 + products.length) % products.length;
@@ -37,38 +42,12 @@ export default function Home() {
   const rightIdx = (activeIdx + 1) % products.length;
   const rightProduct = products[rightIdx];
 
-  // Mouse move 3D tilt effect matching Santioni Spirits
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!stageRef.current) return;
-      const rect = stageRef.current.getBoundingClientRect();
-      const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
-      const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
-      setTilt({ x: x * 18, y: -y * 18 });
-    };
-
-    const handleMouseLeave = () => setTilt({ x: 0, y: 0 });
-
-    const currentStage = stageRef.current;
-    if (currentStage) {
-      currentStage.addEventListener("mousemove", handleMouseMove);
-      currentStage.addEventListener("mouseleave", handleMouseLeave);
-    }
-    return () => {
-      if (currentStage) {
-        currentStage.removeEventListener("mousemove", handleMouseMove);
-        currentStage.removeEventListener("mouseleave", handleMouseLeave);
-      }
-    };
-  }, []);
-
   return (
     <div className="min-h-screen bg-[#faf8f3] text-[#111315] font-sans antialiased selection:bg-[#c44900] selection:text-white">
       
-      {/* ── 1 · SANTIONI FULL-SCREEN 3D EDITORIAL HERO STAGE ─────────────────── */}
+      {/* ── 1 · SANTIONI 3D INTERACTIVE HERO STAGE ───────────────────────────── */}
       <section
-        ref={stageRef}
-        className="relative h-[94vh] flex flex-col justify-between overflow-hidden border-b border-gray-200/80 bg-[radial-gradient(ellipse_at_top,#ffffff,#faf8f3)] pt-16 pb-6 px-4 sm:px-8 select-none"
+        className="relative min-h-[94vh] flex flex-col justify-between overflow-hidden border-b border-gray-200/80 bg-[radial-gradient(ellipse_at_top,#ffffff,#faf8f3)] pt-16 pb-6 px-4 sm:px-8 select-none"
       >
         
         {/* Ambient Radial Golden Sun Aura */}
@@ -79,12 +58,12 @@ export default function Home() {
           <span>01 / 05 · THE FORMULARY</span>
           <span className="inline-flex items-center gap-1.5 text-[#c44900] font-bold">
             <Sparkles size={12} className="animate-pulse" />
-            SCHEDULE T GMP CERTIFIED
+            3D WEBGL ENGINE ACTIVE
           </span>
-          <span className="hidden sm:inline">EST. 2026</span>
+          <span className="hidden sm:inline">TOUCH + DRAG TO ROTATE 3D BOTTLE</span>
         </div>
 
-        {/* Center Stage: Giant High-Fashion Editorial Typography + 3-BOTTLE 3D LINEUP */}
+        {/* Center Stage: Giant High-Fashion Editorial Typography + 3D WebGL Bottle */}
         <div className="my-auto z-10 text-center max-w-6xl mx-auto flex flex-col items-center justify-center relative w-full">
           
           {/* Santioni Giant Editorial Headline */}
@@ -92,13 +71,13 @@ export default function Home() {
             BOTANICAL REMEDIES
           </h1>
 
-          {/* 3-BOTTLE 3D LEVITATING LINEUP CONTAINER */}
+          {/* 3D WEBGR BOTTLE STAGE CONTAINER */}
           <div className="relative -mt-6 sm:-mt-14 z-10 flex flex-col items-center justify-center w-full">
             
             {/* Prev / Next Navigation Controls */}
             <button
               onClick={() => setActiveIdx((prev) => (prev === 0 ? products.length - 1 : prev - 1))}
-              className="absolute -left-2 sm:left-2 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 border border-gray-200 shadow-xl text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer hover:scale-110"
+              className="absolute left-1 sm:left-6 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 border border-gray-200 shadow-xl text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer hover:scale-110"
               aria-label="Previous remedy"
             >
               <ChevronLeft size={22} />
@@ -106,20 +85,20 @@ export default function Home() {
 
             <button
               onClick={() => setActiveIdx((prev) => (prev === products.length - 1 ? 0 : prev + 1))}
-              className="absolute -right-2 sm:right-2 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 border border-gray-200 shadow-xl text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer hover:scale-110"
+              className="absolute right-1 sm:right-6 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 border border-gray-200 shadow-xl text-[#111315] hover:bg-[#c44900] hover:text-white transition-all cursor-pointer hover:scale-110"
               aria-label="Next remedy"
             >
               <ChevronRight size={22} />
             </button>
 
-            {/* 3-BOTTLE LINEUP DISPLAY */}
-            <div className="flex items-center justify-center gap-2 sm:gap-6 lg:gap-10 max-w-4xl mx-auto py-2">
+            {/* 3D WebGL Interactive Lineup Stage */}
+            <div className="flex items-center justify-center gap-2 sm:gap-6 lg:gap-10 max-w-4xl mx-auto py-2 w-full">
               
-              {/* Left Flank Bottle */}
+              {/* Left Flank Bottle Preview */}
               <button
                 key={leftProduct.slug}
                 onClick={() => setActiveIdx(leftIdx)}
-                className="group relative flex-col items-center justify-end hidden sm:flex opacity-60 hover:opacity-100 transition-all duration-500 scale-90 hover:scale-95 cursor-pointer animate-float-1"
+                className="group relative flex-col items-center justify-end hidden sm:flex opacity-50 hover:opacity-100 transition-all duration-500 scale-90 hover:scale-95 cursor-pointer animate-float-1"
                 aria-label={`View ${leftProduct.name}`}
               >
                 <Image
@@ -134,37 +113,28 @@ export default function Home() {
                 </span>
               </button>
 
-              {/* Center Active Hero Bottle (3D Parallax Mouse Tilt) */}
-              <div
-                className="animate-float-center relative cursor-pointer transition-transform duration-200 z-20"
-                style={{
-                  transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale3d(1.05, 1.05, 1.05)`,
-                }}
-                onClick={() => setActiveModalProduct(activeProduct)}
-              >
-                <Image
+              {/* Center Active 3D WebGL Interactive Bottle Canvas */}
+              <div className="relative z-20 w-[240px] sm:w-[320px] h-[320px] sm:h-[400px]">
+                <Bottle3DCanvas
                   key={activeProduct.slug}
-                  src={`/products/${activeProduct.slug}.png`}
-                  alt={`${activeProduct.name} — ${activeProduct.tagline}`}
-                  width={420}
-                  height={520}
-                  priority
-                  className="w-[190px] sm:w-[260px] lg:w-[300px] h-auto object-contain mix-blend-multiply drop-shadow-[0_30px_45px_rgba(0,0,0,0.25)] hover:drop-shadow-[0_40px_60px_rgba(196,73,0,0.4)] transition-all duration-500"
+                  productSlug={activeProduct.slug}
+                  productName={activeProduct.name}
+                  onBottleClick={() => setActiveModalProduct(activeProduct)}
                 />
 
                 {/* Sanskrit Devanagari Floating Pill */}
-                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 font-mono text-xs uppercase tracking-widest text-[#c44900] font-bold whitespace-nowrap bg-white border border-gray-200/90 px-4 py-1.5 rounded-full shadow-xl flex items-center gap-2">
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 font-mono text-xs uppercase tracking-widest text-[#c44900] font-bold whitespace-nowrap bg-white border border-gray-200/90 px-4 py-1.5 rounded-full shadow-xl flex items-center gap-2 pointer-events-none">
                   <span className="font-deva text-sm font-bold text-[#c44900]">{activeProduct.devanagari}</span>
                   <span className="text-gray-300">•</span>
                   <span className="text-[#111315]">{activeProduct.name}</span>
                 </div>
               </div>
 
-              {/* Right Flank Bottle */}
+              {/* Right Flank Bottle Preview */}
               <button
                 key={rightProduct.slug}
                 onClick={() => setActiveIdx(rightIdx)}
-                className="group relative flex-col items-center justify-end hidden sm:flex opacity-60 hover:opacity-100 transition-all duration-500 scale-90 hover:scale-95 cursor-pointer animate-float-2"
+                className="group relative flex-col items-center justify-end hidden sm:flex opacity-50 hover:opacity-100 transition-all duration-500 scale-90 hover:scale-95 cursor-pointer animate-float-2"
                 aria-label={`View ${rightProduct.name}`}
               >
                 <Image
@@ -181,10 +151,17 @@ export default function Home() {
 
             </div>
 
+            {/* Touch Control Helper Pill */}
+            <div className="pt-2 font-mono text-[10px] text-gray-500 uppercase tracking-widest flex items-center gap-3">
+              <span>👆 Touch + Drag: Rotate 3D Bottle</span>
+              <span>•</span>
+              <span>🤏 Pinch: Zoom</span>
+            </div>
+
             {/* Pedestal Stand Shadow */}
             <div
               aria-hidden="true"
-              className="mt-6 h-4 w-[240px] sm:w-[360px] rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(17,19,21,0.2),transparent_70%)] animate-pulse"
+              className="mt-4 h-4 w-[240px] sm:w-[360px] rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(17,19,21,0.2),transparent_70%)] animate-pulse"
             />
           </div>
 

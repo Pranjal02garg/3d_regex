@@ -76,8 +76,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0d0c",
-  colorScheme: "dark",
+  themeColor: "#faf8f3",
+  colorScheme: "light",
 };
 
 import { Inter, Playfair_Display, IBM_Plex_Sans_Devanagari, IBM_Plex_Mono } from "next/font/google";
@@ -108,10 +108,8 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600", "700"],
 });
 
-/* The site ships one theme. The class is asserted rather than stripped so a
-   stale `dark`/`light` class left in the DOM by an earlier build cannot leave
-   the document disagreeing with the tokens. */
-const THEME_SCRIPT = `(function(){try{document.documentElement.classList.add("dark")}catch(e){}})();`;
+/* The site ships one theme: light Alabaster Parchment. */
+const THEME_SCRIPT = `(function(){try{document.documentElement.classList.remove("dark");document.documentElement.classList.add("light")}catch(e){}})();`;
 
 /* Load-in motion is anchored to the first paint, not to element creation.
    A bare CSS animation starts the moment the element exists — measured at

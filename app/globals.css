@@ -9,52 +9,46 @@
    and pure white never appear: the floor is #0B0D0C and the ceiling #F1EDE3,
    so nothing on the page hits the limits of the display.
    ========================================================================== */
-:root, .dark {
-  color-scheme: dark;
+:root, .light {
+  color-scheme: light;
 
-  --ink: #0b0d0c;
-  --ink-2: #101413;
-  --ink-3: #171c1a;
-  --paper: #f1ede3;
-  --paper-2: #c6c2b6;
-  --paper-3: #8d8b81;
+  --ink: #111315;
+  --ink-2: #1c232c;
+  --ink-3: #2d3748;
+  --paper: #faf8f3;
+  --paper-2: #f4efe6;
+  --paper-3: #e2dacd;
 
-  --vetiver: #1a201d;
-  --vetiver-deep: #0b0d0c;
-  --ochre: #c9a15e;
-  --clinic: #7fa8c4;
+  --vetiver: #faf8f3;
+  --vetiver-deep: #f4efe6;
+  --ochre: #c44900;
+  --clinic: #1e4d6b;
 
-  /* Medical semantics, re-lit for a dark ground. The light-mode values were
-     mixed for contrast against white and every one of them fails against
-     #0B0D0C, so these are lifted and desaturated rather than reused. */
-  --safe: #6e9c79;
-  --caution: #d0a851;
-  --contra: #cf7f6d;
-  --info: #7fa8c4;
+  --safe: #1c684e;
+  --caution: #c44900;
+  --contra: #b91c1c;
+  --info: #1e4d6b;
 
-  /* Semantic surface tokens. The ramp is deliberately shallow — four steps
-     inside 18 points of luminance — because on a dark page a large surface
-     shift reads as a mistake rather than as depth. Separation comes from the
-     hairlines below, not from the fills. */
-  --surface: #0b0d0c;
-  --surface-2: #101413;
-  --surface-3: #171c1a;
-  --surface-raised: #121716;
-  --fg: #f1ede3;
-  --fg-2: #c6c2b6;
-  --fg-3: #8d8b81;
-  --line: rgba(241, 237, 227, 0.11);
-  --line-2: rgba(241, 237, 227, 0.06);
-  --line-strong: rgba(241, 237, 227, 0.24);
-  --brand: #c9a15e;
-  --brand-fg: #0b0d0c;
-  --accent: #c9a15e;
-  --accent-bright: #e3c489;
-  --ring: #c9a15e;
-  --scrim: rgba(5, 7, 6, 0.72);
+  /* Semantic surface tokens for Alabaster Parchment theme */
+  --surface: #faf8f3;
+  --surface-2: #f4efe6;
+  --surface-3: #e8e2d5;
+  --surface-raised: #ffffff;
+  --fg: #111315;
+  --fg-2: #2d3748;
+  --fg-3: #718096;
+  --line: rgba(17, 19, 21, 0.12);
+  --line-2: rgba(17, 19, 21, 0.08);
+  --line-strong: rgba(17, 19, 21, 0.25);
+  --brand: #c44900;
+  --brand-fg: #ffffff;
+  --accent: #c44900;
+  --accent-bright: #e65c00;
+  --ring: #c44900;
+  --scrim: rgba(0, 0, 0, 0.6);
 
   /* Warm light pooled behind the product stage. */
-  --glow: rgba(201, 161, 94, 0.18);
+  --glow: rgba(196, 73, 0, 0.15);
 }
 
 @theme inline {
