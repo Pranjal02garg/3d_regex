@@ -89,22 +89,22 @@ export default function Home() {
             />
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+          {/* Santioni-Style Pill Action Buttons */}
+          <div className="flex flex-row items-center justify-center gap-3 pt-2">
             <a
               href="#catalogue"
-              className="w-full sm:w-auto bg-[#c4923e] text-black hover:bg-white px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-widest transition-colors text-center rounded-none shadow-lg"
+              className="bg-[#c4923e] text-black hover:bg-white px-7 py-3 rounded-full font-mono text-xs font-bold uppercase tracking-widest transition-all shadow-xl hover:scale-105"
             >
-              EXPLORE FORMULATIONS
+              EXPLORE RANGE
             </a>
             <a
               href="https://wa.me/918360053594"
               target="_blank"
               rel="noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-white hover:text-[#c4923e] hover:border-[#c4923e] bg-white/5 border border-white/20 px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-widest transition-colors backdrop-blur-md"
+              className="inline-flex items-center justify-center gap-2 text-white hover:text-[#c4923e] hover:border-[#c4923e] bg-white/5 border border-white/20 px-7 py-3 rounded-full font-mono text-xs font-bold uppercase tracking-widest transition-all backdrop-blur-md hover:scale-105"
             >
-              <WhatsAppIcon size={16} className="text-[#25D366]" />
-              <span>CONSULT OUR EXPERTS</span>
+              <WhatsAppIcon size={15} className="text-[#25D366]" />
+              <span>CONSULT DOCTOR</span>
             </a>
           </div>
         </div>

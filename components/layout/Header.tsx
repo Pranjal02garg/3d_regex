@@ -92,8 +92,8 @@ export default function Header() {
       {/* Main Header Container */}
       <header
         className={cn(
-          "fixed inset-x-0 top-8 z-50 bg-white/95 backdrop-blur-md transition-all duration-200 border-b",
-          scrolled ? "border-gray-200 shadow-sm" : "border-transparent",
+          "fixed inset-x-0 top-8 z-50 bg-[#111315]/90 text-white backdrop-blur-md transition-all duration-200 border-b",
+          scrolled ? "border-white/15 shadow-2xl" : "border-white/10",
         )}
         onMouseLeave={scheduleClose}
       >
@@ -105,14 +105,14 @@ export default function Header() {
               alt="Regex Remedies Logo"
               width={32}
               height={32}
-              className="h-7 sm:h-8 w-7 sm:w-8 object-contain"
+              className="h-7 sm:h-8 w-7 sm:w-8 object-contain brightness-200"
               priority
             />
             <span className="flex flex-col leading-none text-left">
-              <span className="display text-base sm:text-lg font-bold text-[#111315]">
+              <span className="display text-base sm:text-lg font-bold text-white tracking-wide">
                 Regex Remedies
               </span>
-              <span className="mt-[2px] hidden font-mono text-[9px] uppercase tracking-widest text-[var(--ochre)] font-bold sm:block">
+              <span className="mt-[2px] hidden font-mono text-[9px] uppercase tracking-widest text-[#c4923e] font-bold sm:block">
                 Natural Ayurvedic Remedies
               </span>
             </span>
@@ -132,7 +132,7 @@ export default function Header() {
                   onClick={() => setMega((v) => !v)}
                   className={cn(
                     "text-[0.9375rem] font-bold transition-colors",
-                    mega || pathname.startsWith("/shop") ? "text-[var(--ochre)]" : "text-[#111315] hover:text-[var(--ochre)]",
+                    mega || pathname.startsWith("/shop") ? "text-[#c4923e]" : "text-gray-200 hover:text-[#c4923e]",
                   )}
                 >
                   {item.label}
@@ -144,7 +144,7 @@ export default function Header() {
                   onMouseEnter={scheduleClose}
                   className={cn(
                     "text-[0.9375rem] font-bold transition-colors",
-                    pathname.startsWith(item.href) ? "text-[var(--ochre)]" : "text-[#111315] hover:text-[var(--ochre)]",
+                    pathname.startsWith(item.href) ? "text-[#c4923e]" : "text-gray-200 hover:text-[#c4923e]",
                   )}
                 >
                   {item.label}
@@ -159,7 +159,7 @@ export default function Header() {
               type="button"
               onClick={openSearch}
               aria-label="Search remedies"
-              className="hidden md:inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-[#111315] hover:border-[var(--ochre)] transition-colors"
+              className="hidden md:inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white hover:border-[#c4923e] transition-colors"
             >
               <Search size={14} strokeWidth={2} />
               <span>Search</span>
@@ -170,7 +170,7 @@ export default function Header() {
               type="button"
               onClick={openSearch}
               aria-label="Search"
-              className="press inline-flex h-9 w-9 items-center justify-center rounded-full text-[#111315] md:hidden active:bg-gray-100"
+              className="press inline-flex h-9 w-9 items-center justify-center rounded-full text-white md:hidden active:bg-white/10"
             >
               <Search size={18} strokeWidth={2} />
             </button>
@@ -189,7 +189,7 @@ export default function Header() {
             <Link
               href="/account"
               aria-label="Account"
-              className="hidden h-9 w-9 items-center justify-center rounded-full text-[#111315] hover:bg-gray-100 sm:inline-flex"
+              className="hidden h-9 w-9 items-center justify-center rounded-full text-white hover:bg-white/10 sm:inline-flex"
             >
               <User size={18} strokeWidth={2} />
             </Link>
@@ -198,11 +198,11 @@ export default function Header() {
               type="button"
               onClick={openCart}
               aria-label="Cart"
-              className="press relative inline-flex h-9 w-9 items-center justify-center rounded-full text-[#111315] active:bg-gray-100"
+              className="press relative inline-flex h-9 w-9 items-center justify-center rounded-full text-white hover:bg-white/10 active:bg-white/20"
             >
               <ShoppingBag size={18} strokeWidth={2} />
               {count > 0 && (
-                <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--ochre)] px-1 text-[9px] font-bold text-white">
+                <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#c4923e] px-1 text-[9px] font-bold text-black">
                   {count}
                 </span>
               )}
@@ -212,7 +212,7 @@ export default function Header() {
               type="button"
               onClick={() => setMobile(true)}
               aria-label="Open menu"
-              className="press inline-flex h-9 w-9 items-center justify-center rounded-full text-[#111315] lg:hidden active:bg-gray-100"
+              className="press inline-flex h-9 w-9 items-center justify-center rounded-full text-white lg:hidden hover:bg-white/10 active:bg-white/20"
             >
               <Menu size={20} strokeWidth={2} />
             </button>

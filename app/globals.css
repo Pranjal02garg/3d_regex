@@ -476,8 +476,6 @@
 
 /* ==========================================================================
    REDUCED MOTION
-   Gentler, not off. Opacity and color changes carry meaning and rarely
-   trigger motion sickness, so they stay; every positional/scale change goes.
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   html {
