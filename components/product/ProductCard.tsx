@@ -1,24 +1,14 @@
-"use client";
-
+import Image from "next/image";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import type { Product } from "@/content/products";
 import { getIngredient } from "@/content/ingredients";
 import { Rating } from "@/components/ui/Primitives";
 import { formatINR, packDuration } from "@/lib/utils";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
-const Bottle3DCanvas = dynamic(() => import("@/components/3d/Bottle3DCanvas"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-full w-full items-center justify-center">
-      <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-    </div>
-  ),
-});
-
 export default function ProductCard({
   product,
+  priority = false,
 }: {
   product: Product;
   priority?: boolean;
@@ -40,17 +30,20 @@ export default function ProductCard({
           </span>
         </div>
 
-        {/* 3D WebGL Bottle Canvas Stage — 100% Interactive 3D Model */}
-        <div className="card-media relative mb-4 flex aspect-[4/3] min-h-[220px] w-full items-center justify-center overflow-hidden rounded-lg border border-line bg-gradient-to-b from-surface-2 to-surface-3 p-1 sm:min-h-[240px]">
+        {/* Static High-Res Studio Bottle Image for Instant Load & Zero Lag */}
+        <div className="card-media relative mb-4 flex aspect-[4/3] min-h-[200px] w-full items-center justify-center overflow-hidden rounded-lg border border-line bg-gradient-to-b from-surface-2 to-surface-3 p-3 sm:min-h-[220px]">
           <div
             aria-hidden="true"
-            className="stage-floor absolute inset-x-6 bottom-3 h-10 rounded-[50%]"
+            className="stage-floor absolute inset-x-6 bottom-3 h-8 rounded-[50%]"
           />
           
-          <Bottle3DCanvas
-            productSlug={product.slug}
-            productName={product.name}
-            className="h-full w-full"
+          <Image
+            src={`/products/${product.slug}.png`}
+            alt={`${product.name} Ayurvedic Remedy Bottle`}
+            width={240}
+            height={240}
+            className="relative z-10 h-full max-h-[190px] w-auto object-contain transition-transform duration-500 group-hover:scale-105"
+            priority={priority}
           />
 
           <span className="absolute inset-x-2 bottom-2 z-10 flex items-center justify-center gap-1 rounded-md border border-line bg-surface/85 px-2 py-1 font-mono text-[10px] font-bold text-safe backdrop-blur-md">

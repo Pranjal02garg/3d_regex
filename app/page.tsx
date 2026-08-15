@@ -116,10 +116,11 @@ export default function Home() {
                 className="group relative flex-col items-center justify-end hidden sm:flex opacity-60 hover:opacity-100 transition-all duration-500 scale-85 hover:scale-95 cursor-pointer w-[120px] lg:w-[150px] h-[220px]"
                 aria-label={`View ${leftProduct.name}`}
               >
-                <div className="w-full h-full pointer-events-none">
-                  <Bottle3DCanvas
-                    productSlug={leftProduct.slug}
-                    productName={leftProduct.name}
+                <div className="w-full h-full p-2 flex items-center justify-center pointer-events-none">
+                  <img
+                    src={`/products/${leftProduct.slug}.png`}
+                    alt={leftProduct.name}
+                    className="max-h-[170px] w-auto object-contain transition-transform group-hover:scale-105"
                   />
                 </div>
                 <span className="font-mono text-[9px] uppercase tracking-widest text-fg-3 font-bold mt-1 bg-surface/90 border border-line px-2 py-0.5 rounded-md shadow-xs">
@@ -152,10 +153,11 @@ export default function Home() {
                 className="group relative flex-col items-center justify-end hidden sm:flex opacity-60 hover:opacity-100 transition-all duration-500 scale-85 hover:scale-95 cursor-pointer w-[120px] lg:w-[150px] h-[220px]"
                 aria-label={`View ${rightProduct.name}`}
               >
-                <div className="w-full h-full pointer-events-none">
-                  <Bottle3DCanvas
-                    productSlug={rightProduct.slug}
-                    productName={rightProduct.name}
+                <div className="w-full h-full p-2 flex items-center justify-center pointer-events-none">
+                  <img
+                    src={`/products/${rightProduct.slug}.png`}
+                    alt={rightProduct.name}
+                    className="max-h-[170px] w-auto object-contain transition-transform group-hover:scale-105"
                   />
                 </div>
                 <span className="font-mono text-[9px] uppercase tracking-widest text-fg-3 font-bold mt-1 bg-surface/90 border border-line px-2 py-0.5 rounded-md shadow-xs">
