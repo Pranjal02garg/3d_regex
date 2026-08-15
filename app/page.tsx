@@ -138,7 +138,7 @@ export default function Home() {
                 />
 
                 {/* Sanskrit Devanagari Floating Pill */}
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 font-mono text-xs uppercase tracking-widest text-accent font-bold whitespace-nowrap bg-surface border border-line px-4 py-1.5 rounded-full shadow-xl flex items-center gap-2 pointer-events-none">
+                <div className="mt-2 mx-auto font-mono text-xs uppercase tracking-widest text-accent font-bold whitespace-nowrap bg-surface border border-line px-4 py-1 rounded-full shadow-md flex items-center justify-center gap-2 pointer-events-none w-max">
                   <span className="font-deva text-sm font-bold text-accent">{activeProduct.devanagari}</span>
                   <span className="text-line">•</span>
                   <span className="text-fg">{activeProduct.name}</span>

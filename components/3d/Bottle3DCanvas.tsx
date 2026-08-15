@@ -12,7 +12,7 @@ interface Bottle3DProps {
   onUserInteract?: () => void;
 }
 
-// GLOBAL GLTF MODEL CACHE TO ELIMINATE RE-LOADING 77MB MODEL & PREVENT GPU LAG
+// GLOBAL GLTF MODEL CACHE TO ELIMINATE RE-LOADING HEAVY 3D MODELS & PREVENT GPU LAG
 const gltfCache = new Map<string, THREE.Group>();
 const gltfLoadingPromises = new Map<string, Promise<THREE.Group>>();
 
@@ -146,36 +146,32 @@ export default function Bottle3DCanvas({
     bounceLight.position.set(0, -4, 2);
     scene.add(bounceLight);
 
-    // 3. Product Configuration
-    let glbPath = "/models/base.glb";
+    // 3. Product Configuration — ALL 5 PRODUCTS NOW LOAD THEIR BAKED 3D GLB MODELS!
+    const validSlugs = ["kabzraj", "gasogex", "livgex", "lucogex", "pilegex"];
+    const targetSlug = validSlugs.includes(productSlug) ? productSlug : "kabzraj";
+    const glbPath = `/models/${targetSlug}.glb`;
+
     let bodyColor = 0x08090c;
     let capColor = 0x121418;
     let ridgeColor = 0x181b22;
-    let labelTexturePath = "/textures/label_atlas.png";
     let capHexStr = "#121418";
-    let isBakedModel = false;
 
-    if (productSlug === "kabzraj") {
-      glbPath = "/models/kabzraj.glb";
-      isBakedModel = true;
-    } else if (productSlug === "gasogex") {
-      glbPath = "/models/base.glb";
+    if (targetSlug === "gasogex") {
       bodyColor = 0x008a4b;
       capColor = 0x00994d;
       ridgeColor = 0x00b359;
-      labelTexturePath = "/textures/gasogex_label.png";
       capHexStr = "#00994d";
-    } else if (productSlug === "livgex") {
+    } else if (targetSlug === "livgex") {
       bodyColor = 0x103652;
       capColor = 0x0a2438;
       ridgeColor = 0x183d5a;
       capHexStr = "#0a2438";
-    } else if (productSlug === "pilegex") {
+    } else if (targetSlug === "pilegex") {
       bodyColor = 0x3d1a0e;
       capColor = 0x240e07;
       ridgeColor = 0x471d0e;
       capHexStr = "#240e07";
-    } else if (productSlug === "lucogex") {
+    } else if (targetSlug === "lucogex") {
       bodyColor = 0x4a1829;
       capColor = 0x300e19;
       ridgeColor = 0x5e1f34;
@@ -195,20 +191,6 @@ export default function Bottle3DCanvas({
       color: capColor,
       roughness: 0.25,
       metalness: 0.0,
-    });
-
-    const textureLoader = new THREE.TextureLoader();
-    const labelTexture = textureLoader.load(labelTexturePath, (tex) => {
-      tex.colorSpace = THREE.SRGBColorSpace;
-      tex.needsUpdate = true;
-    });
-
-    const labelMaterial = new THREE.MeshStandardMaterial({
-      map: labelTexture,
-      transparent: true,
-      roughness: 0.25,
-      metalness: 0.0,
-      side: THREE.DoubleSide,
     });
 
     // 4. Bottle Group
@@ -235,11 +217,6 @@ export default function Bottle3DCanvas({
     bottleBody.castShadow = true;
     bottleBody.receiveShadow = true;
     bottleGroup.add(bottleBody);
-
-    const labelGeometry = new THREE.CylinderGeometry(0.785, 0.785, 1.34, 64, 1, true, 0, Math.PI * 2);
-    const labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
-    labelMesh.position.y = -0.15;
-    bottleGroup.add(labelMesh);
 
     // Ribbed Safety Cap Group
     const capGroup = new THREE.Group();
@@ -280,7 +257,7 @@ export default function Bottle3DCanvas({
     shadowPlane.position.y = -1.30;
     scene.add(shadowPlane);
 
-    // 5. Cached GLB Loading
+    // 5. Cached GLB Loading for All 5 Photorealistic Models
     loadGLTFModelCached(glbPath)
       .then((model) => {
         // Calculate Bounding Dimensions
@@ -302,12 +279,13 @@ export default function Bottle3DCanvas({
             const mesh = child as THREE.Mesh;
             const meshName = mesh.name.toLowerCase();
 
-            // Hide baked floor planes or extra boxes
+            // Hide baked floor planes, extra boxes, or environment planes
             if (
               meshName.includes("plane") ||
               meshName.includes("floor") ||
               meshName.includes("background") ||
-              meshName.includes("cube")
+              meshName.includes("cube") ||
+              meshName.includes("stage")
             ) {
               mesh.visible = false;
               return;
@@ -316,33 +294,17 @@ export default function Bottle3DCanvas({
             mesh.castShadow = true;
             mesh.receiveShadow = true;
 
-            if (isBakedModel) {
-              if (Array.isArray(mesh.material)) {
-                mesh.material.forEach((m) => {
-                  if ((m as THREE.MeshStandardMaterial).map) {
-                    (m as THREE.MeshStandardMaterial).map!.colorSpace = THREE.SRGBColorSpace;
-                  }
-                });
-              } else if ((mesh.material as THREE.MeshStandardMaterial).map) {
-                (mesh.material as THREE.MeshStandardMaterial).map!.colorSpace = THREE.SRGBColorSpace;
-              }
-            } else {
-              mesh.material = bottleBodyMaterial;
+            if (Array.isArray(mesh.material)) {
+              mesh.material.forEach((m) => {
+                if ((m as THREE.MeshStandardMaterial).map) {
+                  (m as THREE.MeshStandardMaterial).map!.colorSpace = THREE.SRGBColorSpace;
+                }
+              });
+            } else if ((mesh.material as THREE.MeshStandardMaterial).map) {
+              (mesh.material as THREE.MeshStandardMaterial).map!.colorSpace = THREE.SRGBColorSpace;
             }
           }
         });
-
-        // Add 360 Label Cylinder for non-baked base models
-        if (!isBakedModel) {
-          const unscaledRadius = (size.x / 2.0) * 1.01;
-          const unscaledLabelHeight = size.y * 0.52;
-          const glbLabelMesh = new THREE.Mesh(
-            new THREE.CylinderGeometry(unscaledRadius, unscaledRadius, unscaledLabelHeight, 64, 1, true, 0, Math.PI * 2),
-            labelMaterial
-          );
-          glbLabelMesh.position.y = center.y - size.y * 0.08;
-          model.add(glbLabelMesh);
-        }
 
         // Align shadow plane directly at the bottom base of the bottle
         shadowPlane.position.y = -(targetHeight / 2.0) - 0.02;
@@ -467,7 +429,7 @@ export default function Bottle3DCanvas({
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
 
-      if (!isVisibleRef.current) return; // Skip rendering when off-screen!
+      if (!isVisibleRef.current) return;
 
       const elapsedTime = clock.getElapsedTime();
 
