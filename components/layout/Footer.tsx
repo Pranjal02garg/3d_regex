@@ -50,15 +50,28 @@ export default function Footer() {
           </nav>
         </div>
 
-        {/* Middle Statutory License Strip */}
-        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-gray-400">
+        {/* Middle Statutory License + Contact Strip */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 text-[11px] font-mono text-gray-400">
           <div>
             <span>AYUSH LICENCE: <strong className="text-[var(--ochre)]">PB/AY/000000</strong></span>
             <span className="mx-2">•</span>
             <span>SCHEDULE T <strong className="text-[#25D366]">GMP CERTIFIED</strong></span>
           </div>
-          <div>
-            <span>Customer Support: <strong className="text-white">+91 83600 53594</strong></span>
+          <div className="space-y-1 sm:text-right not-italic">
+            <div>
+              Customer Support:{" "}
+              <a href={`tel:${SITE.phoneHref}`} className="font-bold text-white hover:text-[var(--ochre)] transition-colors">
+                {SITE.phone}
+              </a>
+            </div>
+            <div>
+              <a href={`mailto:${SITE.email}`} className="hover:text-[var(--ochre)] transition-colors">
+                {SITE.email}
+              </a>
+            </div>
+            <div className="text-gray-500">
+              {SITE.address.line1}, {SITE.address.line2}
+            </div>
           </div>
         </div>
 

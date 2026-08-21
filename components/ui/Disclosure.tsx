@@ -51,20 +51,58 @@ export function Accordion({
                 </span>
               </button>
             </h3>
-            <div
-              id={panelId}
-              role="region"
-              aria-labelledby={btnId}
-              className={cn(
-                "overflow-hidden transition-all duration-[250ms] [transition-timing-function:var(--ease-out)]",
-                isOpen ? "max-h-96 opacity-100 visible" : "max-h-0 opacity-0 invisible",
-              )}
-            >
-              <div className="pb-6 pr-10 measure text-[0.9375rem] leading-relaxed text-fg-2">{item.a}</div>
-            </div>
+            <AccordionPanel id={panelId} btnId={btnId} isOpen={isOpen}>
+              {item.a}
+            </AccordionPanel>
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/**
+ * Panel body for the Accordion. Drives open/close with a *measured* inline
+ * max-height instead of Tailwind utility classes: on this Tailwind v4 build the
+ * `max-h-96`/`visible` open-state utilities lost the cascade and the panel stayed
+ * collapsed. Inline styles always win, and measuring the real content height
+ * means long answers are never clipped.
+ */
+function AccordionPanel({
+  id,
+  btnId,
+  isOpen,
+  children,
+}: {
+  id: string;
+  btnId: string;
+  isOpen: boolean;
+  children: React.ReactNode;
+}) {
+  const inner = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    const el = inner.current;
+    if (!el) return;
+    const measure = () => setHeight(el.scrollHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [children]);
+
+  return (
+    <div
+      id={id}
+      role="region"
+      aria-labelledby={btnId}
+      className="overflow-hidden transition-[max-height,opacity] duration-[280ms] [transition-timing-function:var(--ease-out)]"
+      style={{ maxHeight: isOpen ? height : 0, opacity: isOpen ? 1 : 0 }}
+    >
+      <div ref={inner} className="pb-6 pr-10 measure text-[0.9375rem] leading-relaxed text-fg-2">
+        {children}
+      </div>
     </div>
   );
 }
