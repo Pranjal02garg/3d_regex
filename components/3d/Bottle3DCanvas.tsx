@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 
 interface Bottle3DProps {
   productSlug: string;
@@ -16,6 +17,17 @@ interface Bottle3DProps {
 const gltfCache = new Map<string, THREE.Group>();
 const gltfLoadingPromises = new Map<string, Promise<THREE.Group>>();
 
+// SHARED LOADER — models are meshopt-compressed (EXT_meshopt_compression) + WebP textures,
+// so the decoder MUST be attached or the geometry will not parse.
+let sharedLoader: GLTFLoader | null = null;
+function getLoader(): GLTFLoader {
+  if (!sharedLoader) {
+    sharedLoader = new GLTFLoader();
+    sharedLoader.setMeshoptDecoder(MeshoptDecoder);
+  }
+  return sharedLoader;
+}
+
 function loadGLTFModelCached(url: string): Promise<THREE.Group> {
   if (gltfCache.has(url)) {
     return Promise.resolve(gltfCache.get(url)!.clone(true));
@@ -24,7 +36,7 @@ function loadGLTFModelCached(url: string): Promise<THREE.Group> {
     return gltfLoadingPromises.get(url)!.then((scene) => scene.clone(true));
   }
 
-  const loader = new GLTFLoader();
+  const loader = getLoader();
   const promise = new Promise<THREE.Group>((resolve, reject) => {
     loader.load(
       url,
@@ -39,6 +51,30 @@ function loadGLTFModelCached(url: string): Promise<THREE.Group> {
 
   gltfLoadingPromises.set(url, promise);
   return promise;
+}
+
+// Bump this whenever the .glb assets are re-exported — it busts the browser's
+// HTTP cache so a stale/older-quality model is never reused.
+const MODEL_VERSION = "hq2";
+function modelPath(slug: string): string {
+  return `/models/${slug}.glb?v=${MODEL_VERSION}`;
+}
+
+// Warm the cache for every product model during browser idle time, so switching
+// between bottles after first paint is instant. Runs once, client-side only.
+const ALL_MODEL_SLUGS = ["kabzraj", "gasogex", "livgex", "lucogex", "pilegex"];
+let prefetchStarted = false;
+function prefetchAllModels() {
+  if (prefetchStarted || typeof window === "undefined") return;
+  prefetchStarted = true;
+  const idle =
+    (window as unknown as { requestIdleCallback?: (cb: () => void) => void })
+      .requestIdleCallback || ((cb: () => void) => setTimeout(cb, 1200));
+  idle(() => {
+    ALL_MODEL_SLUGS.forEach((slug) => {
+      loadGLTFModelCached(modelPath(slug)).catch(() => {});
+    });
+  });
 }
 
 // CAP TOP EMBOSSED REGEX LOGO CANVAS
@@ -149,7 +185,7 @@ export default function Bottle3DCanvas({
     // 3. Product Configuration — ALL 5 PRODUCTS NOW LOAD THEIR BAKED 3D GLB MODELS!
     const validSlugs = ["kabzraj", "gasogex", "livgex", "lucogex", "pilegex"];
     const targetSlug = validSlugs.includes(productSlug) ? productSlug : "kabzraj";
-    const glbPath = `/models/${targetSlug}.glb`;
+    const glbPath = modelPath(targetSlug);
 
     let bodyColor = 0x08090c;
     let capColor = 0x121418;
@@ -312,6 +348,9 @@ export default function Bottle3DCanvas({
         bottleGroup.clear();
         bottleGroup.add(model);
         setLoading(false);
+
+        // After the active bottle is on screen, quietly warm the other models.
+        prefetchAllModels();
       })
       .catch((err) => {
         console.log("Using Lathe Profile Fallback Mesh:", err);
