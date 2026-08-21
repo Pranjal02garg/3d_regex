@@ -62,19 +62,29 @@ function modelPath(slug: string): string {
 
 // Warm the cache for every product model during browser idle time, so switching
 // between bottles after first paint is instant. Runs once, client-side only.
+// Loads are chained ONE AT A TIME (not all at once): decoding + GPU-uploading
+// five ~1M-vertex models in a burst spikes memory and stutters the main thread,
+// so each model waits for an idle slot after the previous one finishes.
 const ALL_MODEL_SLUGS = ["kabzraj", "gasogex", "livgex", "lucogex", "pilegex"];
 let prefetchStarted = false;
 function prefetchAllModels() {
   if (prefetchStarted || typeof window === "undefined") return;
   prefetchStarted = true;
-  const idle =
+
+  const whenIdle: (cb: () => void) => void =
     (window as unknown as { requestIdleCallback?: (cb: () => void) => void })
-      .requestIdleCallback || ((cb: () => void) => setTimeout(cb, 1200));
-  idle(() => {
-    ALL_MODEL_SLUGS.forEach((slug) => {
-      loadGLTFModelCached(modelPath(slug)).catch(() => {});
+      .requestIdleCallback?.bind(window) ?? ((cb) => setTimeout(cb, 300));
+
+  const queue = [...ALL_MODEL_SLUGS];
+  const loadNext = () => {
+    const slug = queue.shift();
+    if (!slug) return;
+    whenIdle(() => {
+      loadGLTFModelCached(modelPath(slug)).finally(loadNext);
     });
-  });
+  };
+  // Kick off after first paint has settled.
+  whenIdle(loadNext);
 }
 
 // CAP TOP EMBOSSED REGEX LOGO CANVAS

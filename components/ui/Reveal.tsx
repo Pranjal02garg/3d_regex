@@ -32,6 +32,10 @@ export function Reveal({
       return;
     }
 
+    // IntersectionObserver alone handles reveal without touching layout.
+    // (A previous scroll listener called getBoundingClientRect() on every
+    // scroll event for every un-revealed section, forcing synchronous reflow
+    // and causing scroll jank — removed in favour of the observer.)
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting || entry.boundingClientRect.top < 0) {
@@ -42,20 +46,8 @@ export function Reveal({
       { rootMargin: "0px 0px -12% 0px", threshold: 0.05 },
     );
 
-    const onScroll = () => {
-      if (node.getBoundingClientRect().top < window.innerHeight) {
-        setShown(true);
-        io.disconnect();
-        window.removeEventListener("scroll", onScroll);
-      }
-    };
-
     io.observe(node);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      io.disconnect();
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => io.disconnect();
   }, []);
 
   return (
